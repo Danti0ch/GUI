@@ -6,6 +6,8 @@
 
 typedef unsigned int uint;
 
+// TODO: чекнуть констатные методы и ошибку 
+// Declaring a member function with the const keyword specifies that the function is a "read-only" function that doesn't modify the object for which it's called. A constant member function can't modify any non-static data members or call any member functions that aren't constant. To declare a constant member function, place the const keyword after the closing parenthesis of the argument list. The const keyword is required in both the declaration and the definition.
 class Point{
 
 public:
@@ -15,8 +17,8 @@ private:
 public:
     Point(double x, double y);
 
-    double x(){ return x_; }
-    double y(){ return y_; }
+    double x() const { return x_; }
+    double y() const { return y_; }
 
     ~Point(){}
 };
@@ -32,6 +34,9 @@ private:
     int x_lower_pixel_, x_upper_pixel_;
     int y_lower_pixel_, y_upper_pixel_;
 
+    int n_x_upper_axis_pixels_, n_x_lower_axis_pixels_;
+    int n_y_upper_axis_pixels_, n_y_lower_axis_pixels_;
+    
     double scale_x_, scale_y_;
     double step_val_;
 public:
@@ -55,22 +60,35 @@ public:
     
     int CountPixelPosX(double x_ct);
     int CountPixelPosY(double y_ct);
+
+    double CountAxisPosX(int x_pixel);
+    double CountAxisPosY(int y_pixel);
+    
     int CountPixelPosX(Point* pt);
     int CountPixelPosY(Point* pt);
 
+    void Draw(sf::RenderWindow* window);
     ~CoordinateSus(){}
 };
 //----------------------------------------------------------------------------------------//
 
+// TODO: mb other way??
+enum class VT_DATA{
+    POLAR,
+    COORD
+};
+
+// TODO: конструктор по умолчанию
 class Vector{
 
-private:    
+private:   
 
     double x_, y_;
+    double angle_;
+    double len_;
 public:
 
-    Vector(double x, double y);
-
+    Vector(double v1, double v2, VT_DATA data_type);
     // TODO: to const
     Vector(Point* ct);
     //Vector(double x_offset, double y_offset, Vector* vt_from);
@@ -82,13 +100,29 @@ public:
     void Draw(sf::RenderWindow* window, CoordinateSus* ct_sus, double x_init, double y_init);
     void Draw(sf::RenderWindow* window, CoordinateSus* ct_sus, Vector* vt_init);
 
-    double x(){ return x_; }
-    double y(){ return y_; }
+    double x() const { return x_; }
+    double y() const { return y_; }
+
+    double len()   const { return len_; }
+    double angle() const { return angle_; }
+    //double tg(){ return angle_; }
+    //double len()  { return len_; }
+
+    // TODO: уточнить является ли это корректным
+    Vector NormalVector();
+    void   Normalize();
+
+    void ChangeLen(double len_val);
+
+    Vector operator +(const Vector &v2);
+    Vector operator -(const Vector &v2);
+    Vector operator *(double ratio);
+    Vector operator /(double ratio);
+
+    Vector operator -();
 
     ~Vector(){}
 };
 //----------------------------------------------------------------------------------------//
-
-void DrawGraphic(sf::RenderWindow* window, CoordinateSus* ct_sus);
 
 #endif // DRAWER_H
