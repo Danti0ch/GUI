@@ -70,7 +70,7 @@ double CoordinateSus::CountAxisPosY(int y_pixel) const {
 //----------------------------------------------------------------------------------------//
 
 // TODO: make smarter разметка линий на координатной оси. Например умное деление на линии единичных отрезков вида 10^x
-void CoordinateSus::Draw(sf::RenderWindow* window) const {
+void CoordinateSus::Draw(gl::Window* window) const {
 
     assert(window != NULL);
 
@@ -82,32 +82,16 @@ void CoordinateSus::Draw(sf::RenderWindow* window) const {
     
     for(uint n_x_line = -N_X_LOWER_AXIS_LINES; n_x_line <= N_X_UPPER_AXIS_LINES; n_x_line++){
         
-        int x_ct       = (-n_x_line * COORD_SUS_GRID_SIZE) + n_x_lower_axis_pixels_ + x_lower_pixel_;
+        int x_ct = (-n_x_line * COORD_SUS_GRID_SIZE) + n_x_lower_axis_pixels_ + x_lower_pixel_;
 
-        int y_lower_ct = y_lower_pixel_;
-        int y_upper_ct = y_upper_pixel_;
-
-        sf::Vertex line_to_draw[] = {
-            sf::Vertex(sf::Vector2f(x_ct, y_lower_ct)),
-            sf::Vertex(sf::Vector2f(x_ct, y_upper_ct))
-        };
-
-        window->draw(line_to_draw, 2, sf::Lines);
+        gl::DrawLine(window, x_ct, y_lower_pixel_, x_ct, y_upper_pixel_);
     }
 
     for(uint n_y_line = -N_Y_LOWER_AXIS_LINES; n_y_line <= N_Y_UPPER_AXIS_LINES; n_y_line++){
         
-        int y_ct       = y_lower_pixel_ - n_y_lower_axis_pixels_ - n_y_line * COORD_SUS_GRID_SIZE;
+        int y_ct = y_lower_pixel_ - n_y_lower_axis_pixels_ - n_y_line * COORD_SUS_GRID_SIZE;
 
-        int x_lower_ct = x_lower_pixel_;
-        int x_upper_ct = x_upper_pixel_;
-
-        sf::Vertex line_to_draw[] = {
-            sf::Vertex(sf::Vector2f(x_lower_ct, y_ct)),
-            sf::Vertex(sf::Vector2f(x_upper_ct, y_ct))
-        };
-
-        window->draw(line_to_draw, 2, sf::Lines);
+        gl::DrawLine(window, x_lower_pixel_, y_ct, x_upper_pixel_, y_ct);
     }
 
     return;

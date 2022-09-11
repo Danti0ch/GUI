@@ -17,8 +17,8 @@ static const Vector3D LIGHT_VTOR(30, 30, 90);
 static const double   AMBIENT_VAL      = 0.5;
 static const uint     SPECULAR_POW_RATIO = 7;
 
-static const sf::Color SPHERE_COLOR(168, 253, 80, 255);
-static const sf::Color LIGHT_COLOR(168, 74, 80, 255);
+static const gl::Color SPHERE_COLOR(168, 253, 80, 255);
+static const gl::Color LIGHT_COLOR(168, 74, 80, 255);
 
 static const double DIFFUSE_RATIO   = 0.6;
 static const double AMBIENT_RATIO   = 0.1;
@@ -42,7 +42,7 @@ const uint N_Y_SIZE = WINDOW_HEIGHT / N_Y_GRAPHS;
 
 static sf::Color get_sphere_pixel_color(const CoordinateSus& cts, uint x_pix, uint y_pix);
 
-static void draw_sphere(const CoordinateSus& cts, sf::Vertex* pixels);
+static void draw_sphere(const CoordinateSus& cts, gl::Vertex* pixels);
 
 /*
 inline double graphic_function(double x){
@@ -95,14 +95,14 @@ void DrawGraphic(sf::RenderWindow* window, CoordinateSus& ct_sus){
 
 void DrawSphere(){
 
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "graphics");
+    gl::Window window = InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     CoordinateSus cts(10, 710, 710, 10, -100, 100, -100, 100);
 
     uint n_y_pixels = cts.y_lower_pixel() - cts.y_upper_pixel() + 1;
     uint n_x_pixels = cts.x_upper_pixel() - cts.x_lower_pixel() + 1;
     
-    sf::Vertex* pixels = new sf::Vertex[n_y_pixels * n_x_pixels];
+    gl::Vertex* pixels = new gl::Vertex[n_y_pixels * n_x_pixels];
 
     draw_sphere(&cts, pixels);
 
