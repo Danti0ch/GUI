@@ -6,24 +6,6 @@
 
 typedef unsigned int uint;
 
-// TODO: чекнуть констатные методы и ошибку 
-// Declaring a member function with the const keyword specifies that the function is a "read-only" function that doesn't modify the object for which it's called. A constant member function can't modify any non-static data members or call any member functions that aren't constant. To declare a constant member function, place the const keyword after the closing parenthesis of the argument list. The const keyword is required in both the declaration and the definition.
-class Point{
-
-public:
-
-private:
-    double x_, y_;
-public:
-    Point(double x, double y);
-
-    double x() const { return x_; }
-    double y() const { return y_; }
-
-    ~Point(){}
-};
-//----------------------------------------------------------------------------------------//
-
 class CoordinateSus{
 
 private:
@@ -44,41 +26,37 @@ public:
     CoordinateSus(uint x_lower_pixel, uint x_upper_pixel, uint y_lower_pixel, uint y_upper_pixel,
                   double x_lower_lim, double x_upper_lim, double y_lower_lim, double y_upper_lim);
 
-    double x_lower_lim(){ return x_lower_lim_; }
-    double x_upper_lim(){ return x_upper_lim_; }
-    double y_lower_lim(){ return y_lower_lim_; }
-    double y_upper_lim(){ return y_upper_lim_; }
+    double x_lower_lim() const { return x_lower_lim_; }
+    double x_upper_lim() const { return x_upper_lim_; }
+    double y_lower_lim() const { return y_lower_lim_; }
+    double y_upper_lim() const { return y_upper_lim_; }
     
-    double x_lower_pixel(){ return x_lower_pixel_; }
-    double x_upper_pixel(){ return x_upper_pixel_; }
-    double y_lower_pixel(){ return y_lower_pixel_; }
-    double y_upper_pixel(){ return y_upper_pixel_; }
+    int x_lower_pixel() const { return x_lower_pixel_; }
+    int x_upper_pixel() const { return x_upper_pixel_; }
+    int y_lower_pixel() const { return y_lower_pixel_; }
+    int y_upper_pixel() const { return y_upper_pixel_; }
     
-    double scale_x(){ return scale_x_; }
-    double scale_y(){ return scale_y_; }
-    double step_val(){ return step_val_; }
+    double scale_x()  const { return scale_x_; }
+    double scale_y()  const { return scale_y_; }
+    double step_val() const { return step_val_; }
     
-    int CountPixelPosX(double x_ct);
-    int CountPixelPosY(double y_ct);
+    int CountPixelPosX(double x_ct) const;
+    int CountPixelPosY(double y_ct) const;
 
-    double CountAxisPosX(int x_pixel);
-    double CountAxisPosY(int y_pixel);
-    
-    int CountPixelPosX(Point* pt);
-    int CountPixelPosY(Point* pt);
+    double CountAxisPosX(int x_pixel) const;
+    double CountAxisPosY(int y_pixel) const;
 
-    void Draw(sf::RenderWindow* window);
+    void Draw(sf::RenderWindow* window) const;
     ~CoordinateSus(){}
 };
 //----------------------------------------------------------------------------------------//
 
-// TODO: mb other way??
+// TODO: think about other way of distinguish arguments of constructor
 enum class VT_DATA{
     POLAR,
     COORD
 };
 
-// TODO: конструктор по умолчанию
 class Vector{
 
 private:   
@@ -88,41 +66,62 @@ private:
     double len_;
 public:
 
+    Vector();
     Vector(double v1, double v2, VT_DATA data_type);
-    // TODO: to const
-    Vector(Point* ct);
-    //Vector(double x_offset, double y_offset, Vector* vt_from);
 
-//    Point GetFinalPoint();
-
-    void Draw(sf::RenderWindow* window, CoordinateSus* ct_sus);
-    void Draw(sf::RenderWindow* window, CoordinateSus* ct_sus, Point* ct_init);
-    void Draw(sf::RenderWindow* window, CoordinateSus* ct_sus, double x_init, double y_init);
-    void Draw(sf::RenderWindow* window, CoordinateSus* ct_sus, Vector* vt_init);
+    void Draw(sf::RenderWindow* window, const CoordinateSus& ct_sus) const;
+    void Draw(sf::RenderWindow* window, const CoordinateSus& ct_sus, double x_init, double y_init) const;
+    void Draw(sf::RenderWindow* window, const CoordinateSus& ct_sus, const Vector& vt_init) const;
 
     double x() const { return x_; }
     double y() const { return y_; }
 
     double len()   const { return len_; }
     double angle() const { return angle_; }
-    //double tg(){ return angle_; }
-    //double len()  { return len_; }
 
-    // TODO: уточнить является ли это корректным
-    Vector NormalVector();
+    Vector NormalVector(double len = 1) const;
     void   Normalize();
 
     void ChangeLen(double len_val);
 
-    Vector operator +(const Vector &v2);
-    Vector operator -(const Vector &v2);
-    Vector operator *(double ratio);
-    Vector operator /(double ratio);
+    Vector operator +(const Vector &v2) const;
+    Vector operator -(const Vector &v2) const;
+    Vector operator *(double ratio) const;
+    Vector operator /(double ratio) const;
 
-    Vector operator -();
+    Vector operator -() const;
 
     ~Vector(){}
 };
 //----------------------------------------------------------------------------------------//
+
+// TODO: изменить каталогизацию
+class Vector3D{
+
+private:   
+
+    double x_, y_, z_;
+    double len_;
+public:
+
+    Vector3D();
+    Vector3D(double x, double y, double z);
+
+    double x()   const { return x_; }
+    double y()   const { return y_; }
+    double z()   const { return z_; }
+
+    double len() const { return len_; }
+    
+    void ChangeLen(double len_val);
+
+    Vector3D operator +(const Vector3D &v2) const;
+    Vector3D operator -(const Vector3D &v2) const;
+
+    ~Vector3D(){}
+};
+
+double CountCosAngle(const Vector3D& v1, const Vector3D& v2);
+void DrawSphere();
 
 #endif // DRAWER_H

@@ -6,7 +6,6 @@
 static const double EPS                 = 1e-10;
 static const uint   COORD_SUS_GRID_SIZE = 30;
 
-// TODO: применять амперсанды???
 // TODO: fix left_lim < 0
 // TODO: поиграться с расцветкой и толщиной осей и векторов
 
@@ -34,16 +33,15 @@ CoordinateSus::CoordinateSus(uint x_lower_pixel,   uint x_upper_pixel, uint y_lo
 }
 //----------------------------------------------------------------------------------------//
 
-int CoordinateSus::CountPixelPosX(double x_ct){
+int CoordinateSus::CountPixelPosX(double x_ct) const {
 
-    //std::cout << round(x_ct * scale_x_) << " " << " " << x_lower_pixel_ << " " << n_x_lower_axis_pixels_ << "\n";
     int x_pixel_pos = round(x_ct * scale_x_) + x_lower_pixel_ + n_x_lower_axis_pixels_;
 
     return x_pixel_pos;
 }
 //----------------------------------------------------------------------------------------//
 
-int CoordinateSus::CountPixelPosY(double y_ct){
+int CoordinateSus::CountPixelPosY(double y_ct) const {
 
     int y_pixel_pos = y_lower_pixel_ - n_y_lower_axis_pixels_ - round(y_ct * scale_y_);
 
@@ -51,21 +49,9 @@ int CoordinateSus::CountPixelPosY(double y_ct){
 }
 //----------------------------------------------------------------------------------------//
 
-int CoordinateSus::CountPixelPosX(Point* pt){
+double CoordinateSus::CountAxisPosX(int x_pixel) const {
 
-    return CountPixelPosX(pt->x());
-}
-//----------------------------------------------------------------------------------------//
-
-int CoordinateSus::CountPixelPosY(Point* pt){
-
-    return CountPixelPosY(pt->y());
-}
-//----------------------------------------------------------------------------------------//
-
-double CoordinateSus::CountAxisPosX(int x_pixel){
-
-    assert(x_pixel > x_lower_pixel_ && x_pixel < x_upper_pixel_);
+    assert(x_pixel >= x_lower_pixel_ && x_pixel <= x_upper_pixel_);
     
     double val = (x_pixel - x_lower_pixel_ - n_x_lower_axis_pixels_) / scale_x_;
 
@@ -73,9 +59,9 @@ double CoordinateSus::CountAxisPosX(int x_pixel){
 }
 //----------------------------------------------------------------------------------------//
 
-double CoordinateSus::CountAxisPosY(int y_pixel){
+double CoordinateSus::CountAxisPosY(int y_pixel) const {
 
-    assert(y_pixel > y_upper_pixel_ && y_pixel < y_lower_pixel_);
+    assert(y_pixel >= y_upper_pixel_ && y_pixel <= y_lower_pixel_);
     
     double val = (-y_pixel + y_lower_pixel_ - n_y_lower_axis_pixels_) / scale_y_;
 
@@ -84,7 +70,7 @@ double CoordinateSus::CountAxisPosY(int y_pixel){
 //----------------------------------------------------------------------------------------//
 
 // TODO: make smarter разметка линий на координатной оси. Например умное деление на линии единичных отрезков вида 10^x
-void CoordinateSus::Draw(sf::RenderWindow* window){
+void CoordinateSus::Draw(sf::RenderWindow* window) const {
 
     assert(window != NULL);
 
@@ -94,23 +80,7 @@ void CoordinateSus::Draw(sf::RenderWindow* window){
     uint N_Y_UPPER_AXIS_LINES  = n_y_upper_axis_pixels_ / COORD_SUS_GRID_SIZE;
     uint N_Y_LOWER_AXIS_LINES  = n_y_lower_axis_pixels_ / COORD_SUS_GRID_SIZE;
     
-    for(uint n_x_line = 0; n_x_line < N_X_UPPER_AXIS_LINES; n_x_line++){
-        
-        int x_ct       = n_x_line * COORD_SUS_GRID_SIZE + n_x_lower_axis_pixels_ + x_lower_pixel_;
-
-        int y_lower_ct = y_lower_pixel_;
-        int y_upper_ct = y_upper_pixel_;
-
-        sf::Vertex line_to_draw[] = {
-            sf::Vertex(sf::Vector2f(x_ct, y_lower_ct)),
-            sf::Vertex(sf::Vector2f(x_ct, y_upper_ct))
-        };
-
-        window->draw(line_to_draw, 2, sf::Lines);
-    }
-
-    // TODO: remove copypaste
-    for(uint n_x_line = 0; n_x_line < N_X_LOWER_AXIS_LINES; n_x_line++){
+    for(uint n_x_line = -N_X_LOWER_AXIS_LINES; n_x_line <= N_X_UPPER_AXIS_LINES; n_x_line++){
         
         int x_ct       = (-n_x_line * COORD_SUS_GRID_SIZE) + n_x_lower_axis_pixels_ + x_lower_pixel_;
 
@@ -125,24 +95,9 @@ void CoordinateSus::Draw(sf::RenderWindow* window){
         window->draw(line_to_draw, 2, sf::Lines);
     }
 
-    for(uint n_y_line = 0; n_y_line < N_Y_UPPER_AXIS_LINES; n_y_line++){
+    for(uint n_y_line = -N_Y_LOWER_AXIS_LINES; n_y_line <= N_Y_UPPER_AXIS_LINES; n_y_line++){
         
         int y_ct       = y_lower_pixel_ - n_y_lower_axis_pixels_ - n_y_line * COORD_SUS_GRID_SIZE;
-
-        int x_lower_ct = x_lower_pixel_;
-        int x_upper_ct = x_upper_pixel_;
-
-        sf::Vertex line_to_draw[] = {
-            sf::Vertex(sf::Vector2f(x_lower_ct, y_ct)),
-            sf::Vertex(sf::Vector2f(x_upper_ct, y_ct))
-        };
-
-        window->draw(line_to_draw, 2, sf::Lines);
-    }
-
-    for(uint n_y_line = 0; n_y_line < N_Y_LOWER_AXIS_LINES; n_y_line++){
-        
-        int y_ct       = y_lower_pixel_ - n_y_lower_axis_pixels_ + n_y_line * COORD_SUS_GRID_SIZE;
 
         int x_lower_ct = x_lower_pixel_;
         int x_upper_ct = x_upper_pixel_;
