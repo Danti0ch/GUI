@@ -11,12 +11,12 @@ class Point{
 public:
 
 private:
-    double x_ct_, y_ct_;
+    double x_, y_;
 public:
-    Point(double x_ct, double y_ct);
+    Point(double x, double y);
 
-    double GetX(){ return x_ct_; }
-    double GetY(){ return y_ct_; }
+    double x(){ return x_; }
+    double y(){ return y_; }
 
     ~Point(){}
 };
@@ -51,12 +51,12 @@ public:
     
     double scale_x(){ return scale_x_; }
     double scale_y(){ return scale_y_; }
-    double get_step_val(){ return step_val_; }
+    double step_val(){ return step_val_; }
     
     int CountPixelPosX(double x_ct);
     int CountPixelPosY(double y_ct);
-    int CountPixelPosX(Point pt);
-    int CountPixelPosY(Point pt);
+    int CountPixelPosX(Point* pt);
+    int CountPixelPosY(Point* pt);
 
     ~CoordinateSus(){}
 };
@@ -70,13 +70,16 @@ private:
 public:
 
     Vector(double x, double y);
+
+    // TODO: to const
     Vector(Point* ct);
     //Vector(double x_offset, double y_offset, Vector* vt_from);
 
 //    Point GetFinalPoint();
 
     void Draw(sf::RenderWindow* window, CoordinateSus* ct_sus);
-    void Draw(sf::RenderWindow* window, CoordinateSus* ct_sus, Point* ct);
+    void Draw(sf::RenderWindow* window, CoordinateSus* ct_sus, Point* ct_init);
+    void Draw(sf::RenderWindow* window, CoordinateSus* ct_sus, double x_init, double y_init);
     void Draw(sf::RenderWindow* window, CoordinateSus* ct_sus, Vector* vt_init);
 
     double x(){ return x_; }

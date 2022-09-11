@@ -29,6 +29,15 @@ int main(int argc, char *argv[]){
 		}
 
         window.clear();
+        
+        Vector a(2, 4);
+
+        a.Draw(&window, &ct_sus_big);
+        window.display();
+    }
+    return 0;
+}
+
 /*
         for(uint n_y_graphic = 0; n_y_graphic < N_Y_GRAPHS; n_y_graphic++){
             for(uint n_x_graphic = 0; n_x_graphic <  N_X_GRAPHS; n_x_graphic++){
@@ -40,10 +49,5 @@ int main(int argc, char *argv[]){
             }
         }
 */
-        DrawGraphic(&window, &ct_sus_big);
-        DrawGraphic(&window, &ct_sus_mini);
-        
-        window.display();
-    }
-    return 0;
-}
+//        DrawGraphic(&window, &ct_sus_big);
+  //      DrawGraphic(&window, &ct_sus_mini);

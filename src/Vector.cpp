@@ -4,48 +4,25 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 
-    Vector(double x, double y);
-    Vector(Point* ct);
+Vector::Vector(double x, double y):
+    x_(x), y_(y)
+{}
+
+Vector::Vector(Point* ct):
+    x_(ct->x()), y_(ct->y())
+{}
+
+// TODO: draw - внешняя ф-ция???
+
+void Vector::Draw(sf::RenderWindow* window, CoordinateSus* ct_sus, double x_init, double y_init){
     
-Vector::Vector(double x_offset, double y_offset, double x_init_ct, double y_init_ct):
-    ct_init_(x_init_ct, y_init_ct),
-    x_offset_(x_offset),
-    y_offset_(y_offset)
-{}
-//----------------------------------------------------------------------------------------//
-
-Vector::Vector(double x_offset, double y_offset, Point ct):
-    ct_init_(ct),
-    x_offset_(x_offset),
-    y_offset_(y_offset)
-{}
-//----------------------------------------------------------------------------------------//
-
-Vector::Vector(double x_offset, double y_offset, Vector* vt_from):
-    ct_init_(vt_from->GetFinalPoint()),
-    x_offset_(x_offset),
-    y_offset_(y_offset)
-{}
-//----------------------------------------------------------------------------------------//
-
-/*
-Point Vector::GetFinalPoint(){
-
-    return Point(ct_init_.GetX() + x_offset_, ct_init_.GetY() + y_offset_);
-}
-//----------------------------------------------------------------------------------------//
-*/
-void Vector::Draw(sf::RenderWindow* window, CoordinateSus* ct_sus){
-
     assert(window != NULL);
     assert(ct_sus != NULL);
 
-    Point end_point(this->GetFinalPoint());
-
-    int pix_from_x_ct = ct_sus->CountPixelPosX(ct_init_);
-    int pix_from_y_ct = ct_sus->CountPixelPosY(ct_init_);
-    int pix_to_x_ct   = ct_sus->CountPixelPosX(end_point);
-    int pix_to_y_ct   = ct_sus->CountPixelPosY(end_point);
+    int pix_from_x_ct = ct_sus->CountPixelPosX(x_init);
+    int pix_from_y_ct = ct_sus->CountPixelPosY(y_init);
+    int pix_to_x_ct   = ct_sus->CountPixelPosX(this->x());
+    int pix_to_y_ct   = ct_sus->CountPixelPosY(this->y());
 
     if(pix_from_x_ct < ct_sus->x_lower_pixel() || pix_from_x_ct > ct_sus->x_upper_pixel()) return;
     if(pix_from_y_ct < ct_sus->y_upper_pixel() || pix_from_y_ct > ct_sus->y_lower_pixel()) return;
@@ -59,6 +36,38 @@ void Vector::Draw(sf::RenderWindow* window, CoordinateSus* ct_sus){
     
     window->draw(line_to_draw, 2, sf::Lines);
 
+    return;
+}
+//----------------------------------------------------------------------------------------//
+
+void Vector::Draw(sf::RenderWindow* window, CoordinateSus* ct_sus){
+
+    assert(window != NULL);
+    assert(ct_sus != NULL);
+
+    Draw(window, ct_sus, 0, 0);
+    return;
+}
+//----------------------------------------------------------------------------------------//
+
+void Vector::Draw(sf::RenderWindow* window, CoordinateSus* ct_sus, Point* ct_init){
+
+    assert(window  != NULL);
+    assert(ct_sus  != NULL);
+    assert(ct_init != NULL);
+
+    Draw(window, ct_sus, ct_init->x(), ct_init->y());
+    return;
+}
+//----------------------------------------------------------------------------------------//
+
+void Vector::Draw(sf::RenderWindow* window, CoordinateSus* ct_sus, Vector* vt_init){
+
+    assert(window  != NULL);
+    assert(ct_sus  != NULL);
+    assert(vt_init != NULL);
+
+    Draw(window, ct_sus, vt_init->x(), vt_init->y());
     return;
 }
 //----------------------------------------------------------------------------------------//

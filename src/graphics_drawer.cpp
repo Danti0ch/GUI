@@ -2,7 +2,7 @@
 #include <math.h>
 
 const double EPS = 1e-8;
-
+/*
 double Function(double x){
 
     if(fabs(x) < EPS) return 0;
@@ -44,3 +44,4 @@ void DrawGraphic(sf::RenderWindow* window, CoordinateSus* ct_sus){
     return;
 }
 //----------------------------------------------------------------------------------------//
+*/
