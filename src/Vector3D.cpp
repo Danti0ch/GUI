@@ -1,4 +1,4 @@
-#include "drawer.h"
+#include "Vector3D.h"
 #include <assert.h>
 #include <math.h>
 
@@ -34,7 +34,20 @@ Vector3D Vector3D::operator -(const Vector3D &v2) const {
 }
 //----------------------------------------------------------------------------------------//
 
-double CountCosAngle(const Vector3D& v1, const Vector3D& v2) const {
+Vector3D Vector3D::operator *(double ratio) const{
+    return Vector3D(x_ *  ratio, y_ * ratio, z_ * ratio);
+}
+//----------------------------------------------------------------------------------------//
+
+Vector3D Vector3D::operator /(double ratio) const{
+    assert(fabs(ratio) > EPS);
+
+    ratio = 1 / ratio;
+    return Vector3D(x_ *  ratio, y_ * ratio, z_ * ratio);
+}
+//----------------------------------------------------------------------------------------//
+
+double CountCosAngle(const Vector3D& v1, const Vector3D& v2){
 
     double scalar_mul = v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z();
 

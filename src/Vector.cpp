@@ -1,20 +1,16 @@
-#include "drawer.h"
+#include "drawable_objects.h"
+#include "gui.h"
 #include <assert.h>
-#include <iostream>
-#include <SFML/Graphics.hpp>
-#include <SFML/Graphics/Vertex.hpp>
 #include <math.h>
 
 static const double EPS = 1e-8;
-
 static const uint   LEN_ARROW_LINE_RATIO = 14;
 
 static const sf::Color VECTOR_COLOR = sf::Color(200, 0, 0, 200);
 
-void draw_line(sf::RenderWindow* window, const CoordinateSus& ct_sus, double x_from, double y_from, double x_to, double y_to){
+static void draw_real_line(sf::RenderWindow* window, const CoordinateSus& ct_sus, double x_from, double y_from, double x_to, double y_to, const sf::Color& col){
 
     assert(window != NULL);
-    assert(ct_sus != NULL);
 
     int pix_from_x_ct = ct_sus.CountPixelPosX(x_from);
     int pix_from_y_ct = ct_sus.CountPixelPosY(y_from);
@@ -26,12 +22,7 @@ void draw_line(sf::RenderWindow* window, const CoordinateSus& ct_sus, double x_f
     if(pix_to_x_ct   < ct_sus.x_lower_pixel() || pix_to_x_ct   > ct_sus.x_upper_pixel()) return;
     if(pix_to_y_ct   < ct_sus.y_upper_pixel() || pix_to_y_ct   > ct_sus.y_lower_pixel()) return;
 
-    sf::Vertex line_to_draw[] = {
-        sf::Vertex(sf::Vector2f(pix_from_x_ct, pix_from_y_ct), VECTOR_COLOR),
-        sf::Vertex(sf::Vector2f(pix_to_x_ct,   pix_to_y_ct), VECTOR_COLOR)
-    };
-
-    window->draw(line_to_draw, 2, sf::Lines);
+    DrawLine(window, pix_from_x_ct, pix_from_y_ct, pix_to_x_ct, pix_to_y_ct, col);
 
     return;
 }
@@ -94,77 +85,49 @@ Vector::Vector(double v1, double v2, VT_DATA data_type){
 }
 //----------------------------------------------------------------------------------------//
 
-Vector::Vector(const Point& ct):
-    x_(ct.x()), y_(ct.y())
-{
-    
-    if(fabs(x_) < EPS){
-        if(y_ >= EPS){
-            angle_ = M_PI / 2;
-        }
-        else{
-            angle_ = (3 * M_PI) / 2;
-        }
-    }
-    else{
-        angle_ = atan(y_ / x_);
-    }
-    len_ = sqrt(fabs(x_ * y_));
-}
-//----------------------------------------------------------------------------------------//
-
 // TODO: draw внешней функцией?
-void Vector::Draw(sf::RenderWindow* window, const CoordinateSus& ct_sus, double x_init, double y_init){
+void Vector::Draw(sf::RenderWindow* window, const CoordinateSus& ct_sus, double x_init, double y_init, sf::Color col) const {
     
     assert(window != NULL);
 
     double x_final_ct = x_init + x_;
     double y_final_ct = y_init + y_;
     
-    draw_line(window, ct_sus, x_init, y_init, x_final_ct, y_final_ct);
+    draw_real_line(window, ct_sus, x_init, y_init, x_final_ct, y_final_ct, col);
     
     Vector arrow_line = this->NormalVector(len() / (double)LEN_ARROW_LINE_RATIO);
     arrow_line = arrow_line - (*this / (double)LEN_ARROW_LINE_RATIO);
     
-    draw_line(window, ct_sus, x_final_ct, y_final_ct, x_final_ct + arrow_line.x(), y_final_ct + arrow_line.y());
+    draw_real_line(window, ct_sus, x_final_ct, y_final_ct, x_final_ct + arrow_line.x(), y_final_ct + arrow_line.y(), col);
 
-    Vector arrow_line = -this->NormalVector(len() / (double)LEN_ARROW_LINE_RATIO);
+    arrow_line = -this->NormalVector(len() / (double)LEN_ARROW_LINE_RATIO);
     arrow_line = arrow_line - (*this / (double)LEN_ARROW_LINE_RATIO);
     
-    draw_line(window, ct_sus, x_final_ct, y_final_ct, x_final_ct + arrow_line.x(), y_final_ct + arrow_line.y());
+    draw_real_line(window, ct_sus, x_final_ct, y_final_ct, x_final_ct + arrow_line.x(), y_final_ct + arrow_line.y(), col);
 
     return;
 }
 //----------------------------------------------------------------------------------------//
 
-void Vector::Draw(sf::RenderWindow* window, const CoordinateSus& ct_sus) const {
+void Vector::Draw(sf::RenderWindow* window, const CoordinateSus& ct_sus, sf::Color col) const {
 
     assert(window != NULL);
 
-    Draw(window, ct_sus, 0, 0);
+    Draw(window, ct_sus, 0, 0, col);
     return;
 }
 //----------------------------------------------------------------------------------------//
 
-void Vector::Draw(sf::RenderWindow* window, const CoordinateSus& ct_sus, const Point& ct_init) const {
+void Vector::Draw(sf::RenderWindow* window, const CoordinateSus& ct_sus, const Vector& vt_init, sf::Color col) const {
 
     assert(window  != NULL);
 
-    Draw(window, ct_sus, ct_init.x(), ct_init.y());
+    Draw(window, ct_sus, vt_init.x(), vt_init.y(), col);
     return;
 }
 //----------------------------------------------------------------------------------------//
 
-void Vector::Draw(sf::RenderWindow* window, const CoordinateSus& ct_sus, const Vector& vt_init) const {
-
-    assert(window  != NULL);
-
-    Draw(window, ct_sus, vt_init.x(), vt_init.y());
-    return;
-}
-//----------------------------------------------------------------------------------------//
-
-Vector Vector::NormalVector(double len = 1) const {
+Vector Vector::NormalVector(double len) const {
 
     return Vector(len, angle_ + M_PI / 2, VT_DATA::POLAR);
 }

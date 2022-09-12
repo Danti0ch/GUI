@@ -1,5 +1,4 @@
-#include "drawer.h"
-#include "gui.h"
+#include "tests.h"
 
 // TODO: fix arrow offsets
 // TODO: логирование
@@ -8,6 +7,6 @@
 
 int main(int argc, char *argv[]){
 
-    DrawSphere();
+    BasicVectorActionsTest();
     return 0;
 }
