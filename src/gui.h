@@ -23,7 +23,7 @@ public:
     uint y_lower_pix() const { return y_lower_pix_; }
     uint y_upper_pix() const { return y_upper_pix_; }
     
-    void Draw(sf::RenderWindow* window);
+    void Draw(gl::Window* window);
 };
 
 void DrawLine(sf::RenderWindow* window, double x1, double y1, double x2, double y2, sf::Color col = sf::Color::White);

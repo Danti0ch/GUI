@@ -19,8 +19,8 @@ static const double   AMBIENT_VAL        = 0.6;
 static const uint     SPECULAR_POW_RATIO = 7;
 static const double   LIGHT_Z_CT         = 120;
 
-static const sf::Color SPHERE_COLOR(217, 2, 49, 255);
-static const sf::Color LIGHT_COLOR(217, 206, 2, 255);
+static const gl::Color SPHERE_COLOR(217, 2, 49, 255);
+static const gl::Color LIGHT_COLOR = Color(217, 206, 2, 255);
 
 static const double DIFFUSE_RATIO   = 0.7;
 static const double AMBIENT_RATIO   = 0.2;

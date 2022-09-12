@@ -6,14 +6,15 @@
 
 namespace gl
 {
-typedef sf::RenderWindow Window;
-typedef sf::Color        Color;
-typedef sf::Vertex       Vertex;
+#define Window sf::RenderWindow
+#define Color sf::Color
+#define Vertex sf::Vertex
 
-void DrawLine(Window* window, double x1, double y1, double x2, double y2);
-
-InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT);
-sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "graphics"
-}
-
+Vertex VertexCtor(int x, int y, Color col);
+uint GetWindowXSize(Window& window);
+uint GetWindowYSize(Window& window);
+void DrawVertex(Window* window, Vertex& pixels, uint n_pixels);
+void DrawLine(Window* window, double x1, double y1, double x2, double y2, Color col);
 #endif // GL_WRAPPER
+
+// TODO: функция process events, wrapper для событий

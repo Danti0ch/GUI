@@ -12,6 +12,7 @@ void DrawLine(sf::RenderWindow* window, double x1, double y1, double x2, double 
 
     window->draw(line_to_draw, 2, sf::Lines);
 
+    DrawLine(window, x1, y1, x2, y2);
     return;
 }
 //----------------------------------------------------------------------------------------//

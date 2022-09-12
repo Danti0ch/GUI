@@ -71,7 +71,7 @@ double CoordinateSus::CountAxisPosY(int y_pixel) const {
 //----------------------------------------------------------------------------------------//
 
 // TODO: make smarter разметка линий на координатной оси. Например умное деление на линии единичных отрезков вида 10^x
-void CoordinateSus::Draw(sf::RenderWindow* window, sf::Color col) const {
+void CoordinateSus::Draw(gl::Window* window, gl::Color col) const {
 
     assert(window != NULL);
 

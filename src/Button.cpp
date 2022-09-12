@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <iostream>
 
-myButton::myButton(uint x_lower_pix, uint y_upper_pix, uint x_upper_pix, uint y_lower_pix, sf::Color col):
+myButton::myButton(uint x_lower_pix, uint y_upper_pix, uint x_upper_pix, uint y_lower_pix, gl::Color col):
     x_upper_pix_(x_upper_pix),
     x_lower_pix_(x_lower_pix),
     y_upper_pix_(y_upper_pix),
@@ -11,25 +11,25 @@ myButton::myButton(uint x_lower_pix, uint y_upper_pix, uint x_upper_pix, uint y_
 {}
 //----------------------------------------------------------------------------------------//
 
-void myButton::Draw(sf::RenderWindow* window){
+void myButton::Draw(gl::Window* window){
 
     assert(window != NULL);    
 
-    if(window->getSize().x < x_upper_pix_) return;
-    if(window->getSize().y < y_lower_pix_) return;
+    if(GetWindowXSize(*window) < x_upper_pix_) return;
+    if(GetWindowYSize(*window) < y_lower_pix_) return;
 
     uint n_y_pixels = (y_lower_pix_ - y_upper_pix_ + 1);
     uint n_x_pixels = (x_upper_pix_ - x_lower_pix_ + 1);
     
-    sf::Vertex* pixels = new sf::Vertex[n_y_pixels * n_x_pixels];
+    gl::Vertex* pixels = new gl::Vertex[n_y_pixels * n_x_pixels];
 
     for(uint y_i = 0; y_i < n_y_pixels; y_i++){
         for(uint x_i = 0; x_i < n_x_pixels; x_i++){
-            pixels[y_i * n_x_pixels + x_i] = sf::Vertex(sf::Vector2f(x_i + x_lower_pix_, y_i + y_upper_pix_), col_);
+            pixels[y_i * n_x_pixels + x_i] = VertexCtor(x_i + x_lower_pix_, y_i + y_upper_pix_, col_);
         }
     }
 
-    window->draw(pixels, n_x_pixels * n_y_pixels, sf::Points);
+    DrawVertex(pixels, n_x_pixels * n_y_pixels);
     delete []pixels;
 
     //draw_frame(this);

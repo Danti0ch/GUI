@@ -46,7 +46,7 @@ public:
     double CountAxisPosX(int x_pixel) const;
     double CountAxisPosY(int y_pixel) const;
 
-    void Draw(sf::RenderWindow* window, sf::Color col = sf::Color::White) const;
+    void Draw(gl::Window* window, gl::Color col) const;
     ~CoordinateSus(){}
 };
 //----------------------------------------------------------------------------------------//
@@ -71,9 +71,9 @@ public:
     Vector();
     Vector(double v1, double v2, VT_DATA data_type);
 
-    void Draw(sf::RenderWindow* window, const CoordinateSus& ct_sus, sf::Color col = sf::Color::Red) const;
-    void Draw(sf::RenderWindow* window, const CoordinateSus& ct_sus, double x_init, double y_init, sf::Color col = sf::Color::Red) const;
-    void Draw(sf::RenderWindow* window, const CoordinateSus& ct_sus, const Vector& vt_init, sf::Color col = sf::Color::Red) const;
+    void Draw(gl::Window* window, const CoordinateSus& ct_sus, gl::Color col) const;
+    void Draw(gl::Window* window, const CoordinateSus& ct_sus, double x_init, double y_init, gl::Color col) const;
+    void Draw(gl::Window* window, const CoordinateSus& ct_sus, const Vector& vt_init, gl::Color col) const;
 
     double x() const { return x_; }
     double y() const { return y_; }
