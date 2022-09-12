@@ -23,7 +23,7 @@ private:
     double step_val_;
 public:
     
-    CoordinateSus(uint x_lower_pixel, uint x_upper_pixel, uint y_lower_pixel, uint y_upper_pixel,
+    CoordinateSus(uint x_lower_pixel, uint x_upper_pixel, uint y_upper_pixel, uint y_lower_pixel,
                   double x_lower_lim, double x_upper_lim, double y_lower_lim, double y_upper_lim);
 
     double x_lower_lim() const { return x_lower_lim_; }
@@ -46,10 +46,12 @@ public:
     double CountAxisPosX(int x_pixel) const;
     double CountAxisPosY(int y_pixel) const;
 
-    void Draw(sf::RenderWindow* window) const;
+    void Draw(sf::RenderWindow* window, sf::Color col = sf::Color::White) const;
     ~CoordinateSus(){}
 };
 //----------------------------------------------------------------------------------------//
+
+int CheckCoordInCTS(const CoordinateSus& cts, uint x, uint y);
 
 // TODO: think about other way of distinguish arguments of constructor
 enum class VT_DATA{

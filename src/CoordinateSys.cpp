@@ -4,12 +4,13 @@
 #include <math.h>
 
 static const double EPS                 = 1e-10;
-static const uint   COORD_SUS_GRID_SIZE = 30;
+//static const uint   COORD_SUS_GRID_SIZE = 30;
+static const uint   N_COORD_SUS_GRIDS = 8;
 
 // TODO: fix left_lim < 0
 // TODO: поиграться с расцветкой и толщиной осей и векторов
 
-CoordinateSus::CoordinateSus(uint x_lower_pixel,   uint x_upper_pixel, uint y_lower_pixel, uint y_upper_pixel,
+CoordinateSus::CoordinateSus(uint x_lower_pixel,   uint x_upper_pixel, uint y_upper_pixel, uint y_lower_pixel,
                              double x_lower_lim, double x_upper_lim, double y_lower_lim, double y_upper_lim):
     x_lower_lim_(x_lower_lim),     x_upper_lim_(x_upper_lim),
     y_lower_lim_(y_lower_lim),     y_upper_lim_(y_upper_lim),
@@ -70,30 +71,43 @@ double CoordinateSus::CountAxisPosY(int y_pixel) const {
 //----------------------------------------------------------------------------------------//
 
 // TODO: make smarter разметка линий на координатной оси. Например умное деление на линии единичных отрезков вида 10^x
-void CoordinateSus::Draw(sf::RenderWindow* window) const {
+void CoordinateSus::Draw(sf::RenderWindow* window, sf::Color col) const {
 
     assert(window != NULL);
 
-    int N_X_UPPER_AXIS_LINES  = n_x_upper_axis_pixels_ / COORD_SUS_GRID_SIZE;
-    int N_X_LOWER_AXIS_LINES  = n_x_lower_axis_pixels_ / COORD_SUS_GRID_SIZE;
+    uint grid_x_size = (n_x_upper_axis_pixels_ + n_x_lower_axis_pixels_) / N_COORD_SUS_GRIDS;
+    uint grid_y_size = (n_y_upper_axis_pixels_ + n_y_lower_axis_pixels_) / N_COORD_SUS_GRIDS;
+
+    int N_X_UPPER_AXIS_LINES  = n_x_upper_axis_pixels_ / grid_x_size;
+    int N_X_LOWER_AXIS_LINES  = n_x_lower_axis_pixels_ / grid_x_size;
     
-    int N_Y_UPPER_AXIS_LINES  = n_y_upper_axis_pixels_ / COORD_SUS_GRID_SIZE;
-    int N_Y_LOWER_AXIS_LINES  = n_y_lower_axis_pixels_ / COORD_SUS_GRID_SIZE;
+    int N_Y_UPPER_AXIS_LINES  = n_y_upper_axis_pixels_ / grid_y_size;
+    int N_Y_LOWER_AXIS_LINES  = n_y_lower_axis_pixels_ / grid_y_size;
 
     for(int n_x_line = -N_X_LOWER_AXIS_LINES; n_x_line <= N_X_UPPER_AXIS_LINES; n_x_line++){
         
-        int x_ct = n_x_line * COORD_SUS_GRID_SIZE + n_x_lower_axis_pixels_ + x_lower_pixel_;
+        int x_ct = n_x_line * grid_x_size + n_x_lower_axis_pixels_ + x_lower_pixel_;
 
-        DrawLine(window, x_ct, y_lower_pixel_, x_ct, y_upper_pixel_);
+        DrawLine(window, x_ct, y_lower_pixel_, x_ct, y_upper_pixel_, col);
     }
 
     for(int n_y_line = -N_Y_LOWER_AXIS_LINES; n_y_line <= N_Y_UPPER_AXIS_LINES; n_y_line++){
         
-        int y_ct = y_lower_pixel_ - n_y_lower_axis_pixels_ - n_y_line * COORD_SUS_GRID_SIZE;
+        int y_ct = y_lower_pixel_ - n_y_lower_axis_pixels_ - n_y_line * grid_y_size;
 
-        DrawLine(window, x_lower_pixel_, y_ct, x_upper_pixel_, y_ct);
+        DrawLine(window, x_lower_pixel_, y_ct, x_upper_pixel_, y_ct, col);
     }
 
     return;
+}
+//----------------------------------------------------------------------------------------//
+
+int CheckCoordInCTS(const CoordinateSus& cts, uint x, uint y){
+
+    if(x < cts.x_upper_pixel() && x > cts.x_lower_pixel() &&
+       y < cts.y_lower_pixel() && y > cts.y_upper_pixel()){
+        return 1;
+    }
+    return 0;
 }
 //----------------------------------------------------------------------------------------//
