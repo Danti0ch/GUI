@@ -6,6 +6,6 @@
 
 int main(int argc, char *argv[]){
 
-    DrawSphere();
+    BasicVectorActionsTest();
     return 0;
 }
