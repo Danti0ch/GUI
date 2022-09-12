@@ -8,7 +8,6 @@ namespace gl
 {
 #define Window sf::RenderWindow
 #define Color sf::Color
-#define Vertex sf::Vertex
 
 Vertex VertexCtor(int x, int y, Color col);
 uint GetWindowXSize(Window& window);

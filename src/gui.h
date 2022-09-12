@@ -26,7 +26,6 @@ public:
     void Draw(gl::Window* window);
 };
 
-void DrawLine(sf::RenderWindow* window, double x1, double y1, double x2, double y2, sf::Color col = sf::Color::White);
 int  CheckCoordInButton(const myButton& but, uint x, uint y);
 
 #endif //GUI_H

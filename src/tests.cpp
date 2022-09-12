@@ -20,7 +20,7 @@ static const uint     SPECULAR_POW_RATIO = 7;
 static const double   LIGHT_Z_CT         = 120;
 
 static const gl::Color SPHERE_COLOR(217, 2, 49, 255);
-static const gl::Color LIGHT_COLOR = Color(217, 206, 2, 255);
+static const gl::Color LIGHT_COLOR(217, 206, 2, 255);
 
 static const double DIFFUSE_RATIO   = 0.7;
 static const double AMBIENT_RATIO   = 0.2;
@@ -46,9 +46,9 @@ const uint N_Y_SIZE = WINDOW_HEIGHT / N_Y_GRAPHS;
 
 //========================================================================================//
 
-static sf::Color get_sphere_pixel_color(const CoordinateSus& cts, uint x_pix, uint y_pix, double x_manip, double y_manip);
+static gl::Color get_sphere_pixel_color(const CoordinateSus& cts, uint x_pix, uint y_pix, double x_manip, double y_manip);
 
-static void draw_sphere(const CoordinateSus& cts, sf::Vertex* pixels, double x_manip, double y_manip);
+static void draw_sphere(const CoordinateSus& cts, double x_manip, double y_manip);
 
 /*
 inline double graphic_function(double x){
@@ -101,7 +101,7 @@ void DrawGraphic(sf::RenderWindow* window, CoordinateSus& ct_sus){
 
 void DrawSphere(){
 
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "graphics");
+    gl::Window window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "graphics");
 
     CoordinateSus cts(10, 710, 10, 710, -100, 100, -100, 100);
 
@@ -162,7 +162,7 @@ void DrawSphere(){
 
 void BasicVectorActionsTest(){
 
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "graphics");
+    sf::RenderWindow window = Window(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     CoordinateSus cts1(10, 210, 10, 210, -10, 10, -10, 10);
 
@@ -179,9 +179,9 @@ void BasicVectorActionsTest(){
     uint time_arrow_speed_ratio = 1;
 
     // TODO: add text
-    myButton butt_reset(40, 490, 140, 540, sf::Color(252, 29, 170));
-    myButton butt_speed(160, 490, 260, 540, sf::Color(254, 6, 43));
-    myButton butt_exit(280, 490, 380, 540, sf::Color(78, 101, 202));
+    myButton butt_reset(40, 490, 140, 540, gl::Color(252, 29, 170));
+    myButton butt_speed(160, 490, 260, 540, gl::Color(254, 6, 43));
+    myButton butt_exit(280, 490, 380, 540, gl::Color(78, 101, 202));
 
     while(window.isOpen()){
 
@@ -237,6 +237,7 @@ void BasicVectorActionsTest(){
 
         double time_vtor_angle = M_PI / 2 - (2 * M_PI) / 60 * cur_sec_val;
         Vector code_time_vtor(TIME_VECTOR_LEN, time_vtor_angle, VT_DATA::POLAR);
+
         code_time_vtor.Draw(&window, time_cts_group[0]);
         code_time_vtor.Draw(&window, time_cts_group[1]);
         code_time_vtor.Draw(&window, time_cts_group[2]);

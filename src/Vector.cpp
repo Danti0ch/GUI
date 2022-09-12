@@ -6,9 +6,9 @@
 static const double EPS = 1e-8;
 static const uint   LEN_ARROW_LINE_RATIO = 14;
 
-static const sf::Color VECTOR_COLOR = sf::Color(200, 0, 0, 200);
+static const gl::Color VECTOR_COLOR = gl::Color(200, 0, 0, 200);
 
-static void draw_real_line(sf::RenderWindow* window, const CoordinateSus& ct_sus, double x_from, double y_from, double x_to, double y_to, const sf::Color& col){
+static void draw_real_line(gl::Window* window, const CoordinateSus& ct_sus, double x_from, double y_from, double x_to, double y_to, gl::Color col){
 
     assert(window != NULL);
 
@@ -86,7 +86,7 @@ Vector::Vector(double v1, double v2, VT_DATA data_type){
 //----------------------------------------------------------------------------------------//
 
 // TODO: draw внешней функцией?
-void Vector::Draw(sf::RenderWindow* window, const CoordinateSus& ct_sus, double x_init, double y_init, sf::Color col) const {
+void Vector::Draw(gl::Window* window, const CoordinateSus& ct_sus, double x_init, double y_init, gl::Color col) const {
     
     assert(window != NULL);
 
@@ -109,7 +109,7 @@ void Vector::Draw(sf::RenderWindow* window, const CoordinateSus& ct_sus, double 
 }
 //----------------------------------------------------------------------------------------//
 
-void Vector::Draw(sf::RenderWindow* window, const CoordinateSus& ct_sus, sf::Color col) const {
+void Vector::Draw(gl::Window* window, const CoordinateSus& ct_sus, gl::Color col) const {
 
     assert(window != NULL);
 
