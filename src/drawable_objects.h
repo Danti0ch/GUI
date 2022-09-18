@@ -1,9 +1,7 @@
 #ifndef DRAWER_H
 #define DRAWER_H
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Graphics/Vertex.hpp>
-
+#include "graphic_lib_wrapper.h"
 typedef unsigned int uint;
 
 class CoordinateSus{
@@ -46,7 +44,7 @@ public:
     double CountAxisPosX(int x_pixel) const;
     double CountAxisPosY(int y_pixel) const;
 
-    void Draw(gl::Window* window, gl::Color col) const;
+    void Draw(GraphicSpace* editor, Color col = Color(255, 255, 255, 255)) const;
     ~CoordinateSus(){}
 };
 //----------------------------------------------------------------------------------------//
@@ -71,9 +69,9 @@ public:
     Vector();
     Vector(double v1, double v2, VT_DATA data_type);
 
-    void Draw(gl::Window* window, const CoordinateSus& ct_sus, gl::Color col) const;
-    void Draw(gl::Window* window, const CoordinateSus& ct_sus, double x_init, double y_init, gl::Color col) const;
-    void Draw(gl::Window* window, const CoordinateSus& ct_sus, const Vector& vt_init, gl::Color col) const;
+    void Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, Color col = Color(255, 0, 0)) const;
+    void Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, double x_init, double y_init, Color col = Color(255, 0, 0)) const;
+    void Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, const Vector& vt_init, Color col = Color(255, 0, 0)) const;
 
     double x() const { return x_; }
     double y() const { return y_; }

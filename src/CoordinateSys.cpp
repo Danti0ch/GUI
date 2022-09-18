@@ -1,5 +1,4 @@
 #include "drawable_objects.h"
-#include "gui.h"
 #include <assert.h>
 #include <math.h>
 
@@ -71,9 +70,9 @@ double CoordinateSus::CountAxisPosY(int y_pixel) const {
 //----------------------------------------------------------------------------------------//
 
 // TODO: make smarter разметка линий на координатной оси. Например умное деление на линии единичных отрезков вида 10^x
-void CoordinateSus::Draw(gl::Window* window, gl::Color col) const {
+void CoordinateSus::Draw(GraphicSpace* editor, Color col) const {
 
-    assert(window != NULL);
+    assert(editor != NULL);
 
     uint grid_x_size = (n_x_upper_axis_pixels_ + n_x_lower_axis_pixels_) / N_COORD_SUS_GRIDS;
     uint grid_y_size = (n_y_upper_axis_pixels_ + n_y_lower_axis_pixels_) / N_COORD_SUS_GRIDS;
@@ -88,14 +87,14 @@ void CoordinateSus::Draw(gl::Window* window, gl::Color col) const {
         
         int x_ct = n_x_line * grid_x_size + n_x_lower_axis_pixels_ + x_lower_pixel_;
 
-        DrawLine(window, x_ct, y_lower_pixel_, x_ct, y_upper_pixel_, col);
+        editor->DrawLine(x_ct, y_lower_pixel_, x_ct, y_upper_pixel_, col);
     }
 
     for(int n_y_line = -N_Y_LOWER_AXIS_LINES; n_y_line <= N_Y_UPPER_AXIS_LINES; n_y_line++){
         
         int y_ct = y_lower_pixel_ - n_y_lower_axis_pixels_ - n_y_line * grid_y_size;
 
-        DrawLine(window, x_lower_pixel_, y_ct, x_upper_pixel_, y_ct, col);
+        editor->DrawLine(x_lower_pixel_, y_ct, x_upper_pixel_, y_ct, col);
     }
 
     return;

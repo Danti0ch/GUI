@@ -6,6 +6,6 @@
 
 int main(int argc, char *argv[]){
 
-    BasicVectorActionsTest();
+    
     return 0;
 }

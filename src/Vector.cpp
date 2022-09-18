@@ -1,16 +1,15 @@
 #include "drawable_objects.h"
-#include "gui.h"
 #include <assert.h>
 #include <math.h>
 
 static const double EPS = 1e-8;
 static const uint   LEN_ARROW_LINE_RATIO = 14;
 
-static const gl::Color VECTOR_COLOR = gl::Color(200, 0, 0, 200);
+static const Color VECTOR_COLOR = Color(200, 0, 0, 200);
 
-static void draw_real_line(gl::Window* window, const CoordinateSus& ct_sus, double x_from, double y_from, double x_to, double y_to, gl::Color col){
+static void draw_real_line(GraphicSpace* editor, const CoordinateSus& ct_sus, double x_from, double y_from, double x_to, double y_to, Color col){
 
-    assert(window != NULL);
+    assert(editor != NULL);
 
     int pix_from_x_ct = ct_sus.CountPixelPosX(x_from);
     int pix_from_y_ct = ct_sus.CountPixelPosY(y_from);
@@ -22,7 +21,7 @@ static void draw_real_line(gl::Window* window, const CoordinateSus& ct_sus, doub
     if(pix_to_x_ct   < ct_sus.x_lower_pixel() || pix_to_x_ct   > ct_sus.x_upper_pixel()) return;
     if(pix_to_y_ct   < ct_sus.y_upper_pixel() || pix_to_y_ct   > ct_sus.y_lower_pixel()) return;
 
-    DrawLine(window, pix_from_x_ct, pix_from_y_ct, pix_to_x_ct, pix_to_y_ct, col);
+    editor->DrawLine(pix_from_x_ct, pix_from_y_ct, pix_to_x_ct, pix_to_y_ct, col);
 
     return;
 }
@@ -85,44 +84,43 @@ Vector::Vector(double v1, double v2, VT_DATA data_type){
 }
 //----------------------------------------------------------------------------------------//
 
-// TODO: draw внешней функцией?
-void Vector::Draw(gl::Window* window, const CoordinateSus& ct_sus, double x_init, double y_init, gl::Color col) const {
+void Vector::Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, double x_init, double y_init, Color col) const {
     
-    assert(window != NULL);
+    assert(editor != editor);
 
     double x_final_ct = x_init + x_;
     double y_final_ct = y_init + y_;
     
-    draw_real_line(window, ct_sus, x_init, y_init, x_final_ct, y_final_ct, col);
+    draw_real_line(editor, ct_sus, x_init, y_init, x_final_ct, y_final_ct, col);
     
     Vector arrow_line = this->NormalVector(len() / (double)LEN_ARROW_LINE_RATIO);
     arrow_line = arrow_line - (*this / (double)LEN_ARROW_LINE_RATIO);
     
-    draw_real_line(window, ct_sus, x_final_ct, y_final_ct, x_final_ct + arrow_line.x(), y_final_ct + arrow_line.y(), col);
+    draw_real_line(editor, ct_sus, x_final_ct, y_final_ct, x_final_ct + arrow_line.x(), y_final_ct + arrow_line.y(), col);
 
     arrow_line = -this->NormalVector(len() / (double)LEN_ARROW_LINE_RATIO);
     arrow_line = arrow_line - (*this / (double)LEN_ARROW_LINE_RATIO);
     
-    draw_real_line(window, ct_sus, x_final_ct, y_final_ct, x_final_ct + arrow_line.x(), y_final_ct + arrow_line.y(), col);
+    draw_real_line(editor, ct_sus, x_final_ct, y_final_ct, x_final_ct + arrow_line.x(), y_final_ct + arrow_line.y(), col);
 
     return;
 }
 //----------------------------------------------------------------------------------------//
 
-void Vector::Draw(gl::Window* window, const CoordinateSus& ct_sus, gl::Color col) const {
+void Vector::Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, Color col) const {
 
-    assert(window != NULL);
+    assert(editor != NULL);
 
-    Draw(window, ct_sus, 0, 0, col);
+    Draw(editor, ct_sus, 0, 0, col);
     return;
 }
 //----------------------------------------------------------------------------------------//
 
-void Vector::Draw(sf::RenderWindow* window, const CoordinateSus& ct_sus, const Vector& vt_init, sf::Color col) const {
+void Vector::Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, const Vector& vt_init, Color col) const {
 
-    assert(window  != NULL);
+    assert(editor  != NULL);
 
-    Draw(window, ct_sus, vt_init.x(), vt_init.y(), col);
+    Draw(editor, ct_sus, vt_init.x(), vt_init.y(), col);
     return;
 }
 //----------------------------------------------------------------------------------------//
