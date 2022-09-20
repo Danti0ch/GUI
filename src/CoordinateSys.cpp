@@ -6,8 +6,7 @@ static const double EPS                 = 1e-10;
 //static const uint   COORD_SUS_GRID_SIZE = 30;
 static const uint   N_COORD_SUS_GRIDS = 8;
 
-// TODO: fix left_lim < 0
-// TODO: поиграться с расцветкой и толщиной осей и векторов
+static const uint ARROW_AXIS_PROJ_LEN = 5;
 
 CoordinateSus::CoordinateSus(uint x_lower_pixel,   uint x_upper_pixel, uint y_upper_pixel, uint y_lower_pixel,
                              double x_lower_lim, double x_upper_lim, double y_lower_lim, double y_upper_lim):
@@ -70,7 +69,7 @@ double CoordinateSus::CountAxisPosY(int y_pixel) const {
 //----------------------------------------------------------------------------------------//
 
 // TODO: make smarter разметка линий на координатной оси. Например умное деление на линии единичных отрезков вида 10^x
-void CoordinateSus::Draw(GraphicSpace* editor, Color col) const {
+void CoordinateSus::Draw(GraphicSpace* editor, Color col, Color axis_col) const {
 
     assert(editor != NULL);
 
@@ -87,15 +86,32 @@ void CoordinateSus::Draw(GraphicSpace* editor, Color col) const {
         
         int x_ct = n_x_line * grid_x_size + n_x_lower_axis_pixels_ + x_lower_pixel_;
 
-        editor->DrawLine(x_ct, y_lower_pixel_, x_ct, y_upper_pixel_, col);
+        if(n_x_line == 0){
+            editor->DrawLine(x_ct, y_lower_pixel_, x_ct, y_upper_pixel_, axis_col);
+        }
+        else{
+            editor->DrawLine(x_ct, y_lower_pixel_, x_ct, y_upper_pixel_, col);
+        }
     }
+    int x_ct = n_x_lower_axis_pixels_ + x_lower_pixel_;
+    editor->DrawLine(x_ct - ARROW_AXIS_PROJ_LEN, y_upper_pixel_ + ARROW_AXIS_PROJ_LEN, x_ct, y_upper_pixel_, axis_col);
+    editor->DrawLine(x_ct + ARROW_AXIS_PROJ_LEN, y_upper_pixel_ + ARROW_AXIS_PROJ_LEN, x_ct, y_upper_pixel_, axis_col);
 
     for(int n_y_line = -N_Y_LOWER_AXIS_LINES; n_y_line <= N_Y_UPPER_AXIS_LINES; n_y_line++){
         
         int y_ct = y_lower_pixel_ - n_y_lower_axis_pixels_ - n_y_line * grid_y_size;
 
-        editor->DrawLine(x_lower_pixel_, y_ct, x_upper_pixel_, y_ct, col);
+        if(n_y_line == 0){
+            editor->DrawLine(x_lower_pixel_, y_ct, x_upper_pixel_, y_ct, axis_col);
+        }
+        else{
+            editor->DrawLine(x_lower_pixel_, y_ct, x_upper_pixel_, y_ct, col);
+        }
     }
+
+    int y_ct = y_lower_pixel_ - n_y_lower_axis_pixels_;
+    editor->DrawLine(x_upper_pixel_ - ARROW_AXIS_PROJ_LEN, y_ct + ARROW_AXIS_PROJ_LEN, x_upper_pixel_, y_ct, axis_col);
+    editor->DrawLine(x_upper_pixel_ - ARROW_AXIS_PROJ_LEN, y_ct - ARROW_AXIS_PROJ_LEN, x_upper_pixel_, y_ct, axis_col);
 
     return;
 }

@@ -24,26 +24,77 @@ Vector3D::Vector3D():
 }
 //----------------------------------------------------------------------------------------//
 
+void Vector3D::operator +=(const Vector3D &v2) {
+
+    x_ += v2.x();
+    y_ += v2.y();
+    z_ += v2.z();
+
+    return;
+}
+//----------------------------------------------------------------------------------------//
+
+void Vector3D::operator -=(const Vector3D &v2) {
+
+    x_ -= v2.x();
+    y_ -= v2.y();
+    z_ -= v2.z();
+
+    return;
+}
+//----------------------------------------------------------------------------------------//
+
+void Vector3D::operator *=(double ratio) {
+
+    x_ *= ratio;
+    y_ *= ratio;
+    z_ *= ratio;
+
+    return;
+}
+//----------------------------------------------------------------------------------------//
+
+void Vector3D::operator /=(double ratio) {
+
+    double tmp = 1/ratio;
+
+    x_ *= tmp;
+    y_ *= tmp;
+    z_ *= tmp;
+
+    return;
+}
+//----------------------------------------------------------------------------------------//
+
 Vector3D Vector3D::operator +(const Vector3D &v2) const {
-    return Vector3D(x_ + v2.x(), y_ + v2.y(), z_ + v2.z());
+    Vector3D tmp = *this;
+    tmp.operator+=(v2);
+
+    return tmp;
 }
 //----------------------------------------------------------------------------------------//
 
 Vector3D Vector3D::operator -(const Vector3D &v2) const {
-    return Vector3D(x_- v2.x(), y_ - v2.y(), z_ - v2.z());
+    Vector3D tmp = *this;
+    tmp.operator-=(v2);
+
+    return tmp;
 }
 //----------------------------------------------------------------------------------------//
 
 Vector3D Vector3D::operator *(double ratio) const{
-    return Vector3D(x_ *  ratio, y_ * ratio, z_ * ratio);
+    Vector3D tmp = *this;
+    tmp.operator*=(ratio);
+
+    return tmp;
 }
 //----------------------------------------------------------------------------------------//
 
 Vector3D Vector3D::operator /(double ratio) const{
-    assert(fabs(ratio) > EPS);
+    Vector3D tmp = *this;
+    tmp.operator/=(ratio);
 
-    ratio = 1 / ratio;
-    return Vector3D(x_ *  ratio, y_ * ratio, z_ * ratio);
+    return tmp;
 }
 //----------------------------------------------------------------------------------------//
 

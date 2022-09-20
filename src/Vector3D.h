@@ -20,9 +20,13 @@ public:
     
     void ChangeLen(double len_val);
 
+    void operator +=(const Vector3D &v2);
+    void operator -=(const Vector3D &v2);
+    void operator *=(double ratio);
+    void operator /=(double ratio);
+
     Vector3D operator +(const Vector3D &v2) const;
     Vector3D operator -(const Vector3D &v2) const;
-
     Vector3D operator *(double ratio) const;
     Vector3D operator /(double ratio) const;
 

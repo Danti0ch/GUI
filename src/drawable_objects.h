@@ -4,6 +4,7 @@
 #include "graphic_lib_wrapper.h"
 typedef unsigned int uint;
 
+// TODO: RESTRUCT
 class CoordinateSus{
 
 private:
@@ -44,14 +45,13 @@ public:
     double CountAxisPosX(int x_pixel) const;
     double CountAxisPosY(int y_pixel) const;
 
-    void Draw(GraphicSpace* editor, Color col = Color(255, 255, 255, 255)) const;
+    void Draw(GraphicSpace* editor, Color col = Color(255, 255, 255, 255), Color axis_col = Color(0, 0, 255, 255)) const;
     ~CoordinateSus(){}
 };
 //----------------------------------------------------------------------------------------//
 
 int CheckCoordInCTS(const CoordinateSus& cts, uint x, uint y);
 
-// TODO: think about other way of distinguish arguments of constructor
 enum class VT_DATA{
     POLAR,
     COORD
@@ -60,36 +60,37 @@ enum class VT_DATA{
 class Vector{
 
 private:   
-
     double x_, y_;
-    double angle_;
-    double len_;
+    double len_, angle_;
+
 public:
-
     Vector();
-    Vector(double v1, double v2, VT_DATA data_type);
+    Vector(double v1, double v2, VT_DATA mod);
 
-    void Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, Color col = Color(255, 0, 0)) const;
-    void Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, double x_init, double y_init, Color col = Color(255, 0, 0)) const;
-    void Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, const Vector& vt_init, Color col = Color(255, 0, 0)) const;
+    void Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, Color col = Color(255, 0, 0));
+    void Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, double x_init, double y_init, Color col = Color(255, 0, 0));
+    void Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, const Vector& vt_init, Color col = Color(255, 0, 0));
 
     double x() const { return x_; }
     double y() const { return y_; }
+    
+    double len();
 
-    double len()   const { return len_; }
-    double angle() const { return angle_; }
-
-    Vector NormalVector(double len = 1) const;
+    Vector NormalVector(double len = 1);
     void   Normalize();
 
     void ChangeLen(double len_val);
 
-    Vector operator +(const Vector &v2) const;
-    Vector operator -(const Vector &v2) const;
-    Vector operator *(double ratio) const;
-    Vector operator /(double ratio) const;
+    Vector operator  -(const Vector &v2) const;
+    Vector operator  *(double ratio)     const;
+    Vector operator  /(double ratio)     const;
 
-    Vector operator -() const;
+    void   operator +=(const Vector& v);
+    void   operator -=(const Vector& v);
+    void   operator *=(double ratio);
+    void   operator /=(double ratio);
+
+    Vector operator  -() const;
 
     ~Vector(){}
 };

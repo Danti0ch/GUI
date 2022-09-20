@@ -4,12 +4,9 @@
 #include "graphic_lib_wrapper.h"
 #include "drawable_objects.h"
 
-// TODO: параметр необходимости перерисовки
-// TODO: наследование + виртуальные функции для евентов
-class ActionVectorsRender{
+class ActionVectorsRender : public GraphicSpace{
 
 private:
-    GraphicSpace space_;
     CoordinateSus time_cts_group_[3];
     CoordinateSus cts1_;
 
@@ -20,33 +17,26 @@ private:
     uint    cur_sec_val_;
     clock_t init_time_;
 
-    // TODO: чекнуть что значит
-    static void mouse_press_event(GraphicSpace* space, int x_pos, int y_pos);
-    static void update_handler(GraphicSpace* space);
+    void MouseButtonPressHandler(uint x_pos, uint y_pos);
+    void Update();
 public:
     ActionVectorsRender();
-
-    void Init();
 };
 
-class SphereRender{
+class SphereRender : public GraphicSpace{
 
 private:
-    GraphicSpace space_;
-
     CoordinateSus image_cts_, manip_cts_;
 
     double x_manip_, y_manip_;
 
-    void  draw_sphere();
     Color get_sphere_pixel_color(uint x_pix, uint y_pix);
     
-    void  mouse_press_event(GraphicSpace* space, int x_pos, int y_pos);
-    void  update_handler(GraphicSpace* space);
+    void  draw_sphere();
+
+    void MouseButtonPressHandler(uint x_pos, uint y_pos);
 public:
     SphereRender();
-
-    void Init();
 };
 
 #endif // TESTS_H
