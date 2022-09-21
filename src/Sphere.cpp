@@ -1,54 +1,62 @@
-#include "geometry_objects.h"
+#include "graphic_lib_wrapper.h"
+#include "Raytracer.h"
 #include <math.h>
 
-static const double EPS = 1e-8;
+Sphere::Sphere(double x0, double y0, double z0, double r, gglib::Color col):
+    geom::Sphere(x0, y0, z0, r),
+    col_(col)
+{}
 
-double get_quad_eq_root(double a, double b, double c);
-
-#include <iostream>
-
-double GetIntersectionRatio(const Vector3D& base, const Vector3D& dir, const Sphere& sp){
-
-    double t1 = base.x() - sp.x0();
-    double t2 = base.y() - sp.y0();
-    double t3 = base.z() - sp.z0();
-    
-    double k1 = dir.x() * dir.x() + dir.y() * dir.y() + dir.z() * dir.z();
-    double k2 = 2 * (dir.x() * t1 + dir.y() * t2 + dir.z() * t3);
-    double k3 = t1 * t1 + t2 * t2 + t3 * t3 - sp.r() * sp.r();
-
-    double root = get_quad_eq_root(k1, k2, k3);
-
-    return root;
-}
+Sphere::Sphere(const geom::Vector3D& v, double r, gglib::Color col):
+    geom::Sphere(v, r),
+    col_(col)
+{}
 //----------------------------------------------------------------------------------------//
 
-double get_quad_eq_root(double a, double b, double c){
+gglib::Color Sphere::GetColor(const geom::Vector3D& pt, const Camera& cam, const std::vector<Light>& lights) const{
 
-    if(fabs(a) < EPS){
-        if(fabs(b) < EPS){
-            return NAN;
+    if(!CheckPointIn(pt)) return gglib::Color(255, 255, 255);
+
+    geom::Vector3D beholder_to_point_vtor = cam.pos - pt;
+    geom::Vector3D sphere_to_point_vtor   = pt - center();
+
+    gglib::Color result_color(0, 0, 0);
+
+    uint n_lights = lights.size();
+    for(uint n_light = 0; n_light < n_lights; n_light++){
+
+        geom::Vector3D light_to_point_vtor = lights[n_light].pos - pt;
+        
+        double cosA = geom::CountCosAngle(sphere_to_point_vtor, light_to_point_vtor);
+
+        double diffuse_val  = 0;
+        double specular_val = 0;
+
+        if(cosA > geom::EPS){
+            diffuse_val = cosA;
+
+            sphere_to_point_vtor.ChangeLen(cosA * light_to_point_vtor.len());
+            
+            geom::Vector3D light_reflected_vtor = sphere_to_point_vtor * 2 - light_to_point_vtor;
+            specular_val = geom::CountCosAngle(light_reflected_vtor, beholder_to_point_vtor);
+
+            if(specular_val < geom::EPS) specular_val = 0;
+            else{
+                // TODO: optimize
+                specular_val = pow(specular_val, SPECULAR_POW_RATIO);
+            }
         }
-        return -c / b;
-    }
-    
-    double d = b * b - 4 * a * c;
+        
+        gglib::Color tmp_color = col_ * lights[n_light].col();
 
-    if(d < -EPS){
-        return NAN;
-    }
 
-    else if(d < EPS) d = 0;
-
-    if(a >= EPS){
-
-        double v1 = (-b - sqrt(d)) / (2 * a);
-        if(v1 < EPS){
-            return (-b + sqrt(d)) / (2 * a);
-        }
-        return v1;
+        // TODO: check correct 
+        result_color += tmp_color * diffuse_val * DIFFUSE_RATIO +
+                       tmp_color * AMBIENT_RATIO +
+                       lights[n_light].col() * specular_val * SPECULAR_RATIO;
     }
 
-    return (-b + sqrt(d)) / (2 * a);
+    result_color.a(255);
+    return result_color;
 }
 //----------------------------------------------------------------------------------------//

@@ -16,7 +16,9 @@
 //#elif ACTIVE_GRAPHIC_LIB == QT_LIB
 //    #include <QtWidgets>
 //#endif
+#include "geometry_objects.h"
 
+namespace gglib{
 enum Key {
     Unknown = -1, A = 0, B, C,
     D, E, F, G,
@@ -79,29 +81,6 @@ public:
 };
 //----------------------------------------------------------------------------------------//
 
-class myButton{
-
-private:
-    uint x_upper_pix_, x_lower_pix_;
-    uint y_upper_pix_, y_lower_pix_;
-
-    Color col_;
-
-public:
-
-    myButton(uint x_lower_pix, uint y_upper_pix, uint x_upper_pix, uint y_lower_pix, Color col);
-
-    uint x_lower_pix() const { return x_lower_pix_; }
-    uint x_upper_pix() const { return x_upper_pix_; }
-    uint y_lower_pix() const { return y_lower_pix_; }
-    uint y_upper_pix() const { return y_upper_pix_; }
-
-    Color col() const { return col_; }
-};
-
-int  CheckCoordInButton(const myButton& but, uint x, uint y);
-//----------------------------------------------------------------------------------------//
-
 class GraphicSpace{
 
 private:
@@ -111,8 +90,6 @@ private:
 //#elif ACTIVE_GRAPHIC_LIB == QT_LIB
 //    QWidget wgt;    
 //#endif
-
-protected:
 
 public:
     GraphicSpace(uint x_pixels, uint y_pixels);
@@ -133,10 +110,100 @@ public:
 
     uint sizeX() const { return window_.getSize().x; }
     uint sizeY() const { return window_.getSize().y; }
-    
-    void Draw(const myButton& butt);
 };
 //----------------------------------------------------------------------------------------//
 
+class CoordinateSus{
 
+private:
+    
+    double x_lower_lim_, x_upper_lim_;
+    double y_lower_lim_, y_upper_lim_;
+
+    int x_lower_pixel_, x_upper_pixel_;
+    int y_lower_pixel_, y_upper_pixel_;
+
+    int n_x_upper_axis_pixels_, n_x_lower_axis_pixels_;
+    int n_y_upper_axis_pixels_, n_y_lower_axis_pixels_;
+    
+    double scale_x_, scale_y_;
+    double step_val_;
+public:
+    
+    CoordinateSus(uint x_lower_pixel, uint x_upper_pixel, uint y_upper_pixel, uint y_lower_pixel,
+                  double x_lower_lim, double x_upper_lim, double y_lower_lim, double y_upper_lim);
+
+    double x_lower_lim() const { return x_lower_lim_; }
+    double x_upper_lim() const { return x_upper_lim_; }
+    double y_lower_lim() const { return y_lower_lim_; }
+    double y_upper_lim() const { return y_upper_lim_; }
+    
+    int x_lower_pixel() const { return x_lower_pixel_; }
+    int x_upper_pixel() const { return x_upper_pixel_; }
+    int y_lower_pixel() const { return y_lower_pixel_; }
+    int y_upper_pixel() const { return y_upper_pixel_; }
+    
+    double scale_x()  const { return scale_x_; }
+    double scale_y()  const { return scale_y_; }
+    double step_val() const { return step_val_; }
+    
+    int CountPixelPosX(double x_ct) const;
+    int CountPixelPosY(double y_ct) const;
+
+    double CountAxisPosX(int x_pixel) const;
+    double CountAxisPosY(int y_pixel) const;
+
+    void Draw(GraphicSpace* editor, Color col = Color(255, 255, 255, 255), Color axis_col = Color(0, 0, 255, 255)) const;
+    ~CoordinateSus(){}
+};
+
+int CheckCoordInCTS(const CoordinateSus& cts, uint x, uint y);
+//----------------------------------------------------------------------------------------//
+
+typedef geom::VT_DATA VT_DATA;
+// TODO: -> inheritance?
+class Vector : public geom::Vector{
+
+private:
+    Color col_;
+
+public:
+
+    Vector();
+    Vector(const geom::Vector& vt);
+    Vector(double v1, double v2, VT_DATA mod);
+    Vector(double v1, double v2, VT_DATA mod, Color col);
+    
+    void Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, Color col = Color(255, 0, 0));
+    void Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, double x_init, double y_init, Color col = Color(255, 0, 0));
+    void Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, const Vector& vt_init, Color col = Color(255, 0, 0));
+};
+//----------------------------------------------------------------------------------------//
+
+class Button{
+
+private:
+    uint x_upper_pix_, x_lower_pix_;
+    uint y_upper_pix_, y_lower_pix_;
+
+    Color col_;
+
+public:
+
+    Button(uint x_lower_pix, uint y_upper_pix, uint x_upper_pix, uint y_lower_pix, Color col);
+
+    uint x_lower_pix() const { return x_lower_pix_; }
+    uint x_upper_pix() const { return x_upper_pix_; }
+    uint y_lower_pix() const { return y_lower_pix_; }
+    uint y_upper_pix() const { return y_upper_pix_; }
+
+    Color col() const { return col_; }
+    void Draw(GraphicSpace* editor);
+};
+
+int  CheckCoordInButton(const Button& but, uint x, uint y);
+
+//----------------------------------------------------------------------------------------//
+
+} // gglib
 #endif // GL_WRAPPER

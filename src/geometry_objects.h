@@ -2,7 +2,10 @@
 #define GEOM_OBJS_H
 
 namespace geom{
-enum class VT_DATA{
+
+const double EPS = 1e-8;
+
+enum VT_DATA{
     POLAR,
     COORD
 };
@@ -86,18 +89,24 @@ double CountCosAngle(const Vector3D& v1, const Vector3D& v2);
 class Sphere{
 
 private:
-    double x0_, y0_, z0_;
+    Vector3D center_;
     double r_;
+
 public:
     Sphere(double x0, double y0, double z0, double r):
-        x0_(x0), y0_(y0), z0_(z0), r_(r){}
+        center_(x0, y0, z0), r_(r){}
     Sphere(const Vector3D& v, double r):
-        x0_(v.x()), y0_(v.y()), z0_(v.z()), r_(r){}
+        center_(v), r_(r){}
     
-    double x0() const { return x0_; }
-    double y0() const { return y0_; }
-    double z0() const { return z0_; }
+    double x0() const { return center_.x(); }
+    double y0() const { return center_.y(); }
+    double z0() const { return center_.z(); }
+
+    Vector3D center() const { return center_; }
     double  r() const { return r_; }
+
+    bool CheckPointIn(double x, double y, double z) const;
+    bool CheckPointIn(const Vector3D& vt) const;
 };
 
 double GetIntersectionRatio(const Vector3D& base, const Vector3D& dir, const Sphere& sp);

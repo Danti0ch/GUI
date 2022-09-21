@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 
+using namespace gglib;
 GraphicSpace::GraphicSpace(uint x_pixels, uint y_pixels):
     window_(sf::VideoMode(x_pixels, y_pixels), "NO SIGNAL")
 {}
@@ -90,39 +91,6 @@ void GraphicSpace::DrawPixel(uint x_pix, uint y_pix, Color col){
 
     window_.draw(&pix_to_draw, 1, sf::Points);
 
-    return;
-}
-//----------------------------------------------------------------------------------------//
-
-void GraphicSpace::Draw(const myButton& butt){
-
-    uint x_lower_pix = butt.x_lower_pix();
-    uint x_upper_pix = butt.x_upper_pix();
-    uint y_lower_pix = butt.y_lower_pix();
-    uint y_upper_pix = butt.y_upper_pix();
-    
-    if(sizeX() < x_upper_pix) return;
-    if(sizeY() < y_lower_pix) return;
-
-    uint n_y_pixels = (y_lower_pix - y_upper_pix + 1);
-    uint n_x_pixels = (x_upper_pix - x_lower_pix + 1);
-
-    sf::Vertex* pixels = new sf::Vertex[n_y_pixels * n_x_pixels];
-
-    Color but_color = butt.col();
-    sf::Color sf_col(but_color.r(), but_color.g(), but_color.b(), but_color.a());
-
-    for(uint y_i = 0; y_i < n_y_pixels; y_i++){
-        for(uint x_i = 0; x_i < n_x_pixels; x_i++){
-            pixels[y_i * n_x_pixels + x_i] = sf::Vertex(sf::Vector2f(x_i + x_lower_pix, y_i + y_upper_pix), sf_col);
-        }
-    }
-
-    window_.draw(pixels, n_x_pixels * n_y_pixels, sf::Points);
-
-    delete [] pixels;
-
-    //draw_frame(this);
     return;
 }
 //----------------------------------------------------------------------------------------//

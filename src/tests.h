@@ -2,16 +2,15 @@
 #define TESTS_H
 
 #include "graphic_lib_wrapper.h"
-#include "graphical_primitives.h"
 #include "geometry_objects.h"
 
-class ActionVectorsRender : public GraphicSpace{
+class ActionVectorsRender : public gglib::GraphicSpace{
 
 private:
-    CoordinateSus time_cts_group_[3];
-    CoordinateSus cts1_;
+    gglib::CoordinateSus time_cts_group_[3];
+    gglib::CoordinateSus cts1_;
 
-    myButton butt_reset_, butt_speed_, butt_exit_;
+    gglib::Button butt_reset_, butt_speed_, butt_exit_;
 
     double  cts1_ct_x_, cts1_ct_y_;
     uint    time_arrow_speed_ratio_;
@@ -25,35 +24,18 @@ public:
 };
 //----------------------------------------------------------------------------------------//
 
-class SphereRender : public GraphicSpace{
+class SphereRender : public gglib::GraphicSpace{
 
 private:
-    CoordinateSus image_cts_, manip_cts_;
+    gglib::CoordinateSus image_cts_, manip_cts_;
 
     double x_manip_, y_manip_;
 
-    Color get_sphere_pixel_color(uint x_pix, uint y_pix);
+    gglib::Color get_sphere_pixel_color(uint x_pix, uint y_pix);
     void  draw_sphere();
     void  MouseButtonPressHandler(uint x_pos, uint y_pos);
 public:
     SphereRender();
-};
-//----------------------------------------------------------------------------------------//
-
-class SceneRaytracer : public GraphicSpace{
-
-    void KeyPressHandler(Key key);
-    void UpdateAfterEvents();
-public:
-
-    Vector3D light; Color light_color;
-    Vector3D base; Vector3D base_dir;
-
-    Sphere sp1; Color sp1_col;
-    Sphere sp2; Color sp2_col;
-    Sphere sp3; Color sp3_col;
-
-    SceneRaytracer();
 };
 //----------------------------------------------------------------------------------------//
 

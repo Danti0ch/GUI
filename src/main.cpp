@@ -1,4 +1,5 @@
 #include "tests.h"
+#include "Raytracer.h"
 #include <string.h>
 
 // TODO: fix arrow offsets
