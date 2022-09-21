@@ -1,50 +1,55 @@
 #ifndef GEOM_OBJS_H
 #define GEOM_OBJS_H
 
-class Point;
-class Ray;
-class Plane;
-class Line;
-class Vector3D;
-
-const enum INTERSECTION_MOD{
-
-    NO_INTER,
-    POINTS,
-    RAY
+namespace geom{
+enum class VT_DATA{
+    POLAR,
+    COORD
 };
 
-class Ray{
+class Vector{
 
-private:
-    Vector  pt_;
-    Vector3D vt_;
+private:   
+    double x_, y_;
 
 public:
+    Vector();
+    Vector(double v1, double v2, VT_DATA mod);
 
-    // TODO: написать перегрузки
-    Ray(const Point& pt, const Vector& vt): pt_(pt), vt_(vt){}
+    double x() const { return x_; }
+    double y() const { return y_; }
+    
+    void x(double x) { x_ = x; }
+    void y(double y) { y_ = y; }
+    
+    double len() const;
 
-    INTERSECTION_MOD GetRaysIntersection(const Ray& ray2, std::Vector& storage);
-    INTERSECTION_MOD GetRayPlaneInterSection(const Plane& plane, std::Vector& storage);
-    INTERSECTION_MOD GetRayPolylineInterSection(const Plane* planes, std::Vector& storage);
+    Vector NormalVector(double len = 1) const;
+    void   Normalize();
+
+    void ChangeLen(double len_val);
+
+    Vector operator  +(const Vector &v2) const;
+    Vector operator  -(const Vector &v2) const;
+    Vector operator  *(double ratio)     const;
+    Vector operator  /(double ratio)     const;
+
+    void   operator +=(const Vector& v);
+    void   operator -=(const Vector& v);
+    void   operator *=(double ratio);
+    void   operator /=(double ratio);
+
+    Vector operator  -() const;
+
+    ~Vector(){}
 };
-
-class Plane{
-
-private:
-    double a_, b_, c_, d_;
-public:
-
-    Plane(double a, double b, double c, double d): a_(a), b_(b), c_(c), d_(d){}
-};
+//----------------------------------------------------------------------------------------//
 
 class Vector3D{
 
 private:   
 
     double x_, y_, z_;
-    double len_;
 public:
 
     Vector3D();
@@ -54,13 +59,21 @@ public:
     double y()   const { return y_; }
     double z()   const { return z_; }
 
-    double len() const { return len_; }
+    void x(double x) { x_ = x; }
+    void y(double y) { y_ = y; }
+    void z(double z) { z_ = z; }
+
+    double len() const;
     
     void ChangeLen(double len_val);
 
+    void operator +=(const Vector3D &v2);
+    void operator -=(const Vector3D &v2);
+    void operator *=(double ratio);
+    void operator /=(double ratio);
+
     Vector3D operator +(const Vector3D &v2) const;
     Vector3D operator -(const Vector3D &v2) const;
-
     Vector3D operator *(double ratio) const;
     Vector3D operator /(double ratio) const;
 
@@ -68,19 +81,28 @@ public:
 };
 
 double CountCosAngle(const Vector3D& v1, const Vector3D& v2);
+//----------------------------------------------------------------------------------------//
 
-#endif // GEOM_OBJS_H
-
-/*
-class Line{
+class Sphere{
 
 private:
-    Point    pt_;
-    Vector3D vt_;
-
+    double x0_, y0_, z0_;
+    double r_;
 public:
-
-    // TODO: написать перегрузки
-    Line(const Point& pt, const Vector& vt): pt_(pt), vt_(vt){}
+    Sphere(double x0, double y0, double z0, double r):
+        x0_(x0), y0_(y0), z0_(z0), r_(r){}
+    Sphere(const Vector3D& v, double r):
+        x0_(v.x()), y0_(v.y()), z0_(v.z()), r_(r){}
+    
+    double x0() const { return x0_; }
+    double y0() const { return y0_; }
+    double z0() const { return z0_; }
+    double  r() const { return r_; }
 };
-*/
+
+double GetIntersectionRatio(const Vector3D& base, const Vector3D& dir, const Sphere& sp);
+//----------------------------------------------------------------------------------------//
+
+} // namespace geom
+
+#endif // GEOM_OBJS_H

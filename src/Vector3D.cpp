@@ -1,4 +1,4 @@
-#include "Vector3D.h"
+#include "geometry_objects.h"
 #include <assert.h>
 #include <math.h>
 
@@ -9,8 +9,6 @@ Vector3D::Vector3D(double x, double y, double z):
     y_(y),
     z_(z)
 {
-    len_ = sqrt(x_ * x_ + y_ * y_ + z_ * z_);
-
 //    assert(len_ > EPS);
 }
 //----------------------------------------------------------------------------------------//
@@ -19,9 +17,7 @@ Vector3D::Vector3D():
     x_(1),
     y_(1),
     z_(1)
-{
-    len_ = sqrt(x_ * x_ + y_ * y_ + z_ * z_);
-}
+{}
 //----------------------------------------------------------------------------------------//
 
 void Vector3D::operator +=(const Vector3D &v2) {
@@ -56,7 +52,7 @@ void Vector3D::operator *=(double ratio) {
 
 void Vector3D::operator /=(double ratio) {
 
-    double tmp = 1/ratio;
+    double tmp = ((double)1)/ratio;
 
     x_ *= tmp;
     y_ *= tmp;
@@ -110,11 +106,18 @@ void Vector3D::ChangeLen(double len_val){
 
     assert(len_val > EPS);
 
-    x_  *= len_val / len_;
-    y_  *= len_val / len_;
-    z_  *= len_val / len_;
-    len_ = len_val;
+    double cur_len = len();
 
+    x_  *= len_val / cur_len;
+    y_  *= len_val / cur_len;
+    z_  *= len_val / cur_len;
+    
     return;
+}
+//----------------------------------------------------------------------------------------//
+
+double Vector3D::len() const{
+
+    return sqrt(x_ * x_ + y_ * y_ + z_ * z_);
 }
 //----------------------------------------------------------------------------------------//

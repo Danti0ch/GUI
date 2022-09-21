@@ -1,6 +1,4 @@
-#include "drawable_objects.h"
 #include "tests.h"
-#include "Vector3D.h"
 #include <math.h>
 #include <assert.h>
 #include <iostream>
@@ -93,12 +91,13 @@ void ActionVectorsRender::Update(){
 
     Vector code_time_vtor(TIME_VECTOR_LEN, time_vtor_angle, VT_DATA::POLAR);
 
-    code_time_vtor.Draw(this, time_cts_group_[0]);
-    code_time_vtor.Draw(this, time_cts_group_[1]);
-    code_time_vtor.Draw(this, time_cts_group_[2]);
+    DrawVtor(this, code_time_vtor, time_cts_group_[0]);
+    DrawVtor(this, code_time_vtor, time_cts_group_[1]);
+    DrawVtor(this, code_time_vtor, time_cts_group_[2]);
 
     Vector click_vtor(cts1_ct_x_, cts1_ct_y_, VT_DATA::COORD);
-    click_vtor.Draw(this, cts1_);
+
+    DrawVtor(this, click_vtor, cts1_);
 
     Show();
 

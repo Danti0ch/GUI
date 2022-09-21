@@ -1,6 +1,3 @@
-#include "drawable_objects.h"
-#include "Vector3D.h"
-#include "graphic_lib_wrapper.h"
 #include "tests.h"
 #include <math.h>
 #include <assert.h>
@@ -14,15 +11,15 @@ static const uint WINDOW_WIDTH  = 1080;
 static const double   SPHERE_RADIUS = 50;
 static const Vector3D BEHOLDER_VTOR(20, 40, 60);
 static const double   AMBIENT_VAL        = 0.6;
-static const uint     SPECULAR_POW_RATIO = 4;
-static const double   LIGHT_Z_CT         = 60;
+static const uint     SPECULAR_POW_RATIO = 5;
+static const double   LIGHT_Z_CT         = 100;
 
-static const Color SPHERE_COLOR(255, 100, 0, 255);
+static const Color SPHERE_COLOR(255, 100, 40, 255);
 static const Color LIGHT_COLOR(100, 123, 86, 255);
 
 static const double DIFFUSE_RATIO   = 1.3;
 static const double AMBIENT_RATIO   = 1.1;
-static const double SPECULAR_RATIO  = 1.1;
+static const double SPECULAR_RATIO  = 0.8;
 
 //========================================================================================//
 
@@ -39,7 +36,7 @@ SphereRender::SphereRender():GraphicSpace(WINDOW_WIDTH, WINDOW_HEIGHT),
     manip_cts_.Draw(this, Color(0, 0, 0, 255));
 
     Vector click_vtor(x_manip_, y_manip_, VT_DATA::COORD);
-    click_vtor.Draw(this, manip_cts_);
+    DrawVtor(this, click_vtor, manip_cts_);
     draw_sphere();
 
     Show();
@@ -138,7 +135,7 @@ void SphereRender::MouseButtonPressHandler(uint x_pos, uint y_pos){
     manip_cts_.Draw(this, Color(0, 0, 0, 255));
 
     Vector click_vtor(x_manip_, y_manip_, VT_DATA::COORD);
-    click_vtor.Draw(this, manip_cts_);
+    DrawVtor(this, click_vtor, manip_cts_);
     draw_sphere();
 
     Show();

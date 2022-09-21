@@ -6,12 +6,18 @@
 
 int main(int argc, char *argv[]){
 
-    if(argc > 1 && !strcmp(argv[1], "sphere")){
+    if(argc < 2) return 0;
+
+    if(!strcmp(argv[1], "sphere")){
         SphereRender space;
         space.Init();    
     }
-    else{
+    else if(!strcmp(argv[1], "vecs")){
         ActionVectorsRender space;
+        space.Init();
+    }
+    else if(!strcmp(argv[1], "ray")){
+        SceneRaytracer space;
         space.Init();
     }
     

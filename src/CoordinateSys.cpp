@@ -1,8 +1,8 @@
-#include "drawable_objects.h"
+#include "graphical_primitives.h"
 #include <assert.h>
 #include <math.h>
 
-static const double EPS                 = 1e-10;
+static const double EPS = 1e-10;
 //static const uint   COORD_SUS_GRID_SIZE = 30;
 static const uint   N_COORD_SUS_GRIDS = 8;
 
