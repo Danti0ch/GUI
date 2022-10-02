@@ -42,8 +42,7 @@ SceneRaytracer::SceneRaytracer():
     planes({
         Plane(geom::Vector3D(0, -4, 0), geom::Vector3D(0, -1, 0), SteelMaterial),
         //Plane(geom::Vector3D(-15,  0, 0), geom::Vector3D(1, 0, 0), SteelMaterial),
-        //Plane(geom::Vector3D(15,  0, 0), geom::Vector3D(1, 0, 0), SteelMaterial)
-        
+        //Plane(geom::Vector3D(15,  0, 0), geom::Vector3D(1, 0, 0), SteelMaterial)  
     })
 {
     draw_scene(this);
