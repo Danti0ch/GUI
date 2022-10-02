@@ -94,11 +94,23 @@ Vector3D Vector3D::operator /(double ratio) const{
 }
 //----------------------------------------------------------------------------------------//
 
+Vector3D Vector3D::operator -() const {
+
+    return Vector3D(-x_, -y_, -z_);
+}
+//----------------------------------------------------------------------------------------//
+
 double geom::CountCosAngle(const Vector3D& v1, const Vector3D& v2){
 
-    double scalar_mul = v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z();
+    return geom::CountScalarMul(v1, v2) / (v1.len() * v2.len());
+}
+//----------------------------------------------------------------------------------------//
 
-    return scalar_mul / (v1.len() * v2.len());
+double geom::CountSinAngle(const Vector3D& v1, const Vector3D& v2){
+
+    double cosA = geom::CountScalarMul(v1, v2) / (v1.len() * v2.len());
+
+    return sqrt(1 - cosA * cosA);
 }
 //----------------------------------------------------------------------------------------//
 
@@ -119,5 +131,16 @@ void Vector3D::ChangeLen(double len_val){
 double Vector3D::len() const{
 
     return sqrt(x_ * x_ + y_ * y_ + z_ * z_);
+}
+//----------------------------------------------------------------------------------------//
+
+double geom::CountScalarMul(const Vector3D& v1, const Vector3D& v2){
+
+    return v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z();
+}
+//----------------------------------------------------------------------------------------//
+
+std::ostream& geom::operator<<(std::ostream &os, const Vector3D& v) {
+    return os  << "(" << v.x() << ", " << v.y() << ", " << v.z() << ")";
 }
 //----------------------------------------------------------------------------------------//

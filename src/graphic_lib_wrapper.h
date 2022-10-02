@@ -91,6 +91,7 @@ private:
 //    QWidget wgt;    
 //#endif
 
+    sf::Font font_;
 public:
     GraphicSpace(uint x_pixels, uint y_pixels);
 
@@ -107,6 +108,7 @@ public:
 
     void DrawLine(uint x_pix1, uint y_pix1, uint x_pix2, uint y_pix2, Color col = Color(0, 0, 0, 255));
     void DrawPixel(uint x_pix, uint y_pix, Color col = Color(0, 0, 0, 255));
+    void DrawText(uint x_pixel, uint y_pixel, const char* str, uint font_size, Color col = Color(255, 255, 255));
 
     uint sizeX() const { return window_.getSize().x; }
     uint sizeY() const { return window_.getSize().y; }
@@ -130,7 +132,7 @@ private:
     double step_val_;
 public:
     
-    CoordinateSus(uint x_lower_pixel, uint x_upper_pixel, uint y_upper_pixel, uint y_lower_pixel,
+    CoordinateSus(uint x_lower_pixel, uint x_upper_pixel, uint y_lower_pixel, uint y_upper_pixel,
                   double x_lower_lim, double x_upper_lim, double y_lower_lim, double y_upper_lim);
 
     double x_lower_lim() const { return x_lower_lim_; }
@@ -180,6 +182,20 @@ public:
 };
 //----------------------------------------------------------------------------------------//
 
+class Text{
+private:
+
+    uint        font_size_;
+    char data_[64];
+    Color       col_;
+public:
+    Text(const char* data, uint font_size = 12, Color col = Color(255, 255, 255));
+    
+    Color col() const { return col_; }
+    void Draw(GraphicSpace* editor, uint x_pix, uint y_pix) const;
+};
+//----------------------------------------------------------------------------------------//
+
 class Button{
 
 private:
@@ -187,10 +203,10 @@ private:
     uint y_upper_pix_, y_lower_pix_;
 
     Color col_;
-
+    Text  text_;
 public:
 
-    Button(uint x_lower_pix, uint y_upper_pix, uint x_upper_pix, uint y_lower_pix, Color col);
+    Button(uint x_lower_pix, uint y_upper_pix, uint x_upper_pix, uint y_lower_pix, const Text& text, Color col);
 
     uint x_lower_pix() const { return x_lower_pix_; }
     uint x_upper_pix() const { return x_upper_pix_; }

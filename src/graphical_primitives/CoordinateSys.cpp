@@ -9,7 +9,7 @@ static const uint   N_COORD_SUS_GRIDS = 8;
 
 static const uint ARROW_AXIS_PROJ_LEN = 5;
 
-CoordinateSus::CoordinateSus(uint x_lower_pixel,   uint x_upper_pixel, uint y_upper_pixel, uint y_lower_pixel,
+CoordinateSus::CoordinateSus(uint x_lower_pixel,   uint x_upper_pixel, uint y_lower_pixel, uint y_upper_pixel,
                              double x_lower_lim, double x_upper_lim, double y_lower_lim, double y_upper_lim):
     x_lower_lim_(x_lower_lim),     x_upper_lim_(x_upper_lim),
     y_lower_lim_(y_lower_lim),     y_upper_lim_(y_upper_lim),
@@ -17,12 +17,12 @@ CoordinateSus::CoordinateSus(uint x_lower_pixel,   uint x_upper_pixel, uint y_up
     y_lower_pixel_(y_lower_pixel), y_upper_pixel_(y_upper_pixel)
 {
     assert(x_upper_pixel > x_lower_pixel);
-    assert(y_lower_pixel > y_upper_pixel);
+    assert(y_upper_pixel > y_lower_pixel);
     assert(x_upper_lim - x_lower_lim > geom::EPS);
     assert(y_upper_lim - y_lower_lim > geom::EPS);
     
     scale_x_ = ((double)(x_upper_pixel - x_lower_pixel)) / (x_upper_lim - x_lower_lim);
-    scale_y_ = ((double)(y_lower_pixel - y_upper_pixel)) / (y_upper_lim - y_lower_lim);
+    scale_y_ = ((double)(y_upper_pixel - y_lower_pixel)) / (y_upper_lim - y_lower_lim);
 
     n_x_upper_axis_pixels_ = trunc(x_upper_lim * scale_x_);
     n_x_lower_axis_pixels_ = trunc((-x_lower_lim) * scale_x_);
@@ -43,7 +43,7 @@ int CoordinateSus::CountPixelPosX(double x_ct) const {
 
 int CoordinateSus::CountPixelPosY(double y_ct) const {
 
-    int y_pixel_pos = y_lower_pixel_ - n_y_lower_axis_pixels_ - round(y_ct * scale_y_);
+    int y_pixel_pos = round(y_ct * scale_y_) + y_lower_pixel_ + n_y_lower_axis_pixels_;
 
     return y_pixel_pos;
 }
@@ -61,9 +61,9 @@ double CoordinateSus::CountAxisPosX(int x_pixel) const {
 
 double CoordinateSus::CountAxisPosY(int y_pixel) const {
 
-    assert(y_pixel >= y_upper_pixel_ && y_pixel <= y_lower_pixel_);
+    assert(y_pixel >= y_lower_pixel_ && y_pixel <= y_upper_pixel_);
     
-    double val = (-y_pixel + y_lower_pixel_ - n_y_lower_axis_pixels_) / scale_y_;
+    double val = (y_pixel - y_lower_pixel_ - n_y_lower_axis_pixels_) / scale_y_;
 
     return val;
 }
@@ -94,13 +94,14 @@ void CoordinateSus::Draw(GraphicSpace* editor, Color col, Color axis_col) const 
             editor->DrawLine(x_ct, y_lower_pixel_, x_ct, y_upper_pixel_, col);
         }
     }
+
     int x_ct = n_x_lower_axis_pixels_ + x_lower_pixel_;
-    editor->DrawLine(x_ct - ARROW_AXIS_PROJ_LEN, y_upper_pixel_ + ARROW_AXIS_PROJ_LEN, x_ct, y_upper_pixel_, axis_col);
-    editor->DrawLine(x_ct + ARROW_AXIS_PROJ_LEN, y_upper_pixel_ + ARROW_AXIS_PROJ_LEN, x_ct, y_upper_pixel_, axis_col);
+    editor->DrawLine(x_ct - ARROW_AXIS_PROJ_LEN, y_upper_pixel_ - ARROW_AXIS_PROJ_LEN, x_ct, y_upper_pixel_, axis_col);
+    editor->DrawLine(x_ct + ARROW_AXIS_PROJ_LEN, y_upper_pixel_ - ARROW_AXIS_PROJ_LEN, x_ct, y_upper_pixel_, axis_col);
 
     for(int n_y_line = -N_Y_LOWER_AXIS_LINES; n_y_line <= N_Y_UPPER_AXIS_LINES; n_y_line++){
         
-        int y_ct = y_lower_pixel_ - n_y_lower_axis_pixels_ - n_y_line * grid_y_size;
+        int y_ct = n_y_line * grid_y_size + y_lower_pixel_ + n_y_lower_axis_pixels_ ;
 
         if(n_y_line == 0){
             editor->DrawLine(x_lower_pixel_, y_ct, x_upper_pixel_, y_ct, axis_col);
@@ -110,7 +111,7 @@ void CoordinateSus::Draw(GraphicSpace* editor, Color col, Color axis_col) const 
         }
     }
 
-    int y_ct = y_lower_pixel_ - n_y_lower_axis_pixels_;
+    int y_ct = y_lower_pixel_ + n_y_lower_axis_pixels_;
     editor->DrawLine(x_upper_pixel_ - ARROW_AXIS_PROJ_LEN, y_ct + ARROW_AXIS_PROJ_LEN, x_upper_pixel_, y_ct, axis_col);
     editor->DrawLine(x_upper_pixel_ - ARROW_AXIS_PROJ_LEN, y_ct - ARROW_AXIS_PROJ_LEN, x_upper_pixel_, y_ct, axis_col);
 
@@ -121,7 +122,7 @@ void CoordinateSus::Draw(GraphicSpace* editor, Color col, Color axis_col) const 
 int gglib::CheckCoordInCTS(const CoordinateSus& cts, uint x, uint y){
 
     if(x < cts.x_upper_pixel() && x > cts.x_lower_pixel() &&
-       y < cts.y_lower_pixel() && y > cts.y_upper_pixel()){
+       y < cts.y_upper_pixel() && y > cts.y_lower_pixel()){
         return 1;
     }
     return 0;

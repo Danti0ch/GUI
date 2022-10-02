@@ -51,8 +51,6 @@ void gglib::Vector::Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, doub
     
     Vector vt_normal = this->NormalVector(this->len());
 
-    // HERE MAN
-    //arrow_line = arrow_line - (*this / (double)LEN_ARROW_LINE_RATIO);
     Vector arrow_line = vt_normal - *this;
     arrow_line.ChangeLen(ARROW_LINE_LEN);
     arrow_line.x(arrow_line.x() / ct_sus.scale_x());
@@ -105,9 +103,9 @@ static void draw_real_line(GraphicSpace* editor, const CoordinateSus& ct_sus, do
     int pix_to_y_ct   = ct_sus.CountPixelPosY(y_to);
 
     if(pix_from_x_ct < ct_sus.x_lower_pixel() || pix_from_x_ct > ct_sus.x_upper_pixel()) return;
-    if(pix_from_y_ct < ct_sus.y_upper_pixel() || pix_from_y_ct > ct_sus.y_lower_pixel()) return;
+    if(pix_from_y_ct < ct_sus.y_lower_pixel() || pix_from_y_ct > ct_sus.y_upper_pixel()) return;
     if(pix_to_x_ct   < ct_sus.x_lower_pixel() || pix_to_x_ct   > ct_sus.x_upper_pixel()) return;
-    if(pix_to_y_ct   < ct_sus.y_upper_pixel() || pix_to_y_ct   > ct_sus.y_lower_pixel()) return;
+    if(pix_to_y_ct   < ct_sus.y_lower_pixel() || pix_to_y_ct   > ct_sus.y_upper_pixel()) return;
 
     editor->DrawLine(pix_from_x_ct, pix_from_y_ct, pix_to_x_ct, pix_to_y_ct, col);
 
