@@ -1,0 +1,10 @@
+"filename", "language", "C++", "Markdown", "Makefile", "comment", "blank", "total"
+"/home/plato/mipt_projs/course2/geometry_simulator/README.md", "Markdown", 0, 1, 0, 0, 1, 2
+"/home/plato/mipt_projs/course2/geometry_simulator/build/makefile", "Makefile", 0, 0, 18, 0, 8, 26
+"/home/plato/mipt_projs/course2/geometry_simulator/src/CoordinateSys.cpp", "C++", 56, 0, 0, 9, 27, 92
+"/home/plato/mipt_projs/course2/geometry_simulator/src/Point.cpp", "C++", 5, 0, 0, 1, 2, 8
+"/home/plato/mipt_projs/course2/geometry_simulator/src/Vector.cpp", "C++", 49, 0, 0, 5, 20, 74
+"/home/plato/mipt_projs/course2/geometry_simulator/src/drawer.h", "C++", 60, 0, 0, 6, 29, 95
+"/home/plato/mipt_projs/course2/geometry_simulator/src/graphics_drawer.cpp", "C++", 3, 0, 0, 43, 2, 48
+"/home/plato/mipt_projs/course2/geometry_simulator/src/main.cpp", "C++", 27, 0, 0, 14, 14, 55
+"Total", "-", 200, 1, 18, 78, 103, 400

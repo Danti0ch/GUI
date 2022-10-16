@@ -5,7 +5,8 @@
 #include "geometry_objects.h"
 
 class ActionVectorsRender : public gglib::GraphicSpace{
-
+public:
+    ActionVectorsRender();
 private:
     gglib::CoordinateSus time_cts_group_[3];
     gglib::CoordinateSus cts1_;
@@ -19,13 +20,12 @@ private:
 
     void MouseButtonPressHandler(uint x_pos, uint y_pos);
     void Update();
-public:
-    ActionVectorsRender();
 };
 //----------------------------------------------------------------------------------------//
 
 class SphereRender : public gglib::GraphicSpace{
-
+public:
+    SphereRender();
 private:
     gglib::CoordinateSus image_cts_, manip_cts_;
 
@@ -34,8 +34,6 @@ private:
     gglib::Color get_sphere_pixel_color(uint x_pix, uint y_pix);
     void  draw_sphere();
     void  MouseButtonPressHandler(uint x_pos, uint y_pos);
-public:
-    SphereRender();
 };
 //----------------------------------------------------------------------------------------//
 

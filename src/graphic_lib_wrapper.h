@@ -1,21 +1,6 @@
 #ifndef GL_WRAPPER
 #define GL_WRAPPER
 
-#define SFML_LIB 0
-#define QT_LIB   1
-
-#ifndef ACTIVE_GRAPHIC_LIB
-#define ACTIVE_GRAPHIC_LIB SFML_LIB
-#endif
-
-//#if ACTIVE_GRAPHIC_LIB == SFML_LIB
-    #include <SFML/Graphics.hpp>
-    #include <SFML/Graphics/Vertex.hpp>
-
-
-//#elif ACTIVE_GRAPHIC_LIB == QT_LIB
-//    #include <QtWidgets>
-//#endif
 #include "geometry_objects.h"
 
 namespace gglib{
@@ -51,8 +36,6 @@ enum Key {
 
 // TODO: перегрузка + для даблов
 class Color{
-private:
-    uint8_t r_, g_, b_, a_;
 public:
     Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
     Color(uint8_t r, uint8_t g, uint8_t b);
@@ -78,20 +61,18 @@ public:
     Color operator *(const Color& col2) const;
     Color operator *(double ratio) const;
     Color operator -(const Color& col2) const;
+
+    static Color WHITE(255, 255, 255, 255);
+    static Color BLACK(  0,   0,   0, 255);
+    static Color RED(  255,   0,   0, 255);
+    static Color GREEN(  0, 255,   0, 255);
+    static Color BLUE(   0,   0, 255, 255);
+    
+private:
+    uint8_t r_, g_, b_, a_;
 };
-//----------------------------------------------------------------------------------------//
 
 class GraphicSpace{
-
-private:
-
-//#if ACTIVE_GRAPHIC_LIB == SFML_LIB
-    sf::RenderWindow window_;
-//#elif ACTIVE_GRAPHIC_LIB == QT_LIB
-//    QWidget wgt;    
-//#endif
-
-    sf::Font font_;
 public:
     GraphicSpace(uint x_pixels, uint y_pixels);
 
@@ -112,28 +93,19 @@ public:
 
     uint sizeX() const { return window_.getSize().x; }
     uint sizeY() const { return window_.getSize().y; }
+
+private:
+    GSPACE_GRAPHIC_LIB_DATA
 };
 //----------------------------------------------------------------------------------------//
 
 class CoordinateSus{
-
-private:
-    
-    double x_lower_lim_, x_upper_lim_;
-    double y_lower_lim_, y_upper_lim_;
-
-    int x_lower_pixel_, x_upper_pixel_;
-    int y_lower_pixel_, y_upper_pixel_;
-
-    int n_x_upper_axis_pixels_, n_x_lower_axis_pixels_;
-    int n_y_upper_axis_pixels_, n_y_lower_axis_pixels_;
-    
-    double scale_x_, scale_y_;
-    double step_val_;
 public:
     
     CoordinateSus(uint x_lower_pixel, uint x_upper_pixel, uint y_lower_pixel, uint y_upper_pixel,
                   double x_lower_lim, double x_upper_lim, double y_lower_lim, double y_upper_lim);
+
+    ~CoordinateSus(){}
 
     double x_lower_lim() const { return x_lower_lim_; }
     double x_upper_lim() const { return x_upper_lim_; }
@@ -156,7 +128,19 @@ public:
     double CountAxisPosY(int y_pixel) const;
 
     void Draw(GraphicSpace* editor, Color col = Color(255, 255, 255, 255), Color axis_col = Color(0, 0, 255, 255)) const;
-    ~CoordinateSus(){}
+private:
+    
+    double x_lower_lim_, x_upper_lim_;
+    double y_lower_lim_, y_upper_lim_;
+
+    int x_lower_pixel_, x_upper_pixel_;
+    int y_lower_pixel_, y_upper_pixel_;
+
+    int n_x_upper_axis_pixels_, n_x_lower_axis_pixels_;
+    int n_y_upper_axis_pixels_, n_y_lower_axis_pixels_;
+    
+    double scale_x_, scale_y_;
+    double step_val_;
 };
 
 int CheckCoordInCTS(const CoordinateSus& cts, uint x, uint y);
@@ -165,10 +149,6 @@ int CheckCoordInCTS(const CoordinateSus& cts, uint x, uint y);
 typedef geom::VT_DATA VT_DATA;
 // TODO: -> inheritance?
 class Vector : public geom::Vector{
-
-private:
-    Color col_;
-
 public:
 
     Vector();
@@ -179,6 +159,8 @@ public:
     void Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, Color col = Color(255, 0, 0));
     void Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, double x_init, double y_init, Color col = Color(255, 0, 0));
     void Draw(GraphicSpace* editor, const CoordinateSus& ct_sus, const Vector& vt_init, Color col = Color(255, 0, 0));
+private:
+    Color col_;
 };
 //----------------------------------------------------------------------------------------//
 

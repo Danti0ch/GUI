@@ -14,12 +14,11 @@ enum VT_DATA{
 
 class Vector{
 
-private:   
-    double x_, y_;
-
 public: 
     Vector();
     Vector(double v1, double v2, VT_DATA mod);
+
+    ~Vector(){}
 
     double x() const { return x_; }
     double y() const { return y_; }
@@ -46,21 +45,20 @@ public:
 
     Vector operator  -() const;
 
-    ~Vector(){}
+private:   
+    double x_, y_;
 };
 
 std::ostream& operator<<(std::ostream &os, const Vector& v);
 //----------------------------------------------------------------------------------------//
 
 class Vector3D{
-
-private:   
-
-    double x_, y_, z_;
 public:
 
     Vector3D();
     Vector3D(double x, double y, double z);
+
+    ~Vector3D(){}
 
     double x()   const { return x_; }
     double y()   const { return y_; }
@@ -73,6 +71,7 @@ public:
     double len() const;
     
     void ChangeLen(double len_val);
+    void Normalize();
 
     void operator +=(const Vector3D &v2);
     void operator -=(const Vector3D &v2);
@@ -85,7 +84,8 @@ public:
     Vector3D operator /(double ratio) const;
     Vector3D operator -() const;
 
-    ~Vector3D(){}
+private:
+    double x_, y_, z_;
 };
 
 double CountCosAngle(const Vector3D& v1, const Vector3D& v2);
@@ -96,11 +96,6 @@ std::ostream& operator<<(std::ostream &os, const Vector3D& v);
 //----------------------------------------------------------------------------------------//
 
 class Sphere{
-
-private:
-    Vector3D center_;
-    double r_;
-
 public:
     Sphere(double x0, double y0, double z0, double r):
         center_(x0, y0, z0), r_(r){}
@@ -118,13 +113,15 @@ public:
         
     bool CheckPointIn(double x, double y, double z) const;
     bool CheckPointIn(const Vector3D& vt) const;
+    
+    double GetIntersectionRatio(const Vector3D& base, const Vector3D& dir) const;
+private:
+    Vector3D center_;
+    double r_;
 };
 //----------------------------------------------------------------------------------------//
 
 class Plane{
-
-private:
-    double a_, b_, c_, d_;
 public:
     Plane(double a, double b, double c, double d):
         a_(a), b_(b), c_(c), d_(d){}
@@ -140,10 +137,11 @@ public:
 
     bool CheckPointIn(double x, double y, double z) const;
     bool CheckPointIn(const Vector3D& vt) const;
-};
+    double GetIntersectionRatio(const Vector3D& base, const Vector3D& dir) const;
 
-double GetIntersectionRatio(const Vector3D& base, const Vector3D& dir, const Sphere& sp);
-double GetIntersectionRatio(const Vector3D& base, const Vector3D& dir, const Plane& plane);
+private:
+    double a_, b_, c_, d_;
+};
 
 } // namespace geom
 

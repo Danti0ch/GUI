@@ -128,12 +128,19 @@ void Vector3D::ChangeLen(double len_val){
 }
 //----------------------------------------------------------------------------------------//
 
+void Vector3D::Normalize(){
+
+    ChangeLen(1);
+    return;
+}
+//----------------------------------------------------------------------------------------//
+
 double Vector3D::len() const{
 
     return sqrt(x_ * x_ + y_ * y_ + z_ * z_);
 }
 //----------------------------------------------------------------------------------------//
-
+ 
 double geom::CountScalarMul(const Vector3D& v1, const Vector3D& v2){
 
     return v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z();

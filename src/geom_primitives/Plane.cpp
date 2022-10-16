@@ -51,16 +51,16 @@ bool Plane::CheckPointIn(const Vector3D& vt) const{
 }
 //----------------------------------------------------------------------------------------//
 
-double geom::GetIntersectionRatio(const Vector3D& base, const Vector3D& dir, const Plane& plane){
+double Plane::GetIntersectionRatio(const Vector3D& base, const Vector3D& dir) const{
 
-    double coef = plane.a() * dir.x() + plane.b() * dir.y() + plane.c() * dir.z();
+    double coef = a_ * dir.x() + b_ * dir.y() + c_ * dir.z();
 
     if(fabs(coef) < EPS) return NAN;
 
-    double ratio =  (-plane.d() - plane.a() * base.x() - plane.b() * base.y() - plane.c() * base.z())
+    double ratio =  (-d_ - a_ * base.x() - b_ * base.y() - c_ * base.z())
                                 / coef;
 
-    //if(ratio > UPPER_LIM) return NAN;
+    if(ratio < 0) return NAN;
 
     return ratio;
 }

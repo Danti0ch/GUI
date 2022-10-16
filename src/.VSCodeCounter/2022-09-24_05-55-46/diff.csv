@@ -1,0 +1,8 @@
+"filename", "language", "C++", "comment", "blank", "total"
+"/home/plato/mipt_projs/course2/geometry_simulator/src/Raytracer.h", "C++", 23, 4, 2, 29
+"/home/plato/mipt_projs/course2/geometry_simulator/src/RaytracingTest.cpp", "C++", 34, 5, 15, 54
+"/home/plato/mipt_projs/course2/geometry_simulator/src/Sphere.cpp", "C++", -1, 1, -1, -1
+"/home/plato/mipt_projs/course2/geometry_simulator/src/geom_primitives/Sphere.cpp", "C++", 10, 2, 1, 13
+"/home/plato/mipt_projs/course2/geometry_simulator/src/geom_primitives/Vector3D.cpp", "C++", 9, 3, 6, 18
+"/home/plato/mipt_projs/course2/geometry_simulator/src/geometry_objects.h", "C++", 5, 0, 2, 7
+"Total", "-", 80, 15, 25, 120

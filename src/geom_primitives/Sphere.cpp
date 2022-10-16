@@ -7,15 +7,15 @@ using namespace geom;
 /// @brief выдаёт минимальный положительный корень квадратного уравнения или NAN, если такого нет
 double get_quad_eq_root(double a, double b, double c);
 
-double geom::GetIntersectionRatio(const Vector3D& base, const Vector3D& dir, const Sphere& sp){
+double Sphere::GetIntersectionRatio(const Vector3D& base, const Vector3D& dir) const {
 
-    double t1 = base.x() - sp.x0();
-    double t2 = base.y() - sp.y0();
-    double t3 = base.z() - sp.z0();
+    double t1 = base.x() - center_.x();
+    double t2 = base.y() - center_.y();
+    double t3 = base.z() - center_.z();
     
     double k1 = dir.x() * dir.x() + dir.y() * dir.y() + dir.z() * dir.z();
     double k2 = 2 * (dir.x() * t1 + dir.y() * t2 + dir.z() * t3);
-    double k3 = t1 * t1 + t2 * t2 + t3 * t3 - sp.r() * sp.r();
+    double k3 = t1 * t1 + t2 * t2 + t3 * t3 - r_ * r_;
 
     double root = get_quad_eq_root(k1, k2, k3);
 

@@ -1,0 +1,20 @@
+"filename", "language", "C++", "comment", "blank", "total"
+"/home/plato/mipt_projs/course2/geometry_simulator/src/#include "geometry_objects.h".cpp", "C++", 9, 2, 6, 17
+"/home/plato/mipt_projs/course2/geometry_simulator/src/ActionVectorsTest.cpp", "C++", 65, 10, 30, 105
+"/home/plato/mipt_projs/course2/geometry_simulator/src/GraphicEditor.cpp", "C++", 60, 9, 28, 97
+"/home/plato/mipt_projs/course2/geometry_simulator/src/Raytracer.h", "C++", 81, 27, 33, 141
+"/home/plato/mipt_projs/course2/geometry_simulator/src/RaytracingTest.cpp", "C++", 158, 50, 81, 289
+"/home/plato/mipt_projs/course2/geometry_simulator/src/Sphere.cpp", "C++", 11, 48, 3, 62
+"/home/plato/mipt_projs/course2/geometry_simulator/src/SphereTest.cpp", "C++", 90, 13, 41, 144
+"/home/plato/mipt_projs/course2/geometry_simulator/src/geom_primitives/Sphere.cpp", "C++", 64, 7, 25, 96
+"/home/plato/mipt_projs/course2/geometry_simulator/src/geom_primitives/Vector.cpp", "C++", 84, 15, 44, 143
+"/home/plato/mipt_projs/course2/geometry_simulator/src/geom_primitives/Vector3D.cpp", "C++", 84, 17, 41, 142
+"/home/plato/mipt_projs/course2/geometry_simulator/src/geometry_objects.h", "C++", 82, 3, 39, 124
+"/home/plato/mipt_projs/course2/geometry_simulator/src/graphic_lib_wrapper.h", "C++", 144, 16, 50, 210
+"/home/plato/mipt_projs/course2/geometry_simulator/src/graphical_primitives/Button.cpp", "C++", 29, 4, 13, 46
+"/home/plato/mipt_projs/course2/geometry_simulator/src/graphical_primitives/Color.cpp", "C++", 63, 8, 31, 102
+"/home/plato/mipt_projs/course2/geometry_simulator/src/graphical_primitives/CoordinateSys.cpp", "C++", 84, 9, 37, 130
+"/home/plato/mipt_projs/course2/geometry_simulator/src/graphical_primitives/Vector.cpp", "C++", 62, 16, 39, 117
+"/home/plato/mipt_projs/course2/geometry_simulator/src/main.cpp", "C++", 19, 2, 6, 27
+"/home/plato/mipt_projs/course2/geometry_simulator/src/tests.h", "C++", 29, 2, 12, 43
+"Total", "-", 1218, 258, 559, 2035
