@@ -1,10 +1,12 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-class Image{
+#include "glib_wrapper.h"
 
-    Image(const std::string& filename):
-        data_(GetPixsFromFile(filename)){}
+class Image{
+public:
+    //Image(const std::string& filename):
+    //    data_(GetPixsFromFile(filename)){}
     
     Image(const Matrix<Color>& storage):
         data_(storage){}

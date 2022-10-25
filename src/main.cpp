@@ -1,26 +1,9 @@
-#include "tests.h"
-#include "Raytracer.h"
-#include <string.h>
-
-// TODO: fix arrow offsets
-// TODO: искривление пространства изза масштабирования осей
+#include "Window.h"
 
 int main(int argc, char *argv[]){
 
-    if(argc < 2) return 0;
+    Window cur_window(1080, 720);
 
-    if(!strcmp(argv[1], "sphere")){
-        SphereRender space;
-        space.Init();    
-    }
-    else if(!strcmp(argv[1], "vecs")){
-        ActionVectorsRender space;
-        space.Init();
-    }
-    else if(!strcmp(argv[1], "ray")){
-        SceneRaytracer space;
-        space.Init();
-    }
-    
+    cur_window.exec();
     return 0;
 }

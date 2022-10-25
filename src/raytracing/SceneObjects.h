@@ -1,13 +1,12 @@
 #ifndef SCENE_OBJECTS_H
 #define SCENE_OBJECTS_H
 
-#include "graphic_lib_wrapper.h"
 #include "geometry_objects.h"
-#include "dts.h"
+#include "Color.h"
 #include <math.h>
 
 struct Material{
-    gglib::Color col;
+    Color col;
     double       refract_ratio;
     uint         shininess_ratio;
     double       koef[5];
@@ -24,22 +23,22 @@ enum KOEF_VAL{
 };
 
 const Material MirrorMaterial{
-    gglib::Color(248, 248, 255), 1, 1000, {0, 0.7, 0, 1.2, 0}
+    Color(248, 248, 255), 1, 1000, {0, 0.7, 0, 1.2, 0}
 };
 const Material GlassMaterial{
-    gglib::Color(112, 194, 180), 1.5, 100, {0, 0, 0.6, 0.3, 0.15}
+    Color(112, 194, 180), 1.5, 100, {0, 0, 0.6, 0.3, 0.15}
 };
 const Material SteelMaterial{
-    gglib::Color(142, 154, 175), 1, 1200, {1, 0, 0, 1.2, 0.6}
+    Color(142, 154, 175), 1, 1200, {1, 0, 0, 1.2, 0.6}
 };
 const Material TreeMaterial{
-    gglib::Color(143, 88, 60), 1, 1000, {0.9, 0.06, 0, 0.3, 0.6}
+    Color(143, 88, 60), 1, 1000, {0.9, 0.06, 0, 0.3, 0.6}
 };
 const Material LightMaterial{
-    gglib::Color(255, 200, 200, 255), 1, 0, {0, 0, 0, 0, 0}
+    Color(255, 200, 200, 255), 1, 0, {0, 0, 0, 0, 0}
 };
 const Material GrassMaterial{
-    gglib::Color(112, 194, 180) , 1, 0, {0.9, 0, 0, 0, 0.5}
+    Color(112, 194, 180) , 1, 0, {0.9, 0, 0, 0, 0.5}
 };
 
 class Camera{
@@ -103,20 +102,20 @@ class SphereLight{
 public:
 
     SphereLight():
-        pos_(geom::Vector3D(0, 0, 0)), col_(gglib::Color(0, 0, 0, 0)), shape_(pos_, 0.3, LightMaterial) {}
+        pos_(geom::Vector3D(0, 0, 0)), col_(Color(0, 0, 0, 0)), shape_(pos_, 0.3, LightMaterial) {}
 
-    SphereLight(const geom::Vector3D& pos, gglib::Color col = gglib::Color(255, 244, 79)):
+    SphereLight(const geom::Vector3D& pos, Color col = Color(255, 244, 79)):
         pos_(pos), col_(col), shape_(pos, 0.3, LightMaterial) {}
 
-    SphereLight(double px, double py, double pz, gglib::Color col = gglib::Color(255, 244, 79)):
+    SphereLight(double px, double py, double pz, Color col = Color(255, 244, 79)):
         pos_(px, py, pz), col_(col), shape_(px, py, pz, 0.3, LightMaterial) {}
 
     Sphere         shape() const { return shape_; }
-    gglib::Color   col()   const { return col_; }
+    Color   col()   const { return col_; }
     geom::Vector3D pos()   const { return pos_; }
 private:
     Sphere          shape_;
-    gglib::Color    col_;
+    Color    col_;
     geom::Vector3D  pos_;
 };
 //----------------------------------------------------------------------------------------//

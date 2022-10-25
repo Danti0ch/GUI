@@ -1,22 +1,28 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
+#include <vector>
+#include <stdexcept>
+// TODO: перенести
+
 template <typename T>
 class Matrix{
 
-    explicit Matrix(uint n_rows, uint n_cols):
-        n_rows_(n_rows), n_cols_(n_cols), data_(){}
+public:
+
+    Matrix(uint n_rows, uint n_cols):
+        n_rows_(n_rows), n_cols_(n_cols), data_(n_rows * n_cols){}
+
+    Matrix(uint n_rows, uint n_cols, const T& val):
+        n_rows_(n_rows), n_cols_(n_cols), data_(n_rows * n_cols, val){}
 
     Matrix(const Matrix& other):
-        n_rows_(n_rows), n_cols_(n_cols), data_(other.data()){}
+        n_rows_(other.n_rows_), n_cols_(other.n_cols_), data_(other.data_){}
 
-    Matrix(const std::vector& data):
-        n_rows_(n_rows), n_cols_(n_cols), data_(data){}
-    
     ~Matrix(){}
 
     T& get(uint n_row, uint n_col){
-        if(n_row >= n_rows_ || n_col >= n_cols_) throw std::out_of_range();
+        if(n_row >= n_rows_ || n_col >= n_cols_) throw std::out_of_range("");
         return data_[n_row * n_cols_ + n_col];
     }
 
@@ -33,7 +39,7 @@ class Matrix{
         if(n_row1 > n_row2) std::swap(n_row1, n_row2);
         if(n_col1 > n_col2) std::swap(n_col1, n_col2);
 
-        if(n_row2 >= n_rows_ || n_col2 >= n_cols) throw std::out_of_range();
+        if(n_row2 >= n_rows_ || n_col2 >= n_cols) throw std::out_of_range("");
 
         uint sn_rows = n_row2 - n_row1 + 1;
         uint sn_cols = n_col2 - n_col1 + 1;
@@ -47,6 +53,16 @@ class Matrix{
         }
 
         return submatrix;
+    }
+
+    T* operator[](uint n_row){
+
+        return const_cast<T*>(data_.data()) + n_row * n_cols_;
+    }
+
+    const T* operator[](uint n_row) const{
+
+        return const_cast<const T*>(data_.data() + n_row * n_cols_);
     }
 
     constexpr uint n_rows() const { return n_rows_; }

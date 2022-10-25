@@ -1,14 +1,9 @@
-#include "graphic_lib_wrapper.h"
+#include "Color.h"
 
-using namespace gglib;
-
-const uint MAX_COMP_VAL = 255;
-
+const uint32_t MAX_COMP_VAL = 255;
+#include <iostream>
 Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a):
     r_(r), g_(g), b_(b), a_(a){}
-
-Color::Color(uint8_t r, uint8_t g, uint8_t b):
-    r_(r), g_(g), b_(b), a_(255){}
 
 void Color::operator +=(const Color& col2){
 
@@ -23,10 +18,10 @@ void Color::operator +=(const Color& col2){
 
 void Color::operator *=(const Color& col2){
 
-    uint r_new = ((uint)r_ * (uint)col2.r()) / MAX_COMP_VAL;
-    uint g_new = ((uint)g_ * (uint)col2.g()) / MAX_COMP_VAL;
-    uint b_new = ((uint)b_ * (uint)col2.b()) / MAX_COMP_VAL;
-    uint a_new = ((uint)a_ * (uint)col2.a()) / MAX_COMP_VAL;
+    uint32_t r_new = ((uint32_t)r_ * (uint32_t)col2.r()) / MAX_COMP_VAL;
+    uint32_t g_new = ((uint32_t)g_ * (uint32_t)col2.g()) / MAX_COMP_VAL;
+    uint32_t b_new = ((uint32_t)b_ * (uint32_t)col2.b()) / MAX_COMP_VAL;
+    uint32_t a_new = ((uint32_t)a_ * (uint32_t)col2.a()) / MAX_COMP_VAL;
     
     r_ = (r_new > MAX_COMP_VAL) ? MAX_COMP_VAL : r_new;
     g_ = (g_new > MAX_COMP_VAL) ? MAX_COMP_VAL : g_new;
@@ -39,10 +34,10 @@ void Color::operator *=(const Color& col2){
 
 void Color::operator *=(double ratio){
 
-    uint r_new = (double)r_ * ratio;
-    uint g_new = (double)g_ * ratio;
-    uint b_new = (double)b_ * ratio;
-    uint a_new = (double)a_ * ratio;
+    uint32_t r_new = (double)r_ * ratio;
+    uint32_t g_new = (double)g_ * ratio;
+    uint32_t b_new = (double)b_ * ratio;
+    uint32_t a_new = (double)a_ * ratio;
     
     r_ = (r_new > MAX_COMP_VAL) ? MAX_COMP_VAL : r_new;
     g_ = (g_new > MAX_COMP_VAL) ? MAX_COMP_VAL : g_new;

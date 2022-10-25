@@ -9,7 +9,7 @@
 
 const uint N_SHAPES = 5;
 
-class SceneRaytracer : public gglib::GraphicSpace{
+class SceneRaytracer{
 public:
 
     SceneRaytracer();

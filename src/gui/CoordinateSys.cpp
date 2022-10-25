@@ -1,8 +1,8 @@
-#include "graphic_lib_wrapper.h"
+#include "CoordinateSus.h"
 #include <assert.h>
 #include <math.h>
 
-using namespace gglib;
+#include "geometry_objects.h"
 
 //static const uint   COORD_SUS_GRID_SIZE = 30;
 static const uint   N_COORD_SUS_GRIDS = 8;
@@ -68,58 +68,7 @@ double CoordinateSus::CountAxisPosY(int y_pixel) const {
     return val;
 }
 //----------------------------------------------------------------------------------------//
-
-// TODO: make smarter разметка линий на координатной оси. Например умное деление на линии единичных отрезков вида 10^x
-void CoordinateSus::Draw(GraphicSpace* editor, Color col, Color axis_col) const {
-
-    assert(editor != NULL);
-
-    uint grid_x_size = (n_x_upper_axis_pixels_ + n_x_lower_axis_pixels_) / N_COORD_SUS_GRIDS;
-    uint grid_y_size = (n_y_upper_axis_pixels_ + n_y_lower_axis_pixels_) / N_COORD_SUS_GRIDS;
-
-    int N_X_UPPER_AXIS_LINES  = n_x_upper_axis_pixels_ / grid_x_size;
-    int N_X_LOWER_AXIS_LINES  = n_x_lower_axis_pixels_ / grid_x_size;
-    
-    int N_Y_UPPER_AXIS_LINES  = n_y_upper_axis_pixels_ / grid_y_size;
-    int N_Y_LOWER_AXIS_LINES  = n_y_lower_axis_pixels_ / grid_y_size;
-
-    for(int n_x_line = -N_X_LOWER_AXIS_LINES; n_x_line <= N_X_UPPER_AXIS_LINES; n_x_line++){
-        
-        int x_ct = n_x_line * grid_x_size + n_x_lower_axis_pixels_ + x_lower_pixel_;
-
-        if(n_x_line == 0){
-            editor->DrawLine(x_ct, y_lower_pixel_, x_ct, y_upper_pixel_, axis_col);
-        }
-        else{
-            editor->DrawLine(x_ct, y_lower_pixel_, x_ct, y_upper_pixel_, col);
-        }
-    }
-
-    int x_ct = n_x_lower_axis_pixels_ + x_lower_pixel_;
-    editor->DrawLine(x_ct - ARROW_AXIS_PROJ_LEN, y_upper_pixel_ - ARROW_AXIS_PROJ_LEN, x_ct, y_upper_pixel_, axis_col);
-    editor->DrawLine(x_ct + ARROW_AXIS_PROJ_LEN, y_upper_pixel_ - ARROW_AXIS_PROJ_LEN, x_ct, y_upper_pixel_, axis_col);
-
-    for(int n_y_line = -N_Y_LOWER_AXIS_LINES; n_y_line <= N_Y_UPPER_AXIS_LINES; n_y_line++){
-        
-        int y_ct = n_y_line * grid_y_size + y_lower_pixel_ + n_y_lower_axis_pixels_ ;
-
-        if(n_y_line == 0){
-            editor->DrawLine(x_lower_pixel_, y_ct, x_upper_pixel_, y_ct, axis_col);
-        }
-        else{
-            editor->DrawLine(x_lower_pixel_, y_ct, x_upper_pixel_, y_ct, col);
-        }
-    }
-
-    int y_ct = y_lower_pixel_ + n_y_lower_axis_pixels_;
-    editor->DrawLine(x_upper_pixel_ - ARROW_AXIS_PROJ_LEN, y_ct + ARROW_AXIS_PROJ_LEN, x_upper_pixel_, y_ct, axis_col);
-    editor->DrawLine(x_upper_pixel_ - ARROW_AXIS_PROJ_LEN, y_ct - ARROW_AXIS_PROJ_LEN, x_upper_pixel_, y_ct, axis_col);
-
-    return;
-}
-//----------------------------------------------------------------------------------------//
-
-int gglib::CheckCoordInCTS(const CoordinateSus& cts, uint x, uint y){
+int CheckCoordInCTS(const CoordinateSus& cts, uint x, uint y){
 
     if(x < cts.x_upper_pixel() && x > cts.x_lower_pixel() &&
        y < cts.y_upper_pixel() && y > cts.y_lower_pixel()){

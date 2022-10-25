@@ -1,14 +1,27 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
+#include <set>
+#include <string>
+#include "Matrix.h"
+#include <stdlib.h>
+#include "Color.h"
+#include "Image.h"
+
 enum class TEXTURE_INSERT_MODE{
         FILLING,
         SCRETCHING
 };
 
-class Texture{
+typedef std::set<std::pair<uint, uint>> pt_set;
 
-    Texture(const Color& col = Color::WHITE):
+class Texture{
+public:
+
+    Texture():
+        Texture(Color()){}
+    
+    Texture(const Color& col):
         solid_col_(col), col_pixels_(0, 0), is_solid_(true) {}
 
     Texture(const Image& img):
@@ -20,12 +33,13 @@ class Texture{
     ~Texture(){}
 
     void draw(GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, TEXTURE_INSERT_MODE mode = TEXTURE_INSERT_MODE::SCRETCHING);
-    void draw(GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, const std::set& mask, TEXTURE_INSERT_MODE mode = TEXTURE_INSERT_MODE::SCRETCHING);
+    void draw(GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, const pt_set& mask, TEXTURE_INSERT_MODE mode = TEXTURE_INSERT_MODE::SCRETCHING);
 
     bool is_solid() const { return is_solid_; }
 
-public:
-    static Texture SOLID_WHITE(Color::WHITE);
+    const Color& solid_col() const { return solid_col_; }
+    const Matrix<Color>& col_pixels() const { return col_pixels_; }
+
 private:
 
     bool is_solid_;
