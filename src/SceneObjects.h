@@ -1,7 +1,7 @@
 #ifndef SCENE_OBJECTS_H
 #define SCENE_OBJECTS_H
 
-#include "geometry_objects.h"
+#include "GeometryObjects.h"
 #include "Color.h"
 #include <math.h>
 

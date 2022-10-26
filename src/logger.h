@@ -12,6 +12,7 @@
 #define LOGGER_H
 
 typedef unsigned int uint;
+#include <assert.h>
 
 enum ERROR_CODE{
 

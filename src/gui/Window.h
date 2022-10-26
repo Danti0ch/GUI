@@ -3,81 +3,135 @@
 
 #include "glib_wrapper.h"
 #include "Texture.h"
-#include "ContainerWidget.h"
-#include <iostream>
+#include "Widget.h"
+#include <string.h>
+#include "logger.h"
 
-/*
-struct EventHandler{
-    Widget* p_widget;
-    Event*  p_event;
+// TODO: обязательно ли widget != NULL
+class EventHandler{
+
+public:
+
+    EventHandler(const Widget* caller_widget, T_HANDLER_FUNC p_handler):
+        caller_widget_(caller_widget), p_handler_(p_handler), p_data_(NULL){
+            NASSERT(caller_widget);
+        }
+    EventHandler(const Widget* caller_widget, T_HANDLER_FUNC p_handler, void* p_data):
+        EventHandler(caller_widget, p_handler){
+            p_data_ = p_data;
+            NASSERT(caller_widget);
+        }
+    ~EventHandler(){
+        free(p_data_);
+    }
+
+    const Widget*  caller_widget() const { return caller_widget_; }
+    T_HANDLER_FUNC handler()       const { return p_handler_; }
+    void*          p_data()        const { return p_data_; }
+    bool operator==(const EventHandler& other) const{
+        if(caller_widget_ == other.caller_widget_ && p_handler_ == other.p_handler_) return true;
+
+        return false;
+    }
+private:
+    const Widget* caller_widget_;
+    T_HANDLER_FUNC p_handler_;
+    void*           p_data_;
 };
-*/
+
 class EventManager{
 public:
     EventManager():
-        handlers_(N_CORE_EVENTS){}
+        handlers_(N_EVENTS){}
     
-    void processEvents(const CoreEvent* core_event){
-        std::list<EventHandler>::iterator iter = handlers_[core_event.id()].begin();
+    void processHandlers(Event* event){
+        NASSERT(event);
 
-        // TODO: можно ли избавиться от id
-        while(; iter != handlers_[core_event.id()].end(); iter++){
-            if((*iter)->apply(core_event)){
-                (*iter)->proccessHandlers();
+        std::list<EventHandler>::iterator iter = handlers_[event->id()].begin();
+
+        for(; iter != handlers_[event->id()].end(); iter++){
+            if(event->check((*iter).caller_widget())){
+                (*iter).handler()(event, (*iter).p_data());
             }
         }
         return;
     }
 
-    void addEvent(const Event* event){
-        for(uint n_core_event_id = 0; n_core_event_id < event->core_events.size(); n_core_event_id++){
-            handlers[event->core_events[n_core_event_id]].push_back(event);
-        }
+    void addHandler(T_EVENT event_id, const Widget* caller_widget, const T_HANDLER_FUNC handler, void* p_data){
+        NASSERT(caller_widget);
+        
+        handlers_[(int)event_id].push_back(EventHandler(caller_widget, handler, p_data));
         return;
     }
 
-    void removeEvent(const Event* event){
-        for(uint n_core_event_id = 0; n_core_event_id < event->core_events.size(); n_core_event_id++){
-            handlers[event->core_events[n_core_event_id]].push_back(event);
-        }
+    void removeHandler(T_EVENT event_id, const Widget* caller_widget, const T_HANDLER_FUNC handler){
+        NASSERT(caller_widget);
+
+        std::list<EventHandler>::iterator iter;
+
+        handlers_[(int)event_id].remove(EventHandler(caller_widget, handler));
+        return;
     }
 
+    void removeWidgetHandlers(const Widget* caller_widget){
+        NASSERT(caller_widget);
+
+        for(uint n_event = 0; n_event < handlers_.size(); n_event++){
+            std::list<EventHandler>::iterator iter = handlers_[n_event].begin();
+
+            while(iter != handlers_[n_event].end()){
+                if((*iter).caller_widget() == caller_widget){
+                    std::list<EventHandler>::iterator iter_to_remove = iter;
+                    iter++;
+                    handlers_[n_event].erase(iter_to_remove);
+                }
+                else iter++;
+            }
+        }
+        return;
+    }
     ~EventManager(){}
 private:
-    std::vector<std::list<const Event*>> handlers_;
+    std::vector<std::list<EventHandler>> handlers_;
 };
-class Window{
+
+class Window : public ContainerWidget{
 public:
-    Window(uint width, uint height, const Texture& texture):
-        space(width, height),
-        storage_widget(0, 0, width, height, texture.)
-    {}
-    
+
     Window(uint width, uint height):
         space(width, height),
-        storage_widget(0, 0, width, height)
-    {}
+        ContainerWidget(0, 0, width, height)
+    {
+        p_core_window_ = this;
+    }
     
     void exec(){
-        CoreEvent* core_event = new CoreEvent(T_CORE_EVENT::UNDEFINED);
-        
-        while(space.isopen()){
-            while(space.handleEvent(core_event)){
-                e_manager.processEvents(core_event);
-            }
+        Event* event = NULL;
+        bool was_event = false;
 
-            space.show();
+        fullDraw();
+        space.show();
+
+        while(space.isOpen()){
+            while(space.extractEvent(&event)){
+                was_event = true;
+                event_manager.processHandlers(event);
+                delete event;
+            }
+            if(was_event){
+                fullDraw();
+                space.show();
+                was_event = false;
+            }
         }
-        delete core_event;
+
         return;
     }
 
-// TODO: распространяется на потомки?
-friend class Widget;
+    friend class Widget;
 private:
-    ContainerWidget storage_widget;
     GraphicSpace    space;
-    EventManager    e_manager;
+    EventManager    event_manager;
 };
 
 #endif // WINDOW_H

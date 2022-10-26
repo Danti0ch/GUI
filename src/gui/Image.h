@@ -1,7 +1,8 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#include "glib_wrapper.h"
+#include "Matrix.h"
+#include "Color.h"
 
 class Image{
 public:

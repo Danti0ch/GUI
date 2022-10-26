@@ -1,5 +1,7 @@
 #include "Texture.h"
 #include <assert.h>
+#include "Pixel.h"
+#include "glib_wrapper.h"
 
 void draw_solid(const Texture& obj, GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask);
 void draw_filled(const Texture& obj, GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask);
@@ -131,7 +133,6 @@ void draw_solid(const Texture& obj, GraphicSpace* space, uint x_l, uint y_l, uin
             }
         }
     }
-
     space->drawPixels(pixs_to_draw);
 
     return;

@@ -1,30 +1,34 @@
-#ifndef RAYTRAY
-#define RAYTRAY
+#ifndef DRAW_AREA_H
+#define DRAW_AREA_H
 
-#include "scene_objects.h"
+#include "SceneObjects.h"
+#include "gui/Widget.h"
 
 #ifndef CONTOUR_ENABLED
     #define CONTOUR_ENABLED 0
 #endif
 
-const uint N_SHAPES = 5;
-
-class SceneRaytracer{
+class Raytracer : public Widget{
 public:
 
-    SceneRaytracer();
-    ~SceneRaytracer();
+    Raytracer(ContainerWidget* parent_widget, uint x, uint y, uint width, uint height);
+    ~Raytracer(){}
     
-    gglib::Color background_col;
-    Camera cam;
+    void draw(GraphicSpace* space) override;
 
-    dts::vector<SphereLight> light_sources;
-    dts::vector<Shape*> shapes;
+    std::vector<SphereLight>& light_sources()   { return light_sources_; }  
+    std::vector<Shape*>&       shapes()          { return shapes_; }
+    Color&                    background_col()  { return background_col_; }
+    Camera&                   cam()             { return cam_; }
 
 private:
-    void KeyPressHandler(gglib::Key key);
-    void UpdateAfterEvents();
-};
-//----------------------------------------------------------------------------------------//
 
-#endif // RAYTRAY
+    // TODO: to list
+    std::vector<SphereLight> light_sources_;
+    std::vector<Shape*> shapes_;
+
+    Color background_col_;
+    Camera cam_;
+};
+
+#endif // DRAW_AREA_H

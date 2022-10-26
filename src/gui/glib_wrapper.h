@@ -1,20 +1,13 @@
 #ifndef GRAPHIC_LIB_WRAPPER_H
 #define GRAPHIC_LIB_WRAPPER_H
-
-/*
-#define SFML_LIB 0
-#define QT_LIB   1
-
-#ifndef ACTIVE_GRAPHIC_LIB
-#define ACTIVE_GRAPHIC_LIB SFML_LIB
-#endif
-*/
+    #include <iostream>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include "GraphicSpaceKernelAbstract.h"
-#include <iostream>
 
+#include "Event.h"
+#include "BaseEvents.h"
 class GraphicSpace : public GraphicSpaceKernelAbstract{
 
 public:
@@ -23,19 +16,19 @@ public:
         window_(sf::VideoMode(width, height), "NO SIGNAL"),
         font_()
     {
+        // TODO: refactor
         font_.loadFromFile("../fonts/arial.ttf");
     }
 
-    void drawText(uint x_pixel, uint y_pixel, const std::string& str, uint font_size, Color col) override{
+    void drawText(uint x_pixel, uint y_pixel, const std::string& str, uint font_size, const Color& col) override{
         sf::Text text_obj(str.c_str(), font_, font_size);
-        text_obj.setPosition(x_pixel, height() - y_pixel);
-
+        text_obj.setPosition(x_pixel, y_pixel);
+        
         text_obj.setFillColor(convertLibColor(col));
-
         window_.draw(text_obj);
     }
 
-    void drawLine(uint x_pix1, uint y_pix1, uint x_pix2, uint y_pix2, Color col) override {
+    void drawLine(uint x_pix1, uint y_pix1, uint x_pix2, uint y_pix2, const Color& col) override {
         sf::Color sf_col = convertLibColor(col);
 
         sf::Vertex line_to_draw[] = {
@@ -47,14 +40,13 @@ public:
         return;
     }
 
-    void drawPixel(uint x_pix, uint y_pix, Color col) override {
+    void drawPixel(uint x_pix, uint y_pix, const Color& col) override {
         sf::Color sf_col = convertLibColor(col);
         sf::Vertex pix_to_draw(sf::Vector2f(x_pix, height() - y_pix), sf_col);
 
         window_.draw(&pix_to_draw, 1, sf::Points);
         return;
     }
-    
     void drawPixels(const std::vector<Pixel>& pixels) override {
 
         uint n_pixels = pixels.size();
@@ -69,7 +61,7 @@ public:
         return;
     }
 
-    void clear(Color col) override{
+    void clear(const Color& col) override{
         window_.clear(convertLibColor(col));
         return;
     }
@@ -84,34 +76,26 @@ public:
         return;
     }
 
-    bool isopen() override{
+    bool isOpen() override{
         return window_.isOpen();
     }
 
-    bool extractEvent(CoreEvent* core_event) override {
+    bool extractEvent(Event** p_event) override {
+
         sf::Event sf_event;
         if(!window_.pollEvent(sf_event)) return false;
 
-        /*
-        if(sf_event.type == sf::Event::Closed){
-            *event = Event(EVENT_TYPE::CLOSE_BUTTON_PRESSED);
-            return true;
-        }*/
+        //if(sf_event.type == sf::Event::Closed){
+        //    *p_event = new CloseButtonPressedEvent();
+        //}
         if(sf_event.type == sf::Event::MouseButtonPressed){
-
-            // TODO: refactor this            
-            free(CoreEvent);
-            *CoreEvent = new MouseLClickCoreEvent(width() - sf_event.mouseButton.x, height() - sf_event.mouseButton.y);
-            return true;
+            *p_event = new MouseLClickEvent(sf_event.mouseButton.x, sf_event.mouseButton.y);
         }
         else if(sf_event.type == sf::Event::KeyPressed){
-
-            free(CoreEvent);
-            *CoreEvent = new KeyPressedCoreEvent((KEY_TYPE)sf_event.key.code);
-            return true;
+            *p_event = new KeyPressedEvent((KEY_TYPE)sf_event.key.code);
         }
-
-        return false;
+        else return false;
+        return true;
     }
 
 private:

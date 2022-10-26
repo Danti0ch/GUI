@@ -1,8 +1,8 @@
-#include "CoordinateSus.h"
+#include "GeometryObjects.h"
 #include <assert.h>
 #include <math.h>
 
-#include "geometry_objects.h"
+using namespace geom;
 
 //static const uint   COORD_SUS_GRID_SIZE = 30;
 static const uint   N_COORD_SUS_GRIDS = 8;

@@ -8,6 +8,7 @@
 #include "Color.h"
 #include "Image.h"
 
+class GraphicSpace;
 enum class TEXTURE_INSERT_MODE{
         FILLING,
         SCRETCHING
