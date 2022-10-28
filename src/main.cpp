@@ -4,7 +4,7 @@
 #include "gui/DropMenu.h"
 #include <iostream>
 
-void ButtOK(Event* event, void* p_data){
+void ButtOK(const Event* event){
     std::cout << "OK\n";
 }
 
@@ -23,10 +23,6 @@ int main(int argc, char *argv[]){
 
     Raytracer tracer(&cur_window, 4, 4, 600, 600);
     draw_butt.addEventHandler(T_EVENT::mouseLClickEvent, ButtOK);
-
-    DropMenu menu(&cur_window, 700, 300, 100, 60);
-    menu.setText("wtf");
-    menu.setTexture(Texture(Color(16, 100, 115)));
 
     cur_window.exec();
     return 0;
