@@ -4,7 +4,7 @@
 #include <vector>
 #include <stdexcept>
 // TODO: перенести
-
+// TODO: переделать в pixelBuff?? Есть проблема того, что виджет может теоретически любые точки красить на окне
 template <typename T>
 class Matrix{
 

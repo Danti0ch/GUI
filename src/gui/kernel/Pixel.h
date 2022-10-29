@@ -12,6 +12,9 @@ public:
     uint x() const { return x_; } 
     uint y() const { return y_; } 
 
+    uint& x() { return x_; } 
+    uint& y() { return y_; } 
+
     const Color& col() const { return col_; }
 private:
     uint x_, y_;

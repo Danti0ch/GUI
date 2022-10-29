@@ -1,7 +1,4 @@
 #include "gui/Window.h"
-#include "Raytracer.h"
-#include "gui/Buttons.h"
-#include "gui/DropMenu.h"
 #include <iostream>
 
 void ButtOK(Event* event, void* p_data){
