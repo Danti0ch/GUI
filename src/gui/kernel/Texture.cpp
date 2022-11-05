@@ -3,10 +3,10 @@
 #include "Pixel.h"
 #include "glib_wrapper.h"
 
-void draw_solid(const Texture& obj, GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask);
-void draw_filled(const Texture& obj, GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask);
-void draw_scretched(const Texture& obj, GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask);
-void draw_distribution(const Texture& obj, GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask, TEXTURE_INSERT_MODE mode);
+void draw_solid(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask);
+void draw_filled(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask);
+void draw_scretched(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask);
+void draw_distribution(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask, TEXTURE_INSERT_MODE mode);
 
 //========================================================================================//
 
@@ -15,7 +15,7 @@ void draw_distribution(const Texture& obj, GraphicSpace* space, uint x_l, uint y
 //========================================================================================//
 
 #include <iostream>
-void Texture::draw(GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, TEXTURE_INSERT_MODE mode){
+void Texture::draw(PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, TEXTURE_INSERT_MODE mode){
 
     assert(space != NULL);
     draw_distribution(*this, space, x_l, y_l, x_u, y_u, false, pt_set(), mode);
@@ -23,7 +23,7 @@ void Texture::draw(GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, 
 }
 //----------------------------------------------------------------------------------------//
 
-void Texture::draw(GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, const pt_set& mask, TEXTURE_INSERT_MODE mode){
+void Texture::draw(PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, const pt_set& mask, TEXTURE_INSERT_MODE mode){
     
     assert(space != NULL);
     draw_distribution(*this, space, x_l, y_l, x_u, y_u, true, mask, mode);    
@@ -37,7 +37,7 @@ void Texture::draw(GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, 
 //========================================================================================//
 
 
-void draw_distribution(const Texture& obj, GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask, TEXTURE_INSERT_MODE mode){
+void draw_distribution(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask, TEXTURE_INSERT_MODE mode){
 
     assert(space != NULL);
 
@@ -55,7 +55,7 @@ void draw_distribution(const Texture& obj, GraphicSpace* space, uint x_l, uint y
 }
 //----------------------------------------------------------------------------------------//
 
-void draw_filled(const Texture& obj, GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask){
+void draw_filled(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask){
 
     assert(space != NULL);
 
@@ -86,7 +86,7 @@ void draw_filled(const Texture& obj, GraphicSpace* space, uint x_l, uint y_l, ui
 }
 //----------------------------------------------------------------------------------------//
 
-void draw_scretched(const Texture& obj, GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask){
+void draw_scretched(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask){
 
     assert(space != NULL);
 
@@ -116,7 +116,7 @@ void draw_scretched(const Texture& obj, GraphicSpace* space, uint x_l, uint y_l,
 }
 //----------------------------------------------------------------------------------------//
 
-void draw_solid(const Texture& obj, GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask){
+void draw_solid(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask){
 
     assert(space != NULL);
     assert(obj.is_solid());

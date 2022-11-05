@@ -7,8 +7,8 @@
 #include <stdlib.h>
 #include "Color.h"
 #include "Image.h"
+#include "glib_wrapper.h"
 
-class GraphicSpace;
 enum class TEXTURE_INSERT_MODE{
         FILLING,
         SCRETCHING
@@ -33,8 +33,8 @@ public:
 
     ~Texture(){}
 
-    void draw(GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, TEXTURE_INSERT_MODE mode = TEXTURE_INSERT_MODE::SCRETCHING);
-    void draw(GraphicSpace* space, uint x_l, uint y_l, uint x_u, uint y_u, const pt_set& mask, TEXTURE_INSERT_MODE mode = TEXTURE_INSERT_MODE::SCRETCHING);
+    void draw(PixelBuffer* buff, uint x_l, uint y_l, uint x_u, uint y_u, TEXTURE_INSERT_MODE mode = TEXTURE_INSERT_MODE::SCRETCHING);
+    void draw(PixelBuffer* buff, uint x_l, uint y_l, uint x_u, uint y_u, const pt_set& mask, TEXTURE_INSERT_MODE mode = TEXTURE_INSERT_MODE::SCRETCHING);
 
     bool is_solid() const { return is_solid_; }
 

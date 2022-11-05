@@ -3,10 +3,10 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Vertex.hpp>
-#include <SFML/RenderTarget.hpp>
 
 #include "Pixel.h"
 #include "Color.h"
+#include "Event.h"
 
 // TODO: make cpp
 
@@ -15,10 +15,15 @@
 
 // TODO: написать проверки на out_of_range
 
-class PixBuffer{
+class PixelBuffer{
 public:
-    PixBuffer(uint width, uint height):
-        buffer_(width, height){}
+    PixelBuffer(uint width, uint height):
+        buffer_(),
+        font_()
+    {
+        buffer_.create(width, height);
+        font_.loadFromFile("../fonts/arial.ttf");
+    }
 
     uint width()  const { return buffer_.getSize().x; }
     uint height() const { return buffer_.getSize().y; }
@@ -63,19 +68,38 @@ public:
 
         buffer_.draw(pix_to_draw, n_pixels, sf::Points);
         delete[] pix_to_draw;
+
+        buffer_.display();
         return;
     }
     
-    friend class GraphicsSpace;
+    void drawPixelBuffer(uint x, uint y, const PixelBuffer& obj){
+        sf::Sprite tmp_sprite(obj.buffer_.getTexture()); 
+        tmp_sprite.setPosition(sf::Vector2f(x, y));
+        buffer_.draw(tmp_sprite);
+
+        return;
+    }
+
 private:
     sf::RenderTexture buffer_;
+    sf::Font font_;
+    
+    friend class GraphicSpace;
+
+    sf::Color convertLibColor(const Color& col){
+        sf::Color sf_col(col.r(), col.g(), col.b(), col.a());
+        return sf_col;
+    }
+
 };
+
+#include <iostream>
 
 class GraphicSpace{
 
 public:
     GraphicSpace(uint width, uint height):
-        GraphicSpaceKernelAbstract(width, height),
         window_(sf::VideoMode(width, height), "NO SIGNAL"),
         font_()
     {
@@ -102,6 +126,9 @@ public:
         return window_.isOpen();
     }
 
+    uint width()  const { return window_.getSize().x; }
+    uint height() const { return window_.getSize().y; }
+
     bool extractEvent(Event** p_event){
 
         sf::Event sf_event;
@@ -114,13 +141,13 @@ public:
             *p_event = new MouseLClickEvent(sf_event.mouseButton.x, sf_event.mouseButton.y);
         }
         else if(sf_event.type == sf::Event::KeyPressed){
-            *p_event = new KeyPressedEvent((KEY_TYPE)sf_event.key.code);
+            *p_event = new KeyPressedEvent((T_KEY)sf_event.key.code);
         }
         else return false;
         return true;
     }
 
-    void drawText(uint x_pixel, uint y_pixel, const std::string& str, uint font_size, const Color& col) override{
+    void drawText(uint x_pixel, uint y_pixel, const std::string& str, uint font_size, const Color& col){
         sf::Text text_obj(str.c_str(), font_, font_size);
         text_obj.setPosition(x_pixel, y_pixel);
         
@@ -162,8 +189,11 @@ public:
         return;
     }
 
-    void drawPixBuffer(const PixBuffer& obj){
-        sf::Sprite tmp_spite(obj.buffer_.getTexture()); 
+    void drawPixelBuffer(uint x, uint y, PixelBuffer& obj){
+
+        window_.clear();
+
+        sf::Sprite tmp_sprite(obj.buffer_.getTexture()); 
         window_.draw(tmp_sprite);
 
         return;
@@ -172,7 +202,7 @@ private:
     sf::RenderWindow window_;
     sf::Font font_;
 
-private:
+
     sf::Color convertLibColor(const Color& col){
         sf::Color sf_col(col.r(), col.g(), col.b(), col.a());
         return sf_col;
