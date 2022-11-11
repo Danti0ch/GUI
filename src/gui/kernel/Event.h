@@ -6,6 +6,7 @@ enum class T_EVENT{
     unknown,
     mouseLClick,
     keyPressed,
+    sliderMoved,
     N_EVENTS
 };
 
@@ -85,6 +86,18 @@ public:
     T_KEY key() const { return key_; }
 private: 
     T_KEY key_;
+};
+
+class SliderMovedEvent : public Event {
+public:
+    SliderMovedEvent(double ratio):
+        Event(T_EVENT::sliderMoved), ratio_(ratio){}
+
+    bool check(const Widget* widget) const override;
+
+    double ratio() const { return ratio_; }
+private:
+    double ratio_;
 };
 
 #endif // EVENT_H

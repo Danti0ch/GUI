@@ -116,6 +116,7 @@ void draw_scretched(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, 
 }
 //----------------------------------------------------------------------------------------//
 
+#include <iostream>
 void draw_solid(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask){
 
     assert(space != NULL);
@@ -128,11 +129,12 @@ void draw_solid(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint
 
     for(uint n_row = 0; n_row < ny_area_pxs; n_row++){
         for(uint n_col = 0; n_col < nx_area_pxs; n_col++){
-            if(!mask_req || mask.count({n_row, n_col})){
+            if((!mask_req) || mask.count({n_row, n_col})){
                 pixs_to_draw.push_back(Pixel(x_l + n_col, y_l + n_row, obj.solid_col()));
             }
         }
     }
+
     space->drawPixels(pixs_to_draw);
 
     return;

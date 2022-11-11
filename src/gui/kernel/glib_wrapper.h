@@ -8,6 +8,7 @@
 #include "Color.h"
 #include "Event.h"
 
+#include <iostream>
 // TODO: make cpp
 
 // TODO: rename
@@ -60,6 +61,7 @@ public:
     void drawPixels(const std::vector<Pixel>& pixels){
 
         uint n_pixels = pixels.size();
+
         sf::Vertex* pix_to_draw = new sf::Vertex[n_pixels];
 
         for(uint n_pix = 0; n_pix < n_pixels; n_pix++){
@@ -189,9 +191,7 @@ public:
         return;
     }
 
-    void drawPixelBuffer(uint x, uint y, PixelBuffer& obj){
-
-        window_.clear();
+    void drawPixelBuffer(uint x, uint y, const PixelBuffer& obj){
 
         sf::Sprite tmp_sprite(obj.buffer_.getTexture()); 
         window_.draw(tmp_sprite);
@@ -201,7 +201,6 @@ public:
 private:
     sf::RenderWindow window_;
     sf::Font font_;
-
 
     sf::Color convertLibColor(const Color& col){
         sf::Color sf_col(col.r(), col.g(), col.b(), col.a());

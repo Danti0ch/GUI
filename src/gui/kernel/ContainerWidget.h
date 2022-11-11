@@ -18,9 +18,11 @@ public:
     friend class Window;
 private:
     std::list<Widget*> subwidgets_;
+
 private:
-    void connectToManager_(EventManager* manager) override;
-    void disconnectFromManager_() override;
+    //! TODO: arg to container widget
+    void connectDataUpdate_(Widget* container) override;
+    void disconnectDataUpdate_() override;
 };
 
 #endif // CONTAINER_WIDGET_H

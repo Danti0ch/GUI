@@ -38,8 +38,12 @@ public:
     uint x() const { return x_; }
     uint y() const { return y_; }
 
-//    uint glob_x() const { return gx_; }
-//    uint glob_y() const { return gy_; }
+    //?  is it ok?
+    void x(uint val) { x_ = val; }
+    void y(uint val) { y_ = val; }
+
+    uint rx() const { return rx_; }
+    uint ry() const { return ry_; }
 
     uint width() const { return width_; }
     uint height() const { return height_; }
@@ -52,36 +56,48 @@ public:
 
     ContainerWidget* parent() { return parent_widget_; }
     const PixelBuffer& pixBuff() const { return buff_; }
-
-    virtual void onMouseLClick(const Event* event){};
-    virtual void onKeyPressed( const Event* event){};
     
+    //! normal?? + rename
+    PixelBuffer* GetPointerOnPixBuff() { return &buff_; }
+    //const EventManager* eventManager() const { return p_manager_; }
+
+    virtual void onMouseLClick(const MouseLClickEvent* event){};
+    virtual void onKeyPressed( const KeyPressedEvent* event){};
+
+    //? should we remove slider moved
+    //! delete if it not be useful in other situations
+    virtual void onSliderMoved( const SliderMovedEvent* event){};
+
+    void RequireRender();
+    //! not good it is accessible for all widgets
+    // or normal?
+    void throwEvent(const Event* event);
     void triggerEvent(const Event* event);
     friend class ContainerWidget;
+    friend class Window;
 private:
     uint x_, y_;
-
-    // TODO: понадобятся ли локальные координаты виджета, или достаточно текущих глобальных?(x_, y_)
-    //uint glob_x_, glob_y_;
+    uint rx_, ry_;
 
     uint width_, height_;
-
-    bool is_focused_;
-    bool is_visible_;
-    bool is_render_required_;
 
     Texture texture_;
 
     PixelBuffer buff_;
 
-    // TODO: remove mb?
-    EventManager* p_manager_;
-    // TODO: needed?
     ContainerWidget* parent_widget_;
+    EventManager* p_manager_;
+
+protected:
+
+    bool is_focused_;
+    bool is_visible_;
+    bool is_render_required_;
 
 private:
-    virtual void connectToManager_(EventManager* manager);
-    virtual void disconnectFromManager_();
+    //! TODO: arg to container widget
+    virtual void connectDataUpdate_(Widget* container);
+    virtual void disconnectDataUpdate_();
 };
 
 #endif // WIDGET_H

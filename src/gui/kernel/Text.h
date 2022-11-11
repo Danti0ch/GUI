@@ -17,7 +17,7 @@ public:
     void fontSize(uint font_size){ font_size_ = font_size; }
     void color(const Color& col){ col_ = col; }
     
-    void draw(GraphicSpace* space, uint x_pixel, uint y_pixel){
+    void draw(PixelBuffer* space, uint x_pixel, uint y_pixel){
         space->drawText(x_pixel, y_pixel, data_, font_size_, col_);
         return;
     }

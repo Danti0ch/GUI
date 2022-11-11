@@ -12,7 +12,6 @@ public:
 private:
     GraphicSpace space_;
     EventManager manager_;
-    PixelBuffer  pix_buf_;
 };
 
 #endif // WINDOW_H
