@@ -1,15 +1,14 @@
 #ifndef EVENT_H
 #define EVENT_H
 
+//? maybe remove the inheritance mechanic and make general class for all event
+
 #include "stdlib.h"
 enum class T_EVENT{
     unknown,
     mouseLClick,
-    keyPressed,
-    N_EVENTS
+    keyPressed
 };
-
-const int N_EVENTS = (int)T_EVENT::N_EVENTS;
 
 class Widget;
 
@@ -21,6 +20,7 @@ public:
 
     virtual ~Event(){}
 
+    // TODO: rename to type
     T_EVENT id() const { return id_; }
     //int     id() const { return (int)id_; }
 

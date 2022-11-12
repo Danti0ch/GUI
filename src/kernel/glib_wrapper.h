@@ -57,6 +57,8 @@ public:
         return;
     }
 
+    // TODO: getPixel(x, y) using cast from renderttexture to image (https://en.sfml-dev.org/forums/index.php?topic=16310.0)
+    
     void drawPixels(const std::vector<Pixel>& pixels){
 
         uint n_pixels = pixels.size();

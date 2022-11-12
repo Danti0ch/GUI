@@ -14,7 +14,7 @@
 typedef unsigned int uint;
 #include <assert.h>
 
-enum ERROR_CODE{
+enum class ERROR_CODE{
 
     OK,
     OWN,                    // недофолтная ошибка, которую юзер указывает сам
@@ -71,7 +71,7 @@ void debug_log_error(log_location loc, ERROR_CODE err_code);
 void debug_meta_log(log_location loc, const char* string, ...);
 
 #define DLOG(type, string, ...)       debug_log({(__FILE__), (__FUNCTION__) , (__LINE__)}, (type), (string), ##__VA_ARGS__);
-#define EDLOG(err_code, string, ...)  debug_log_error({(__FILE__), (__FUNCTION__) , (__LINE__)}, (err_code), (string), ##__VA_ARGS__);
+#define EDLOG(string, ...)            debug_log_error({(__FILE__), (__FUNCTION__) , (__LINE__)}, (ERROR_CODE::OWN), (string), ##__VA_ARGS__);
 #define ESDLOG(err_code)              debug_log_error({(__FILE__), (__FUNCTION__) , (__LINE__)}, (err_code));
 #define MDLOG(string, ...)            debug_meta_log({(__FILE__), (__FUNCTION__) , (__LINE__)}, (string), ##__VA_ARGS__);
 

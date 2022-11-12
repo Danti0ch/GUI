@@ -30,6 +30,7 @@ public:
     Color operator *(double ratio) const;
     Color operator -(const Color& col2) const;
 
+    // TODO: cast to uint32_t, cast from uint32_t, cast to const uint32_t&
 private:
     uint8_t r_, g_, b_, a_;
 };
