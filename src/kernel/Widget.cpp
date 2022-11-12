@@ -54,3 +54,15 @@ void Widget::triggerEvent(const Event* event){
 
     return;
 }
+
+void Widget::x(uint val){
+    x_ = val;
+    is_render_required_ = true;
+    return;
+}
+
+void Widget::y(uint val){
+    y_ = val;
+    is_render_required_ = true;
+    return;
+}

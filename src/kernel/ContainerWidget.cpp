@@ -17,6 +17,7 @@ void ContainerWidget::draw(){
 }
 
 void ContainerWidget::connect(Widget* child_widget){
+    NASSERT(child_widget);
 
     if(child_widget->parent_widget_ != NULL){
         child_widget->parent_widget_->remove(child_widget);
@@ -32,7 +33,19 @@ void ContainerWidget::connect(Widget* child_widget){
     return;
 }
 
+void ContainerWidget::connect(Widget* child_widget, uint x, uint y){
+    NASSERT(child_widget);
+
+    child_widget->x(x);
+    child_widget->y(y);
+
+    connect(child_widget, x, y);
+    return;
+}
+
 void ContainerWidget::remove(Widget* child_widget){
+    NASSERT(child_widget);
+
     subwidgets_.remove( child_widget);
 
     child_widget->parent_widget_ = NULL;
@@ -50,7 +63,6 @@ void ContainerWidget::connectToManager_(EventManager* manager){
     }
 
     manager->addWidget(this);
-    std::cout << "555\n";
     p_manager_ = manager;
 
     std::list<Widget*>::iterator subwidgets_iter;

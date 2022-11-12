@@ -7,7 +7,8 @@
 enum class T_EVENT{
     unknown,
     mouseLClick,
-    keyPressed
+    keyPressed,
+    sliderMoved
 };
 
 class Widget;
@@ -85,6 +86,24 @@ public:
     T_KEY key() const { return key_; }
 private: 
     T_KEY key_;
+};
+
+class Slider;
+
+//? should slider know what widgets are connected to it to distrubute event
+class SliderMovedEvent : public Event{
+public:
+    SliderMovedEvent(const Slider* p_slider, double ratio):
+        Event(T_EVENT::sliderMoved), p_slider_(p_slider), ratio_(ratio){}
+    
+    bool check(const Widget* widget) const override;
+
+    const Slider* p_slider() const { return p_slider_; }
+    double ratio() const { return ratio_; }
+
+private:
+    Slider* p_slider_;
+    double ratio_;
 };
 
 #endif // EVENT_H

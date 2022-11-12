@@ -34,3 +34,7 @@ void HSlider::onMouseLClick(const MouseLClickEvent* event){
 
     return;
 }
+
+hSlider_.update_limit(ext_width_);
+vSlider_.update_limit(ext_height_);
+ 

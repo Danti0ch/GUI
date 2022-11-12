@@ -8,15 +8,15 @@ class ContainerWidget : public Widget{
 public:
     ContainerWidget(uint x, uint y, uint width, uint height);
 
-    // TODO: mb virtual void?
-    void draw() override;
+    virtual void draw() override;
 
-    void connect( Widget* child_widget);
-    void remove( Widget* child_widget);
+    virtual void connect( Widget* child_widget);
+    virtual void connect(Widget* child_widget, uint x, uint y);
+    virtual void remove( Widget* child_widget);
     
     // TODO: fix    
     friend class Window;
-private:
+protected:
     std::list<Widget*> subwidgets_;
 private:
     void connectToManager_(EventManager* manager) override;

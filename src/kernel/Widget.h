@@ -6,6 +6,7 @@
 #include "Event.h"
 #include "glib_wrapper.h"
 #include "EventManager.h"
+#include "logger.h"
 
 class ContainerWidget;
 class Window;
@@ -39,6 +40,10 @@ public:
     uint x() const { return x_; }
     uint y() const { return y_; }
 
+    /// setters
+    void x(uint val);
+    void y(uint val);
+    
 //    uint glob_x() const { return gx_; }
 //    uint glob_y() const { return gy_; }
 
