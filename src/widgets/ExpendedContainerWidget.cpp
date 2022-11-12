@@ -1,4 +1,4 @@
-#include "ExtendedContainerWidget.h"
+#include "ExpendedContainerWidget.h"
 
 // TODO: remove hardcode
 ExpendedContainerWidget::ExpendedContainerWidget(uint x, uint y, uint width, uint height, uint sliderWidth):

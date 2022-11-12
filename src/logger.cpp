@@ -151,7 +151,7 @@ void debug_log_error(log_location loc, ERROR_CODE err_code, const char* string, 
 	va_end(args);
 
     LogClose();
-    exit(err_code);
+    exit((int)err_code);
     
     return;
 }

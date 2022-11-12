@@ -1,5 +1,5 @@
 #include "stImage.h"
-
+/*
 stImage::stImage(uint width, uint height):
     storage_(width, height){}
 
@@ -29,9 +29,14 @@ uint32_t& stImage::operator()(uint32_t x, uint32_t y){
     return const_cast<uint32_t&>(stImage::operator()(x, y));
 }
 
+// TODO:
 const uint32_t& stImage::operator()(uint32_t x, uint32_t y) const{
 
-    return static_cast<const uint32_t&>(storage_.getPixel(x, y));
+    //return static_cast<const uint32_t&>(storage_.getPixel(x, y));
+
+    uint32_t garbage = 5;
+    return garbage;
 }
 
 stImage::~stImage(){}
+*/

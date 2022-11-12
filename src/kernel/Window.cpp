@@ -6,8 +6,9 @@ Window::Window(uint width, uint height):
     space_(width, height),
     pix_buf_(width, height),
     manager_()
-{
-    connectToManager_(&manager_);
+{   
+    //! ok?
+    p_manager_ = &manager_;
 }
 
 void Window::exec(){

@@ -35,6 +35,7 @@ void Widget::connectDataUpdate_(Widget* container){
         p_manager_ = NULL;
         return;
     }
+
     container->p_manager_->addWidget(this);
     p_manager_ = container->p_manager_;
 
@@ -50,15 +51,15 @@ void Widget::disconnectDataUpdate_(){
 }
 
 void Widget::triggerEvent(const Event* event){
-    if(event->id() == T_EVENT::mouseLClick){
+    if(event->type() == T_EVENT::mouseLClick){
         const MouseLClickEvent* detected_event = static_cast<const MouseLClickEvent*>(event);
         onMouseLClick(detected_event);
     }
-    else if(event->id() == T_EVENT::keyPressed){
+    else if(event->type() == T_EVENT::keyPressed){
         const KeyPressedEvent* detected_event = static_cast<const KeyPressedEvent*>(event);
         onKeyPressed(detected_event);
     }
-    else if(event->id() == T_EVENT::sliderMoved){
+    else if(event->type() == T_EVENT::sliderMoved){
         const SliderMovedEvent* detected_event = static_cast<const SliderMovedEvent*>(event);
         onSliderMoved(detected_event);
     }

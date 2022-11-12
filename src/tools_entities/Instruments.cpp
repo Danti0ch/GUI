@@ -9,7 +9,9 @@
 //? how to implement garbage collector, when we need to free generated widgets???
 
 extern "C" uint64_t booba::createButton(int32_t x, int32_t y, uint32_t w, uint32_t h, const char* name = nullptr){
-    RectButton<void>* button = new RectButton<void>(x, y, w, h);
+    
+    // TODO: make button without params
+    RectButton<int>* button = new RectButton<int>(x, y, w, h);
 
     if(name != nullptr){
         button->setText(name);

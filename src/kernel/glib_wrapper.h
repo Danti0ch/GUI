@@ -30,7 +30,7 @@ public:
 
     void drawText(uint x_pixel, uint y_pixel, const std::string& str, uint font_size, const Color& col){
         sf::Text text_obj(str.c_str(), font_, font_size);
-        text_obj.setPosition(x_pixel, y_pixel);
+        text_obj.setPosition(x_coord(x_pixel), y_coord(y_pixel));
         
         text_obj.setFillColor(convertLibColor(col));
         buffer_.draw(text_obj);
@@ -41,8 +41,8 @@ public:
         sf::Color sf_col = convertLibColor(col);
 
         sf::Vertex line_to_draw[] = {
-            sf::Vertex(sf::Vector2f(x_pix1, height() - y_pix1), sf_col),
-            sf::Vertex(sf::Vector2f(x_pix2, height() - y_pix2), sf_col)
+            sf::Vertex(sf::Vector2f(x_coord(x_pix1), y_coord(y_pix1)), sf_col),
+            sf::Vertex(sf::Vector2f(x_coord(x_pix2), y_coord(y_pix2)), sf_col)
         };
 
         buffer_.draw(line_to_draw, 2, sf::Lines);
@@ -51,13 +51,24 @@ public:
 
     void drawPixel(uint x_pix, uint y_pix, const Color& col){
         sf::Color sf_col = convertLibColor(col);
-        sf::Vertex pix_to_draw(sf::Vector2f(x_pix, height() - y_pix), sf_col);
+        sf::Vertex pix_to_draw(sf::Vector2f(x_coord(x_pix), y_coord(y_pix)), sf_col);
 
         buffer_.draw(&pix_to_draw, 1, sf::Points);
         return;
     }
 
-    // TODO: getPixel(x, y) using cast from renderttexture to image (https://en.sfml-dev.org/forums/index.php?topic=16310.0)
+    //!!!
+    //!!! VERY SLOW
+    //!!!
+    // TODO: rework, maybe change renderttexture to image??
+    Color getPixel(uint x, uint y){
+        
+        // TODO: throw error if x, y under the limits
+        sf::Image img_tmp = buffer_.getTexture().copyToImage();
+        sf::Color color = img_tmp.getPixel(x, y);
+
+        return convertFromLibColor(color);
+    }
     
     void drawPixels(const std::vector<Pixel>& pixels){
 
@@ -65,7 +76,7 @@ public:
         sf::Vertex* pix_to_draw = new sf::Vertex[n_pixels];
 
         for(uint n_pix = 0; n_pix < n_pixels; n_pix++){
-            pix_to_draw[n_pix] = sf::Vertex(sf::Vector2f(pixels[n_pix].x(), pixels[n_pix].y()), convertLibColor(pixels[n_pix].col()));
+            pix_to_draw[n_pix] = sf::Vertex(sf::Vector2f(x_coord(pixels[n_pix].x()), y_coord(pixels[n_pix].y())), convertLibColor(pixels[n_pix].col()));
         }
 
         buffer_.draw(pix_to_draw, n_pixels, sf::Points);
@@ -77,7 +88,7 @@ public:
     
     void drawPixelBuffer(uint x, uint y, const PixelBuffer& obj){
         sf::Sprite tmp_sprite(obj.buffer_.getTexture()); 
-        tmp_sprite.setPosition(sf::Vector2f(x, y));
+        tmp_sprite.setPosition(sf::Vector2f(x_coord(x), y_coord(y)));
         buffer_.draw(tmp_sprite);
 
         return;
@@ -94,6 +105,20 @@ private:
         return sf_col;
     }
 
+    Color convertFromLibColor(const sf::Color& sf_col){
+        Color col(sf_col.r, sf_col.g, sf_col.b, sf_col.a);
+
+        return col;
+    }
+    //? fromLib ToLib?
+    // TODO: make inline
+    uint x_coord(uint val) const {
+        return val;
+    }
+
+    uint y_coord(uint val) const{
+        return height() - val;
+    }
 };
 
 #include <iostream>
@@ -140,10 +165,17 @@ public:
         //    *p_event = new CloseButtonPressedEvent();
         //}
         if(sf_event.type == sf::Event::MouseButtonPressed){
-            *p_event = new MouseLClickEvent(sf_event.mouseButton.x, sf_event.mouseButton.y);
+            *p_event = new MouseLClickEvent(x_coord(sf_event.mouseButton.x), y_coord(sf_event.mouseButton.y));
         }
         else if(sf_event.type == sf::Event::KeyPressed){
             *p_event = new KeyPressedEvent((T_KEY)sf_event.key.code);
+        }
+        else if(sf_event.type == sf::Event::MouseMoved){
+            std::cout << "Mouse moved: " << x_coord(sf_event.mouseButton.x) << " " << y_coord(sf_event.mouseButton.y) << " " << x_coord(sf_event.mouseMove.x) << " " << y_coord(sf_event.mouseMove.y) << "\n";
+            *p_event = new MouseMovedEvent(x_coord(sf_event.mouseMove.x), y_coord(sf_event.mouseMove.y));
+        }
+        else if(sf_event.type == sf::Event::MouseButtonReleased){
+            *p_event = new MouseReleasedEvent(x_coord(sf_event.mouseButton.x), y_coord(sf_event.mouseButton.y));
         }
         else return false;
         return true;
@@ -151,7 +183,7 @@ public:
 
     void drawText(uint x_pixel, uint y_pixel, const std::string& str, uint font_size, const Color& col){
         sf::Text text_obj(str.c_str(), font_, font_size);
-        text_obj.setPosition(x_pixel, y_pixel);
+        text_obj.setPosition(x_coord(x_pixel), y_coord(y_pixel));
         
         text_obj.setFillColor(convertLibColor(col));
         window_.draw(text_obj);
@@ -161,8 +193,8 @@ public:
         sf::Color sf_col = convertLibColor(col);
 
         sf::Vertex line_to_draw[] = {
-            sf::Vertex(sf::Vector2f(x_pix1, height() - y_pix1), sf_col),
-            sf::Vertex(sf::Vector2f(x_pix2, height() - y_pix2), sf_col)
+            sf::Vertex(sf::Vector2f(x_coord(x_pix1), y_coord(y_pix1)), sf_col),
+            sf::Vertex(sf::Vector2f(x_coord(x_pix2), y_coord(y_pix2)), sf_col)
         };
 
         window_.draw(line_to_draw, 2, sf::Lines);
@@ -171,7 +203,7 @@ public:
 
     void drawPixel(uint x_pix, uint y_pix, const Color& col){
         sf::Color sf_col = convertLibColor(col);
-        sf::Vertex pix_to_draw(sf::Vector2f(x_pix, height() - y_pix), sf_col);
+        sf::Vertex pix_to_draw(sf::Vector2f(x_coord(x_pix), y_coord(y_pix)), sf_col);
 
         window_.draw(&pix_to_draw, 1, sf::Points);
         return;
@@ -183,7 +215,7 @@ public:
         sf::Vertex* pix_to_draw = new sf::Vertex[n_pixels];
 
         for(uint n_pix = 0; n_pix < n_pixels; n_pix++){
-            pix_to_draw[n_pix] = sf::Vertex(sf::Vector2f(pixels[n_pix].x(), pixels[n_pix].y()), convertLibColor(pixels[n_pix].col()));
+            pix_to_draw[n_pix] = sf::Vertex(sf::Vector2f(x_coord(pixels[n_pix].x()), y_coord(pixels[n_pix].y())), convertLibColor(pixels[n_pix].col()));
         }
 
         window_.draw(pix_to_draw, n_pixels, sf::Points);
@@ -204,10 +236,17 @@ private:
     sf::RenderWindow window_;
     sf::Font font_;
 
-
     sf::Color convertLibColor(const Color& col){
         sf::Color sf_col(col.r(), col.g(), col.b(), col.a());
         return sf_col;
+    }
+
+    uint x_coord(uint val) const {
+        return val;
+    }
+
+    uint y_coord(uint val) const{
+        return height() - val;
     }
 };
 

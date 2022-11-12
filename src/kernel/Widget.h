@@ -23,7 +23,6 @@ private:
     std::list<Widget*> widgets_;
 };
 
-// TODO: y coord should be from bottom
 /**
  * @brief an abstract class of any entity that has a representation on the application screen
  * 
@@ -44,7 +43,6 @@ public:
     void x(uint val);
     void y(uint val);
     
-
     uint real_x();
     uint real_y();
 
@@ -66,12 +64,14 @@ public:
 
     virtual void onMouseLClick(const MouseLClickEvent* event){};
     virtual void onKeyPressed( const KeyPressedEvent* event){};
-
+    virtual void onMouseReleaed(const MouseReleasedEvent* event){};
+    virtual void onMouseMoved(const MouseMovedEvent* event){};
+    
     //? should we remove slider moved
     //! delete if it not be useful in other situations
     virtual void onSliderMoved( const SliderMovedEvent* event){};
 
-    void RequireRender(){ is_render_required_ = true; }
+    void RequireRender();
 
     //! not good it is accessible for all widgets
     // or normal?

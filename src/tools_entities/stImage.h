@@ -1,9 +1,13 @@
 #ifndef ST_IMAGE_H
 #define ST_IMAGE_H
 
+// TODO:
+/*
 #include "tools.hpp"
 #include "glib_wrapper.h"
 //? maybe merge this with pixel_buff?
+
+booba::Image::~Image(){}
 
 // TODO: rename
 //? or public
@@ -24,5 +28,5 @@ private:
     // TODO: rename
     PixelBuffer storage_;
 };
-
+*/
 #endif // ST_IMAGE_H

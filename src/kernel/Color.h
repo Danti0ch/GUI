@@ -7,7 +7,8 @@
 class Color{
 public:
     Color(uint8_t r = 255, uint8_t g = 255, uint8_t b = 255, uint8_t a = 255);
-    
+    Color(uint32_t val);
+
     uint8_t r() const { return r_; }
     uint8_t g() const { return g_; }
     uint8_t b() const { return b_; }
@@ -31,6 +32,13 @@ public:
     Color operator -(const Color& col2) const;
 
     // TODO: cast to uint32_t, cast from uint32_t, cast to const uint32_t&
+
+    //? explicit
+    operator uint32_t() const;
+    
+    //!! implement?
+    //explicit operator const uint32_t&() const;
+
 private:
     uint8_t r_, g_, b_, a_;
 };

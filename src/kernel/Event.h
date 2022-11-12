@@ -7,6 +7,8 @@
 enum class T_EVENT{
     unknown,
     mouseLClick,
+    mouseMoved,
+    mouseReleased,
     keyPressed,
     sliderMoved
 };
@@ -16,13 +18,13 @@ class Widget;
 class Event{
 public:
 
-    Event(T_EVENT id):
-        id_(id){}
+    Event(T_EVENT type):
+        type_(type){}
 
     virtual ~Event(){}
 
     // TODO: rename to type
-    T_EVENT id() const { return id_; }
+    T_EVENT type() const { return type_; }
     //int     id() const { return (int)id_; }
 
     /**
@@ -30,21 +32,39 @@ public:
      */
     virtual bool check(const Widget* widget) const = 0;
 private:
-    T_EVENT id_;
+    T_EVENT type_;
 };
 
-class MouseLClickEvent : public Event{
+class MouseEvent : public Event{
 public:
-    MouseLClickEvent(uint x, uint y):
-        Event(T_EVENT::mouseLClick), x_(x), y_(y){}
+    MouseEvent(T_EVENT type, uint x, uint y):
+        Event(type), x_(x), y_(y){}
 
     bool check(const Widget* widget) const override;
 
     uint x() const { return x_; }
     uint y() const { return y_; }
+private:
+    uint x_;
+    uint y_;
+};
 
-private: 
-    uint x_, y_;
+class MouseLClickEvent : public MouseEvent{
+public:
+    MouseLClickEvent(uint x, uint y):
+        MouseEvent(T_EVENT::mouseLClick, x, y){}
+};
+
+class MouseMovedEvent : public MouseEvent{
+public:
+    MouseMovedEvent(uint x, uint y):
+        MouseEvent(T_EVENT::mouseMoved, x, y){}
+};
+
+class MouseReleasedEvent : public MouseEvent{
+public:
+    MouseReleasedEvent(uint x, uint y):
+        MouseEvent(T_EVENT::mouseReleased, x, y){}
 };
 
 enum T_KEY {
@@ -87,8 +107,6 @@ public:
 private: 
     T_KEY key_;
 };
-
-class AbstractSlider;
 
 //? should slider know what widgets are connected to it to distrubute event
 class SliderMovedEvent : public Event{
