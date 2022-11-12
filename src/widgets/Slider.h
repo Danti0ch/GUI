@@ -2,25 +2,46 @@
 #define SLIDER_H
 
 #include "Widget.h"
+#include "RectButton.h"
 
 // TODO: implement possibility to move scroll while pressing scroll main part(by holding mouse button)
+
+//?
+// TODO:
+/*
 class AbstractSlider : public Widget{
 public:
-
-    void onMouseLClick() override;
     double ratio() const { return ratio_;}
-private:
+
+    virtual void onMouseLClick(const MouseLClickEvent* event);
+protected:
     double ratio_;
+    RectButton<double> butt_;
 };
+*/
 
 class HSlider : public Widget{
 public:
-    HSlider(uint x, uint y, uint width, uint height);
+    HSlider(uint x, uint y, uint width, uint height, uint butt_width);
     ~HSlider();
 
-    double ratio() const { return ratio_;}
+    void onMouseLClick(const MouseLClickEvent* event) override;
+    void draw() override;
 private:
     double ratio_;
+    RectButton<double> butt_;
+};
+
+class VSlider : public Widget{
+public:
+    VSlider(uint x, uint y, uint width, uint height, uint butt_height);
+    ~VSlider();
+
+    void onMouseLClick(const MouseLClickEvent* event) override;
+    void draw() override;
+private:
+    double ratio_;
+    RectButton<double> butt_;
 };
 
 #endif // SLIDER_H

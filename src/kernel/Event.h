@@ -88,21 +88,22 @@ private:
     T_KEY key_;
 };
 
-class Slider;
+class AbstractSlider;
 
 //? should slider know what widgets are connected to it to distrubute event
 class SliderMovedEvent : public Event{
 public:
-    SliderMovedEvent(const Slider* p_slider, double ratio):
+    // TODO: fix Widget* -> AbstractSlider*
+    SliderMovedEvent(Widget* p_slider, double ratio):
         Event(T_EVENT::sliderMoved), p_slider_(p_slider), ratio_(ratio){}
     
     bool check(const Widget* widget) const override;
 
-    const Slider* p_slider() const { return p_slider_; }
+    const Widget* p_slider() const { return p_slider_; }
     double ratio() const { return ratio_; }
 
 private:
-    Slider* p_slider_;
+    Widget* p_slider_;
     double ratio_;
 };
 

@@ -1,4 +1,4 @@
-#include "ContainerWidget.h"
+#include "Widget.h"
 #include <assert.h>
 
 // TODO: обернуть подобные конструкторы в один макрос
@@ -16,23 +16,6 @@ void ContainerWidget::draw(){
     return;
 }
 
-void ContainerWidget::connect(Widget* child_widget){
-    NASSERT(child_widget);
-
-    if(child_widget->parent_widget_ != NULL){
-        child_widget->parent_widget_->remove(child_widget);
-    }
-
-    subwidgets_.push_back(child_widget);
-    
-    child_widget->parent_widget_ = this;
-
-    assert(p_manager_ != NULL);
-
-    child_widget->connectToManager_(p_manager_);
-    return;
-}
-
 void ContainerWidget::connect(Widget* child_widget, uint x, uint y){
     NASSERT(child_widget);
 
@@ -43,36 +26,46 @@ void ContainerWidget::connect(Widget* child_widget, uint x, uint y){
     return;
 }
 
-void ContainerWidget::remove(Widget* child_widget){
-    NASSERT(child_widget);
+void ContainerWidget::connect(Widget* child_widget){
+    assert(child_widget != NULL);
 
+    if(child_widget->parent_widget_ != NULL){
+        child_widget->parent_widget_->remove(child_widget);
+    }
+
+    subwidgets_.push_back(child_widget);
+    
+    child_widget->parent_widget_ = this;
+
+    child_widget->connectDataUpdate_(this);
+    return;
+}
+
+void ContainerWidget::remove(Widget* child_widget){
     subwidgets_.remove( child_widget);
 
     child_widget->parent_widget_ = NULL;
-    child_widget->disconnectFromManager_();
+    child_widget->disconnectDataUpdate_();
 
     return;
 }
-
-#include <iostream>
-
-void ContainerWidget::connectToManager_(EventManager* manager){
+void ContainerWidget::connectDataUpdate_(Widget* container){
 
     if(p_manager_ != NULL){
-        disconnectFromManager_();
+        disconnectDataUpdate_();
     }
 
-    manager->addWidget(this);
-    p_manager_ = manager;
+    container->p_manager_->addWidget(this);
+    p_manager_ = container->p_manager_;
 
     std::list<Widget*>::iterator subwidgets_iter;
     for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
-        (*subwidgets_iter)->connectToManager_(manager);
+        (*subwidgets_iter)->connectDataUpdate_(this);
     }
     return;
 }
 
-void ContainerWidget::disconnectFromManager_(){
+void ContainerWidget::disconnectDataUpdate_(){
 
     if(p_manager_ == NULL) return;
 
@@ -81,7 +74,7 @@ void ContainerWidget::disconnectFromManager_(){
 
     std::list<Widget*>::iterator subwidgets_iter;
     for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
-        (*subwidgets_iter)->disconnectFromManager_();
+        (*subwidgets_iter)->disconnectDataUpdate_();
     }
     return;
 }

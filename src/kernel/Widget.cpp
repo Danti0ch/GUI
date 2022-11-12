@@ -25,31 +25,62 @@ void Widget::coreDraw(){
 }
 
 // TODO: copypaste with container widget
-void Widget::connectToManager_(EventManager* manager){
+void Widget::connectDataUpdate_(Widget* container){
 
     if(p_manager_ != NULL){
-        disconnectFromManager_( );
+        disconnectDataUpdate_( );
     }
 
-    p_manager_->addWidget(this);
-    p_manager_ = manager;
+    if(container->p_manager_ == NULL){
+        p_manager_ = NULL;
+        return;
+    }
+    container->p_manager_->addWidget(this);
+    p_manager_ = container->p_manager_;
 
     return;
 }
 
-void Widget::disconnectFromManager_(){
+void Widget::disconnectDataUpdate_(){
 
     p_manager_->removeWidget(this);
     p_manager_ = NULL;
 
     return;
 }
+
 void Widget::triggerEvent(const Event* event){
     if(event->id() == T_EVENT::mouseLClick){
-        onMouseLClick(event);
+        const MouseLClickEvent* detected_event = static_cast<const MouseLClickEvent*>(event);
+        onMouseLClick(detected_event);
     }
     else if(event->id() == T_EVENT::keyPressed){
-        onKeyPressed(event);
+        const KeyPressedEvent* detected_event = static_cast<const KeyPressedEvent*>(event);
+        onKeyPressed(detected_event);
+    }
+    else if(event->id() == T_EVENT::sliderMoved){
+        const SliderMovedEvent* detected_event = static_cast<const SliderMovedEvent*>(event);
+        onSliderMoved(detected_event);
+    }
+    return;
+}
+
+void Widget::throwEvent(const Event* event){
+
+    assert(event != NULL);
+    p_manager_->ProcessHandlers(event);
+    return;
+}
+
+void Widget::RequireRender(){
+
+    is_render_required_ = true;
+
+    ContainerWidget* parent = (parent_widget_);
+    while(parent != NULL){
+
+        parent->is_render_required_ = true;
+        parent = parent->parent_widget_;
     }
 
     return;
@@ -65,4 +96,29 @@ void Widget::y(uint val){
     y_ = val;
     is_render_required_ = true;
     return;
+}
+
+uint Widget::real_x(){
+    uint real_x = x_;
+
+    ContainerWidget* parent_widget = parent_widget_;
+    while(parent_widget != NULL){
+        real_x += parent_widget->x();
+        parent_widget = parent_widget->parent_widget_;
+    }
+
+    return real_x;
+}
+
+uint Widget::real_y(){
+
+    uint real_y = y_;
+
+    ContainerWidget* parent_widget = parent_widget_;
+    while(parent_widget != NULL){
+        real_y += parent_widget->y();
+        parent_widget = parent_widget->parent_widget_;
+    }
+
+    return real_y;
 }

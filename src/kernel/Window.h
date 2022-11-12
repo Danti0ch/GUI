@@ -1,7 +1,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include "ContainerWidget.h"
+#include "Widget.h"
 #include "EventManager.h"
 #include <iostream>
 class Window : public ContainerWidget{

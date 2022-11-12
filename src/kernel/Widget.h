@@ -8,9 +8,9 @@
 #include "EventManager.h"
 #include "logger.h"
 
-class ContainerWidget;
 class Window;
 class Widget;
+class ContainerWidget;
 
 class EventManager{
 public:
@@ -44,8 +44,9 @@ public:
     void x(uint val);
     void y(uint val);
     
-//    uint glob_x() const { return gx_; }
-//    uint glob_y() const { return gy_; }
+
+    uint real_x();
+    uint real_y();
 
     uint width() const { return width_; }
     uint height() const { return height_; }
@@ -70,7 +71,8 @@ public:
     //! delete if it not be useful in other situations
     virtual void onSliderMoved( const SliderMovedEvent* event){};
 
-    void RequireRender();
+    void RequireRender(){ is_render_required_ = true; }
+
     //! not good it is accessible for all widgets
     // or normal?
     void throwEvent(const Event* event);
@@ -79,7 +81,6 @@ public:
     friend class Window;
 private:
     uint x_, y_;
-    uint rx_, ry_;
 
     uint width_, height_;
 
@@ -100,6 +101,27 @@ private:
     //! TODO: arg to container widget
     virtual void connectDataUpdate_(Widget* container);
     virtual void disconnectDataUpdate_();
+};
+
+#include <list>
+
+class ContainerWidget : public Widget{
+public:
+    ContainerWidget(uint x, uint y, uint width, uint height);
+
+    virtual void draw() override;
+
+    virtual void connect( Widget* child_widget);
+    virtual void connect(Widget* child_widget, uint x, uint y);
+    virtual void remove( Widget* child_widget);
+    
+    // TODO: fix    
+    friend class Window;
+protected:
+    std::list<Widget*> subwidgets_;
+private:
+    void connectDataUpdate_(Widget* container) override;
+    void disconnectDataUpdate_() override;
 };
 
 #endif // WIDGET_H
