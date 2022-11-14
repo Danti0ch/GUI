@@ -1,6 +1,7 @@
 
 #include "ListWidget.h"
 
+/*
 const uint SLIDER_SIZE = 20;
 
 // TODO: figure out: error: there are no arguments to ‘height’ that depend on a template parameter, so a declaration of ‘height’ must be avai
@@ -51,3 +52,4 @@ void VListWidget<T_ARG>::add(const std::string& label, T_HANDLER p_handler, cons
     ExpendedContainerWidget::connect(&(this->elems_[this->elems_.size() - 1]));
     return;
 }
+*/

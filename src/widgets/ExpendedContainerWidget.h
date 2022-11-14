@@ -22,8 +22,12 @@ public:
 
     void onSliderMoved( const SliderMovedEvent* event) override;
 
+    void ext_width( uint val);
+    void ext_height(uint val);
+
     virtual void draw() override;
-    //virtual void connect(Widget* child_widget, uint x, uint y);
+
+protected:
     virtual void connect(Widget* child_widget);
     virtual void remove(Widget* child_widget);
     

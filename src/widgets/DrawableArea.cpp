@@ -4,12 +4,15 @@ DrawableArea::DrawableArea(uint x, uint y, uint width, uint height):
     Widget(x, y, width, height),
     is_drawing_enabled(false){}
 
-void DrawableArea::onMouseReleaed(const MouseReleasedEvent* event){
+void DrawableArea::onMouseReleased(const MouseReleasedEvent* event){
     is_drawing_enabled = false;
     return;
 }
 
 void DrawableArea::onMouseMoved(const MouseMovedEvent* event){
-    // TODO:
+    return;
+}
+
+void DrawableArea::draw(){
     return;
 }

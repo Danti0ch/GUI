@@ -8,9 +8,10 @@ class DrawableArea : public Widget{
 public:
     DrawableArea(uint x, uint y, uint width, uint height);
 
-    void onMouseReleaed(const MouseReleasedEvent* event) override;
+    void onMouseReleased(const MouseReleasedEvent* event) override;
     void onMouseMoved(const MouseMovedEvent* event) override;
-
+    
+    void draw() override;
 private:
     bool is_drawing_enabled;
 };

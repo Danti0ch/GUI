@@ -5,9 +5,10 @@
 #include "Texture.h"
 #include "Event.h"
 #include "glib_wrapper.h"
-#include "EventManager.h"
 #include "logger.h"
+#include <list>
 
+//? x and y connect to very close functions by meaning, maybe they should be childs of class dimension_coord?
 class Window;
 class Widget;
 class ContainerWidget;
@@ -43,8 +44,8 @@ public:
     void x(uint val);
     void y(uint val);
     
-    uint real_x();
-    uint real_y();
+    uint real_x() const;
+    uint real_y() const;
 
     uint width() const { return width_; }
     uint height() const { return height_; }
@@ -54,6 +55,9 @@ public:
     bool isRenderRequired() const { return is_render_required_; }
     const Texture& texture(){ return texture_; }
     void setTexture(const Texture& texture){ texture_ = texture; }
+    
+    // TODO: make it virtual for overloading in containerWidget
+    void setVisible(bool val){ is_visible_ = val; }
 
     ContainerWidget* parent() { return parent_widget_; }
     const PixelBuffer& pixBuff() const { return buff_; }
@@ -64,7 +68,7 @@ public:
 
     virtual void onMouseLClick(const MouseLClickEvent* event){};
     virtual void onKeyPressed( const KeyPressedEvent* event){};
-    virtual void onMouseReleaed(const MouseReleasedEvent* event){};
+    virtual void onMouseReleased(const MouseReleasedEvent* event){};
     virtual void onMouseMoved(const MouseMovedEvent* event){};
     
     //? should we remove slider moved
@@ -111,13 +115,13 @@ public:
 
     virtual void draw() override;
 
+    // TODO: fix    
+    friend class Window;
+protected:
     virtual void connect( Widget* child_widget);
     virtual void connect(Widget* child_widget, uint x, uint y);
     virtual void remove( Widget* child_widget);
     
-    // TODO: fix    
-    friend class Window;
-protected:
     std::list<Widget*> subwidgets_;
 private:
     void connectDataUpdate_(Widget* container) override;

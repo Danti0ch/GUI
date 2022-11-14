@@ -6,7 +6,7 @@
 HSlider::HSlider(uint x, uint y, uint width, uint height, uint butt_width):
     Widget(x, y, width, height),
     ratio_(0),
-    butt_(x, y, butt_width, height)
+    butt_(0, 0, butt_width, height)
 {
     // TODO: remove
     butt_.setTexture(Color(50, 50, 50));
@@ -23,7 +23,10 @@ void HSlider::onMouseLClick(const MouseLClickEvent* event){
     else if(new_butt_x_pos + butt_.width() > width()) new_butt_x_pos = width() - butt_.width();
 
     butt_.x(new_butt_x_pos);
+
+    // TODO: fix
     butt_.RequireRender();
+    RequireRender();
 
     double ratio = (double)new_butt_x_pos / (double)(width() - butt_.width());
     SliderMovedEvent slider_event(this, ratio);
@@ -43,7 +46,7 @@ void HSlider::draw(){
 VSlider::VSlider(uint x, uint y, uint width, uint height, uint butt_height):
     Widget(x, y, width, height),
     ratio_(0),
-    butt_(x, y, width, butt_height)
+    butt_(0, 0, width, butt_height)
 {
     // TODO: remove
     butt_.setTexture(Color(50, 50, 50));
@@ -61,6 +64,7 @@ void VSlider::onMouseLClick(const MouseLClickEvent* event){
 
     butt_.y(new_butt_y_pos);
     butt_.RequireRender();
+    RequireRender();
 
     double ratio = (double)new_butt_y_pos / (double)(height() - butt_.height());
     SliderMovedEvent slider_event(this, ratio);

@@ -30,7 +30,7 @@ public:
 
     void drawText(uint x_pixel, uint y_pixel, const std::string& str, uint font_size, const Color& col){
         sf::Text text_obj(str.c_str(), font_, font_size);
-        text_obj.setPosition(x_coord(x_pixel), y_coord(y_pixel));
+        text_obj.setPosition(x_coord(x_pixel), y_coord(y_pixel) - font_size);
         
         text_obj.setFillColor(convertLibColor(col));
         buffer_.draw(text_obj);
@@ -88,7 +88,7 @@ public:
     
     void drawPixelBuffer(uint x, uint y, const PixelBuffer& obj){
         sf::Sprite tmp_sprite(obj.buffer_.getTexture()); 
-        tmp_sprite.setPosition(sf::Vector2f(x_coord(x), y_coord(y)));
+        tmp_sprite.setPosition(sf::Vector2f(x_coord(x), y_coord(y) - obj.height()));
         buffer_.draw(tmp_sprite);
 
         return;
@@ -171,7 +171,7 @@ public:
             *p_event = new KeyPressedEvent((T_KEY)sf_event.key.code);
         }
         else if(sf_event.type == sf::Event::MouseMoved){
-            std::cout << "Mouse moved: " << x_coord(sf_event.mouseButton.x) << " " << y_coord(sf_event.mouseButton.y) << " " << x_coord(sf_event.mouseMove.x) << " " << y_coord(sf_event.mouseMove.y) << "\n";
+            // "Mouse moved: " << x_coord(sf_event.mouseButton.x) << " " << y_coord(sf_event.mouseButton.y) << " " << x_coord(sf_event.mouseMove.x) << " " << y_coord(sf_event.mouseMove.y) << "\n";
             *p_event = new MouseMovedEvent(x_coord(sf_event.mouseMove.x), y_coord(sf_event.mouseMove.y));
         }
         else if(sf_event.type == sf::Event::MouseButtonReleased){

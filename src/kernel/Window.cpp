@@ -4,7 +4,6 @@
 Window::Window(uint width, uint height):
     ContainerWidget(0, 0, width, height),
     space_(width, height),
-    pix_buf_(width, height),
     manager_()
 {   
     //! ok?
@@ -18,10 +17,9 @@ void Window::exec(){
     coreDraw();
 
     // TODO: fix
-    space_.drawPixelBuffer(0, 0, pix_buf_);
+    space_.drawPixelBuffer(0, 0, buff_);
     space_.show();
 
-    while(true){}
     while(space_.isOpen()){
         while(space_.extractEvent(&event)){
             was_event = true;
@@ -30,11 +28,21 @@ void Window::exec(){
         }
         if(was_event){
             coreDraw();
-            space_.drawPixelBuffer(0, 0, pix_buf_);
+            space_.drawPixelBuffer(0, 0, buff_);
             space_.show();
             was_event = false;
         }
     }
 
+    return;
+}
+
+void Window::add(Widget* widget){
+    ContainerWidget::connect(widget);
+    return;
+}
+
+void Window::remove(Widget* widget){
+    ContainerWidget::remove(widget);
     return;
 }

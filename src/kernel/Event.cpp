@@ -3,8 +3,8 @@
 
 bool MouseEvent::check(const Widget* widget) const{
 
-    if(widget->x() <= x_ && widget->width()  + widget->x() >= x_ && 
-        widget->y() <= y_ && widget->height() + widget->y() >= y_) return true;
+    if(widget->real_x() <= x_ && widget->width()  + widget->real_x() >= x_ && 
+        widget->real_y() <= y_ && widget->height() + widget->real_y() >= y_) return true;
     return false;
 }
 

@@ -3,11 +3,14 @@
 // TODO: remove hardcode
 ExpendedContainerWidget::ExpendedContainerWidget(uint x, uint y, uint width, uint height, uint sliderWidth):
     ContainerWidget(x, y, width, height),
-    hSlider_(x, y, width, sliderWidth, sliderWidth / 10),
-    vSlider_(x + width - sliderWidth, y, sliderWidth, height, sliderWidth / 10),
+    hSlider_(0, 0, width, sliderWidth, width / 5),
+    vSlider_(width - sliderWidth, sliderWidth, sliderWidth, height - sliderWidth, height / 5),
     loc_x_(0), loc_y_(0),
     ext_width_(width), ext_height_(height)
-{}
+{
+    ContainerWidget::connect(&hSlider_);
+    ContainerWidget::connect(&vSlider_);
+}
 
 ExpendedContainerWidget::~ExpendedContainerWidget(){}
 
@@ -23,7 +26,8 @@ void ExpendedContainerWidget::onSliderMoved(const SliderMovedEvent* event){
         //! type conversion could lead to errors
         loc_y_ = (uint)((double)(ext_height_ - height()) * event->ratio());
     }
-
+    
+    RequireRender();
     return;
 }
 
@@ -35,6 +39,7 @@ void ExpendedContainerWidget::draw(){
         return;
     }
 
+    // TODO: debug
     std::list<Widget*>::iterator subwidgets_iter;
     for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
 
@@ -71,6 +76,20 @@ void ExpendedContainerWidget::draw(){
         }
     }
 
+    if(hSlider_.isVisible()){
+        hSlider_.coreDraw();
+
+        PixelBuffer* buff = GetPointerOnPixBuff();
+        buff->drawPixelBuffer(hSlider_.x(), hSlider_.y(), (hSlider_.pixBuff()));
+    }
+
+    if(vSlider_.isVisible()){
+        vSlider_.coreDraw();
+
+        PixelBuffer* buff = GetPointerOnPixBuff();
+        buff->drawPixelBuffer(vSlider_.x(), vSlider_.y(), (vSlider_.pixBuff()));
+    }
+    
     return;
 }
 
@@ -82,7 +101,7 @@ void ExpendedContainerWidget::connect( Widget* child_widget){
     ext_width_  = std::max(ext_width_,  child_widget->x());
     ext_height_ = std::max(ext_height_, child_widget->y());
 
-    is_render_required_ = true;    
+    RequireRender();    
 
     return;
 }
@@ -101,7 +120,35 @@ void ExpendedContainerWidget::remove(Widget* child_widget){
         ext_height_ = std::max(ext_height_, (*subwidgets_iter)->y());
     }
 
-    is_render_required_ = true;    
+    RequireRender();
+
+    return;
+}
+
+void ExpendedContainerWidget::ext_width(uint val){
+    ext_width_ = val;
+
+    if(ext_width_ <= width()){
+        hSlider_.setVisible(false);
+    }
+    else{
+        hSlider_.setVisible(true);
+        hSlider_.ratio((double)loc_x_ / (double)(ext_width_ - width()));
+    }
+
+    return;
+}
+
+void ExpendedContainerWidget::ext_height(uint val){
+    ext_height_ = val;
+
+    if(ext_height_ <= height()){
+        vSlider_.setVisible(false);
+    }
+    else{
+        vSlider_.setVisible(true);
+        vSlider_.ratio((double)loc_y_ / (double)(ext_height_ - height()));
+    }
 
     return;
 }

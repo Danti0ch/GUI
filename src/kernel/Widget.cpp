@@ -63,6 +63,15 @@ void Widget::triggerEvent(const Event* event){
         const SliderMovedEvent* detected_event = static_cast<const SliderMovedEvent*>(event);
         onSliderMoved(detected_event);
     }
+    else if(event->type() == T_EVENT::mouseMoved){
+        const MouseMovedEvent* detected_event = static_cast<const MouseMovedEvent*>(event);
+        onMouseMoved(detected_event);
+    }
+    else if(event->type() == T_EVENT::mouseReleased){
+        const MouseReleasedEvent* detected_event = static_cast<const MouseReleasedEvent*>(event);
+        onMouseReleased(detected_event);
+    }
+    
     return;
 }
 
@@ -99,7 +108,7 @@ void Widget::y(uint val){
     return;
 }
 
-uint Widget::real_x(){
+uint Widget::real_x() const{
     uint real_x = x_;
 
     ContainerWidget* parent_widget = parent_widget_;
@@ -111,7 +120,7 @@ uint Widget::real_x(){
     return real_x;
 }
 
-uint Widget::real_y(){
+uint Widget::real_y() const{
 
     uint real_y = y_;
 

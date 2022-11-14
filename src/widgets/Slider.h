@@ -27,11 +27,20 @@ public:
 
     void onMouseLClick(const MouseLClickEvent* event) override;
     void draw() override;
+
+    // TODO: refactor
+    double ratio(double val){
+        NASSERT(val >= 0 && val <= 1);
+
+        ratio_ = val;
+        RequireRender();
+    }
 private:
     double ratio_;
     RectButton<double> butt_;
 };
 
+// TODO: inheritance from containerWidget
 class VSlider : public Widget{
 public:
     VSlider(uint x, uint y, uint width, uint height, uint butt_height);
@@ -39,6 +48,14 @@ public:
 
     void onMouseLClick(const MouseLClickEvent* event) override;
     void draw() override;
+
+    // TODO: refactor
+    double ratio(double val){
+        NASSERT(val >= 0 && val <= 1);
+
+        ratio_ = val;
+        RequireRender();
+    }
 private:
     double ratio_;
     RectButton<double> butt_;

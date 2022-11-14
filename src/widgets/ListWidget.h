@@ -19,8 +19,8 @@ public:
     virtual void add(const std::string& label, T_HANDLER p_handler, const T_ARG& arg) = 0;
 
     //? ok
-    void connect(Widget* child_widget) = delete;
-    void remove( Widget* child_widget) = delete;
+    //void connect(Widget* child_widget) = delete;
+    //void remove( Widget* child_widget) = delete;
     
 protected:
     std::vector<RectButton<T_ARG>> elems_;
