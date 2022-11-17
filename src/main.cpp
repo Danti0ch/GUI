@@ -4,6 +4,7 @@
 #include "DrawableArea.h"
 #include "Label.h"
 #include "ExpendedContainerWidget.h"
+#include "ListWidget.h"
 
 void foo(int ga){
     std::cout<< "nig" << ga << "\n";
@@ -17,11 +18,17 @@ int main(int argc, char *argv[]){
     
     exp.setTexture(Color(200, 0, 0));
 
-    exp.ext_width(200);
-    exp.ext_height(200);
-
     cur_window.add(&exp);
 
+    HListWidget<int> lst(200, 200, 200, 200, 60);
+    lst.setTexture(Color(0, 255, 255));
+    lst.add("wtf",  foo, 1);
+    lst.add("wtf2", foo, 2);
+    lst.add("wtf3", foo, 3);
+    lst.add("wtf3", foo, 3);
+    lst.add("wtf3", foo, 3);
+    
+    cur_window.add(&lst);    
     cur_window.exec();
     return 0;
 }

@@ -9,13 +9,18 @@ public:
     RectButton(uint x, uint y, uint width, uint height):
         AbstractButton<T_HANDLER_ARG>(x, y, width, height){}
 
+    // TODO: redone
+    RectButton(const RectButton<T_HANDLER_ARG>& other):
+        AbstractButton<T_HANDLER_ARG>(static_cast<const AbstractButton<T_HANDLER_ARG>&>(other)),
+        text_(other.text_){}
+
     void setText(const std::string& str){
         text_.data(str);
     }
     
     virtual void draw() override{
         // TODO: count offset for text
-        text_.draw(this->GetPointerOnPixBuff(), this->x() + 2, this->y() + 2);
+        text_.draw(this->GetPointerOnPixBuff(), 2, 40);
         return;
     }
 

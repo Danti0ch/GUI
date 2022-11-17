@@ -60,5 +60,5 @@ private:
     double ratio_;
     RectButton<double> butt_;
 };
-
+ 
 #endif // SLIDER_H

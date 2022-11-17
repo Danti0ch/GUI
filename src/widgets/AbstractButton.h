@@ -14,6 +14,10 @@ public:
     AbstractButton(uint x, uint y, uint width, uint height):
         Widget(x, y, width, height), p_handler_(NULL){}
 
+    AbstractButton(const AbstractButton<T_HANDLER_ARG>& other):
+        Widget(other.x(), other.y(), other.width(), other.height()),
+        p_handler_(other.p_handler_), handler_arg_(other.handler_arg_){}
+
     void onMouseLClick(const MouseLClickEvent* event) override{
         if(p_handler_ == NULL) return;
         p_handler_(handler_arg_);

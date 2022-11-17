@@ -1,6 +1,6 @@
 /**
  * @file ExtendedWidget.h
- * @brief same as containerWidget, but the area is expanded by using sliderWidget
+ * @brief same as containerWidget, but the area is expended by using sliderWidget
  * @version 0.1
  * @date 2022-11-12
  * 
@@ -39,6 +39,8 @@ private:
 
     uint loc_x_, loc_y_;
     uint ext_width_, ext_height_;
+
+    PixelBuffer exp_buf_;
 };
 
 #endif // EXP_CONTAINER_WIDGET_H

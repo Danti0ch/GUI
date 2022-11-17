@@ -6,10 +6,14 @@ ExpendedContainerWidget::ExpendedContainerWidget(uint x, uint y, uint width, uin
     hSlider_(0, 0, width, sliderWidth, width / 5),
     vSlider_(width - sliderWidth, sliderWidth, sliderWidth, height - sliderWidth, height / 5),
     loc_x_(0), loc_y_(0),
-    ext_width_(width), ext_height_(height)
+    ext_width_(width), ext_height_(height),
+    exp_buf_(width, height)
 {
     ContainerWidget::connect(&hSlider_);
     ContainerWidget::connect(&vSlider_);
+
+    hSlider_.setVisible(false);
+    vSlider_.setVisible(false);
 }
 
 ExpendedContainerWidget::~ExpendedContainerWidget(){}
@@ -34,6 +38,8 @@ void ExpendedContainerWidget::onSliderMoved(const SliderMovedEvent* event){
 // TODO: draw widgets that partially fall into the area
 void ExpendedContainerWidget::draw(){
 
+
+    // TODO: make test on this(check)
     if(!(hSlider_.isVisible()) && (!vSlider_.isVisible())){
         ContainerWidget::draw();
         return;
@@ -43,32 +49,38 @@ void ExpendedContainerWidget::draw(){
     std::list<Widget*>::iterator subwidgets_iter;
     for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
 
+        if(*subwidgets_iter == &hSlider_ || *subwidgets_iter == &vSlider_) continue;
         bool draw_required = false;
         if(hSlider_.isVisible() && vSlider_.isVisible()){
-            if((*subwidgets_iter)->x() >= loc_x_ &&
-               (*subwidgets_iter)->x() + (*subwidgets_iter)->width() <= width() - vSlider_.width() && 
-               (*subwidgets_iter)->y() >= loc_y_ &&
-               (*subwidgets_iter)->y() + (*subwidgets_iter)->height() <= height() - hSlider_.height()){
+            if(((*subwidgets_iter)->x() < loc_x_ + width() ||
+                (*subwidgets_iter)->x() + (*subwidgets_iter)->width() >= loc_x_) && 
+               ((*subwidgets_iter)->y() >= loc_y_ ||
+                (*subwidgets_iter)->y() + (*subwidgets_iter)->height() <= height() - hSlider_.height())){
                 
                 draw_required =  true;
             }
         }
+        
         else if(hSlider_.isVisible()){
-            if((*subwidgets_iter)->x() >= loc_x_ &&
-               (*subwidgets_iter)->x() + (*subwidgets_iter)->width() <= width()){
 
+            std::cout << (*subwidgets_iter)->x() << " " << (*subwidgets_iter)->width() << " " << loc_x_ << " " << width() << "\n";
+            if(((*subwidgets_iter)->x() < loc_x_ + width()) ||
+               ((*subwidgets_iter)->x() + (*subwidgets_iter)->width() >= loc_x_)){
+                std::cout << "1\n";
                 draw_required =  true;
             }
         }
+
         else if(vSlider_.isVisible()){
-            if((*subwidgets_iter)->y() >= loc_y_ &&
-               (*subwidgets_iter)->y() + (*subwidgets_iter)->height() <= height()){
+            if((*subwidgets_iter)->y() < loc_y_ + height() ||
+               (*subwidgets_iter)->y() + (*subwidgets_iter)->height() >= loc_y_){
 
                 draw_required =  true;
             }
         }
 
-        if(draw_required){
+        if(draw_required && (*subwidgets_iter)->isVisible()){
+
             (*subwidgets_iter)->coreDraw();
 
             PixelBuffer* buff = GetPointerOnPixBuff();
@@ -76,6 +88,7 @@ void ExpendedContainerWidget::draw(){
         }
     }
 
+    
     if(hSlider_.isVisible()){
         hSlider_.coreDraw();
 
@@ -84,6 +97,7 @@ void ExpendedContainerWidget::draw(){
     }
 
     if(vSlider_.isVisible()){
+
         vSlider_.coreDraw();
 
         PixelBuffer* buff = GetPointerOnPixBuff();
@@ -101,6 +115,13 @@ void ExpendedContainerWidget::connect( Widget* child_widget){
     ext_width_  = std::max(ext_width_,  child_widget->x());
     ext_height_ = std::max(ext_height_, child_widget->y());
 
+    if(ext_width_ > width()){
+       hSlider_.setVisible(true);
+    }
+
+    if(ext_height_ > height()){
+        vSlider_.setVisible(true);
+    }
     RequireRender();    
 
     return;

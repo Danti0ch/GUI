@@ -11,7 +11,10 @@ void ContainerWidget::draw(){
     std::list<Widget*>::iterator subwidgets_iter;
     for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
         (*subwidgets_iter)->coreDraw();
-        buff_.drawPixelBuffer((*subwidgets_iter)->x(), (*subwidgets_iter)->y(), (*subwidgets_iter)->pixBuff());
+
+        if((*subwidgets_iter)->isVisible()){
+            buff_.drawPixelBuffer((*subwidgets_iter)->x(), (*subwidgets_iter)->y(), (*subwidgets_iter)->pixBuff());
+        }
     }
     return;
 }
@@ -49,6 +52,7 @@ void ContainerWidget::remove(Widget* child_widget){
 
     return;
 }
+
 void ContainerWidget::connectDataUpdate_(Widget* container){
 
     if(p_manager_ != NULL){
@@ -62,6 +66,7 @@ void ContainerWidget::connectDataUpdate_(Widget* container){
     for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
         (*subwidgets_iter)->connectDataUpdate_(this);
     }
+
     return;
 }
 
