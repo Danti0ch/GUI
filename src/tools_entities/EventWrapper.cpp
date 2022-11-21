@@ -1,4 +1,4 @@
-#include "tools.hpp"
+/*#include "tools.hpp"
 #include "Event.h"
 #include "logger.h"
 
@@ -17,7 +17,7 @@ class Event
         } Oleg; //Object loading event group.
     };
 
-*/
+
 
 // TODO: rename
 booba::Event* convertToStandartEvent(const Event* event){
@@ -59,5 +59,5 @@ booba::Event* convertToStandartEvent(const Event* event){
 
     return stEvent;
 }
-
+*/
 //? convertFromStandardEvent()?

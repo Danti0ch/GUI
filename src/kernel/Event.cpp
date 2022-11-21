@@ -1,6 +1,7 @@
 #include "Event.h"
 #include "Widget.h"
 
+/*
 bool MouseEvent::check(const Widget* widget) const{
 
     if(widget->real_x() <= x_ && widget->width()  + widget->real_x() >= x_ && 
@@ -16,3 +17,4 @@ bool KeyPressedEvent::check(const Widget* widget) const{
 bool SliderMovedEvent::check(const Widget* widget) const{
     return true;    
 }
+*/

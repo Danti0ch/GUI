@@ -29,8 +29,8 @@ public:
     void draw() override;
 
     // TODO: refactor
-    double ratio(double val){
-        NASSERT(val >= 0 && val <= 1);
+    void ratio(double val){
+        assert(val >= 0 && val <= 1);
 
         ratio_ = val;
         RequireRender();
@@ -50,8 +50,8 @@ public:
     void draw() override;
 
     // TODO: refactor
-    double ratio(double val){
-        NASSERT(val >= 0 && val <= 1);
+    void ratio(double val){
+        assert(val >= 0 && val <= 1);
 
         ratio_ = val;
         RequireRender();

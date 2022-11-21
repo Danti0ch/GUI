@@ -12,6 +12,8 @@
 
 const uint SLIDER_SIZE = 20;
 
+//!!!!!!!!!!!!!! MAKE THAT IT WOULD NOT HAVE T_ARG, BUT RETURN  TO BUTTON HANDLER ID OF THE PRESSED ITEM
+
 // TODO: figure out: error: there are no arguments to ‘height’ that depend on a template parameter, so a declaration of ‘height’ must be avai
 // TODO: copypaste 4 times, remove
 
@@ -58,12 +60,14 @@ public:
         this->elems_[this->elems_.size() - 1]->handler(p_handler);
         this->elems_[this->elems_.size() - 1]->setText(label);
         this->elems_[this->elems_.size() - 1]->setTexture(Color(255, 255, 255));
-        
+        this->elems_[this->elems_.size() - 1]->setHoverTexture(Color(204, 204, 255));
+
         ExpendedContainerWidget::connect(this->elems_[this->elems_.size() - 1]);
         return;
     }
 };
 
+// TODO: make adding widget from top to bottom
 template<typename T_ARG>
 class VListWidget : public AbstractListWidget<T_ARG>{
 public:
@@ -73,17 +77,17 @@ public:
         AbstractListWidget<T_ARG>(x, y, width, height, elem_height){}
 
     void add(const std::string& label, T_HANDLER p_handler, const T_ARG& arg){
-        this->elems_.push_back(new RectButton<T_ARG>(0, this->elems_.size() * this->elem_size_, this->width(), this->elem_height_));
+        this->elems_.push_back(new RectButton<T_ARG>(0, this->elems_.size() * this->elem_size(), this->width(), this->elem_size()));
 
         this->elems_[this->elems_.size() - 1]->data(arg);
         this->elems_[this->elems_.size() - 1]->handler(p_handler);
         this->elems_[this->elems_.size() - 1]->setText(label);
         this->elems_[this->elems_.size() - 1]->setTexture(Color(255, 255, 255));
+        this->elems_[this->elems_.size() - 1]->setHoverTexture(Color(204, 204, 255));
 
         ExpendedContainerWidget::connect(this->elems_[this->elems_.size() - 1]);
         return;
     }
 };
-
 
 #endif // LIST_WIDGET_H

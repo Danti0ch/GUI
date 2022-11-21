@@ -53,7 +53,8 @@ public:
     bool isFocused() const { return is_focused_; }
     bool isVisible() const { return is_visible_; }
     bool isRenderRequired() const { return is_render_required_; }
-    const Texture& texture(){ return texture_; }
+    Texture& texture(){ return texture_; }
+    
     void setTexture(const Texture& texture){ texture_ = texture; }
     
     // TODO: make it virtual for overloading in containerWidget
@@ -81,11 +82,13 @@ public:
     // or normal?
     void throwEvent(const Event* event);
     void triggerEvent(const Event* event);
+
+    bool isPointInside(uint x, uint y);
+
     friend class ContainerWidget;
     friend class Window;
 private:
     uint x_, y_;
-
     uint width_, height_;
 
     Texture texture_;
@@ -96,7 +99,6 @@ private:
     EventManager* p_manager_;
 
 protected:
-
     bool is_focused_;
     bool is_visible_;
     bool is_render_required_;
@@ -114,6 +116,10 @@ public:
     ContainerWidget(uint x, uint y, uint width, uint height);
 
     virtual void draw() override;
+
+
+    virtual uint getSubPosX(const Widget* child_widget) const;
+    virtual uint getSubPosY(const Widget* child_widget) const;
 
     // TODO: fix    
     friend class Window;

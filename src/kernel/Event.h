@@ -30,7 +30,7 @@ public:
     /**
      * @brief проверяет действует ли событие на переданный виджет
      */
-    virtual bool check(const Widget* widget) const = 0;
+    //virtual bool check(const Widget* widget) const = 0;
 private:
     T_EVENT type_;
 };
@@ -40,7 +40,7 @@ public:
     MouseEvent(T_EVENT type, uint x, uint y):
         Event(type), x_(x), y_(y){}
 
-    bool check(const Widget* widget) const override;
+    //bool check(const Widget* widget) const override;
 
     uint x() const { return x_; }
     uint y() const { return y_; }
@@ -101,7 +101,7 @@ public:
     KeyPressedEvent(T_KEY key):
         Event(T_EVENT::keyPressed), key_(key){}
 
-    bool check(const Widget* widget) const override;
+    //bool check(const Widget* widget) const override;
 
     T_KEY key() const { return key_; }
 private: 
@@ -115,7 +115,7 @@ public:
     SliderMovedEvent(Widget* p_slider, double ratio):
         Event(T_EVENT::sliderMoved), p_slider_(p_slider), ratio_(ratio){}
     
-    bool check(const Widget* widget) const override;
+    //bool check(const Widget* widget) const override;
 
     const Widget* p_slider() const { return p_slider_; }
     double ratio() const { return ratio_; }

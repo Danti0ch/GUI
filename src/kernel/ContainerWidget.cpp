@@ -83,3 +83,30 @@ void ContainerWidget::disconnectDataUpdate_(){
     }
     return;
 }
+
+// TODO: what if child_widget not in list?? redone for handling error
+uint ContainerWidget::getSubPosX(const Widget* child_widget) const{
+
+    std::list<Widget*>::const_iterator subwidgets_iter;
+    for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
+        
+        if((*subwidgets_iter) == child_widget){
+            return (*subwidgets_iter)->x();
+        }
+    }
+
+    return -1;
+}
+
+uint ContainerWidget::getSubPosY(const Widget* child_widget) const{
+
+    std::list<Widget*>::const_iterator subwidgets_iter;
+    for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
+        
+        if((*subwidgets_iter) == child_widget){
+            return (*subwidgets_iter)->y();
+        }
+    }
+
+    return -1;
+}

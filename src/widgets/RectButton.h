@@ -20,7 +20,8 @@ public:
     
     virtual void draw() override{
         // TODO: count offset for text
-        text_.draw(this->GetPointerOnPixBuff(), 2, 40);
+
+        text_.draw(this->GetPointerOnPixBuff(), 2, 6);
         return;
     }
 

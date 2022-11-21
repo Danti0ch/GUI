@@ -26,7 +26,10 @@ public:
     void ext_height(uint val);
 
     virtual void draw() override;
-
+    
+    uint getSubPosX(const Widget* child_widget) const override;
+    uint getSubPosY(const Widget* child_widget) const override;
+    
 protected:
     virtual void connect(Widget* child_widget);
     virtual void remove(Widget* child_widget);
@@ -40,7 +43,7 @@ private:
     uint loc_x_, loc_y_;
     uint ext_width_, ext_height_;
 
-    PixelBuffer exp_buf_;
+    PixelBuffer* exp_buf_;
 };
 
 #endif // EXP_CONTAINER_WIDGET_H

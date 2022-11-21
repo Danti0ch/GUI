@@ -7,7 +7,8 @@
 #include "Pixel.h"
 #include "Color.h"
 #include "Event.h"
-
+#include "logger.h"
+#include <iostream>
 // TODO: make cpp
 
 // TODO: rename
@@ -15,6 +16,7 @@
 
 // TODO: написать проверки на out_of_range
 
+const int a = 15;
 class PixelBuffer{
 public:
     PixelBuffer(uint width, uint height):
@@ -30,6 +32,7 @@ public:
 
     void drawText(uint x_pixel, uint y_pixel, const std::string& str, uint font_size, const Color& col){
         sf::Text text_obj(str.c_str(), font_, font_size);
+        
         text_obj.setPosition(x_coord(x_pixel), y_coord(y_pixel) - font_size);
         
         text_obj.setFillColor(convertLibColor(col));
@@ -45,6 +48,7 @@ public:
             sf::Vertex(sf::Vector2f(x_coord(x_pix2), y_coord(y_pix2)), sf_col)
         };
 
+        int a = 15;
         buffer_.draw(line_to_draw, 2, sf::Lines);
         return;
     }
@@ -87,8 +91,20 @@ public:
     }
     
     void drawPixelBuffer(uint x, uint y, const PixelBuffer& obj){
+
+        buffer_.display();
         sf::Sprite tmp_sprite(obj.buffer_.getTexture()); 
         tmp_sprite.setPosition(sf::Vector2f(x_coord(x), y_coord(y) - obj.height()));
+        buffer_.draw(tmp_sprite);
+
+        return;
+    }
+
+    void drawPixelBuffer(const PixelBuffer& obj, uint x_to, uint y_to, uint x_from, uint y_from, uint other_width, uint other_height){
+
+        buffer_.display();
+        sf::Sprite tmp_sprite(obj.buffer_.getTexture(), sf::IntRect(obj.x_coord(x_from), obj.y_coord(y_from) - other_height, other_width, other_height)); 
+        tmp_sprite.setPosition(sf::Vector2f(x_coord(x_to), y_coord(y_to) - other_height));
         buffer_.draw(tmp_sprite);
 
         return;
@@ -110,6 +126,7 @@ private:
 
         return col;
     }
+
     //? fromLib ToLib?
     // TODO: make inline
     uint x_coord(uint val) const {
@@ -204,7 +221,7 @@ public:
     void drawPixel(uint x_pix, uint y_pix, const Color& col){
         sf::Color sf_col = convertLibColor(col);
         sf::Vertex pix_to_draw(sf::Vector2f(x_coord(x_pix), y_coord(y_pix)), sf_col);
-
+        
         window_.draw(&pix_to_draw, 1, sf::Points);
         return;
     }

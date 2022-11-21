@@ -108,27 +108,28 @@ void Widget::y(uint val){
     return;
 }
 
+
+// TODO: make non-recursive
 uint Widget::real_x() const{
-    uint real_x = x_;
 
-    ContainerWidget* parent_widget = parent_widget_;
-    while(parent_widget != NULL){
-        real_x += parent_widget->x();
-        parent_widget = parent_widget->parent_widget_;
-    }
+    if(parent_widget_ == NULL) return 0;
 
-    return real_x;
+    return parent_widget_->getSubPosX(this) + parent_widget_->real_x();
 }
 
 uint Widget::real_y() const{
 
-    uint real_y = y_;
+    if(parent_widget_ == NULL) return 0;
 
-    ContainerWidget* parent_widget = parent_widget_;
-    while(parent_widget != NULL){
-        real_y += parent_widget->y();
-        parent_widget = parent_widget->parent_widget_;
-    }
+    return parent_widget_->getSubPosY(this) + parent_widget_->real_y();
+}
 
-    return real_y;
+bool Widget::isPointInside(uint x, uint y){
+
+    uint realX = real_x(), realY = real_y();
+
+    if(x >= realX && x <= realX + width() && y >= realY && y <= realY + height()){
+        return true;
+    } 
+    return false;
 }

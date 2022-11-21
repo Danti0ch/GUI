@@ -6,17 +6,23 @@ ExpendedContainerWidget::ExpendedContainerWidget(uint x, uint y, uint width, uin
     hSlider_(0, 0, width, sliderWidth, width / 5),
     vSlider_(width - sliderWidth, sliderWidth, sliderWidth, height - sliderWidth, height / 5),
     loc_x_(0), loc_y_(0),
-    ext_width_(width), ext_height_(height),
-    exp_buf_(width, height)
+    ext_width_(width), ext_height_(height)
 {
     ContainerWidget::connect(&hSlider_);
     ContainerWidget::connect(&vSlider_);
 
     hSlider_.setVisible(false);
     vSlider_.setVisible(false);
+
+    hSlider_.setTexture(Color(119, 136, 153));
+    vSlider_.setTexture(Color(119, 136, 153));
+
+    exp_buf_ = new PixelBuffer(width, height);
 }
 
-ExpendedContainerWidget::~ExpendedContainerWidget(){}
+ExpendedContainerWidget::~ExpendedContainerWidget(){
+    delete exp_buf_;
+}
 
 void ExpendedContainerWidget::onSliderMoved(const SliderMovedEvent* event){
 
@@ -38,7 +44,7 @@ void ExpendedContainerWidget::onSliderMoved(const SliderMovedEvent* event){
 // TODO: draw widgets that partially fall into the area
 void ExpendedContainerWidget::draw(){
 
-
+    MDLOG("drawing init on %p", this);
     // TODO: make test on this(check)
     if(!(hSlider_.isVisible()) && (!vSlider_.isVisible())){
         ContainerWidget::draw();
@@ -50,44 +56,17 @@ void ExpendedContainerWidget::draw(){
     for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
 
         if(*subwidgets_iter == &hSlider_ || *subwidgets_iter == &vSlider_) continue;
-        bool draw_required = false;
-        if(hSlider_.isVisible() && vSlider_.isVisible()){
-            if(((*subwidgets_iter)->x() < loc_x_ + width() ||
-                (*subwidgets_iter)->x() + (*subwidgets_iter)->width() >= loc_x_) && 
-               ((*subwidgets_iter)->y() >= loc_y_ ||
-                (*subwidgets_iter)->y() + (*subwidgets_iter)->height() <= height() - hSlider_.height())){
-                
-                draw_required =  true;
-            }
-        }
-        
-        else if(hSlider_.isVisible()){
 
-            std::cout << (*subwidgets_iter)->x() << " " << (*subwidgets_iter)->width() << " " << loc_x_ << " " << width() << "\n";
-            if(((*subwidgets_iter)->x() < loc_x_ + width()) ||
-               ((*subwidgets_iter)->x() + (*subwidgets_iter)->width() >= loc_x_)){
-                std::cout << "1\n";
-                draw_required =  true;
-            }
-        }
+        (*subwidgets_iter)->coreDraw();
 
-        else if(vSlider_.isVisible()){
-            if((*subwidgets_iter)->y() < loc_y_ + height() ||
-               (*subwidgets_iter)->y() + (*subwidgets_iter)->height() >= loc_y_){
-
-                draw_required =  true;
-            }
-        }
-
-        if(draw_required && (*subwidgets_iter)->isVisible()){
-
-            (*subwidgets_iter)->coreDraw();
-
-            PixelBuffer* buff = GetPointerOnPixBuff();
-            buff->drawPixelBuffer((*subwidgets_iter)->x() - loc_x_, (*subwidgets_iter)->y() - loc_y_, (*subwidgets_iter)->pixBuff());
+        if((*subwidgets_iter)->isVisible()){
+            exp_buf_->drawPixelBuffer((*subwidgets_iter)->x(), (*subwidgets_iter)->y(), (*subwidgets_iter)->pixBuff());
         }
     }
 
+    PixelBuffer* buff = GetPointerOnPixBuff();
+
+    buff->drawPixelBuffer(*exp_buf_, 0, 0, loc_x_, loc_y_, width(), height());
     
     if(hSlider_.isVisible()){
         hSlider_.coreDraw();
@@ -97,7 +76,6 @@ void ExpendedContainerWidget::draw(){
     }
 
     if(vSlider_.isVisible()){
-
         vSlider_.coreDraw();
 
         PixelBuffer* buff = GetPointerOnPixBuff();
@@ -112,16 +90,26 @@ void ExpendedContainerWidget::connect( Widget* child_widget){
 
     ContainerWidget::connect(child_widget);
 
-    ext_width_  = std::max(ext_width_,  child_widget->x());
-    ext_height_ = std::max(ext_height_, child_widget->y());
+    ext_width_  = std::max(ext_width_,  child_widget->x() + child_widget->width());
+    ext_height_ = std::max(ext_height_, child_widget->y() + child_widget->height());
 
     if(ext_width_ > width()){
-       hSlider_.setVisible(true);
+        hSlider_.setVisible( true);
     }
 
     if(ext_height_ > height()){
         vSlider_.setVisible(true);
     }
+
+    if(ext_width_ > exp_buf_->width() || ext_height_ > exp_buf_->height()){
+        PixelBuffer* p_tmp_buf = new PixelBuffer(std::max(ext_width_, exp_buf_->width()), std::max(ext_height_, exp_buf_->height()));
+
+        p_tmp_buf->drawPixelBuffer(0, 0, *exp_buf_);
+
+        delete exp_buf_;
+        exp_buf_ = p_tmp_buf;
+    }
+
     RequireRender();    
 
     return;
@@ -172,4 +160,35 @@ void ExpendedContainerWidget::ext_height(uint val){
     }
 
     return;
+}
+
+// TODO: what if child_widget not in list?? redone for handling error
+uint ExpendedContainerWidget::getSubPosX(const Widget* child_widget) const{
+
+    if(child_widget == &hSlider_ || child_widget == &vSlider_) return child_widget->x();
+
+    std::list<Widget*>::const_iterator subwidgets_iter;
+    for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
+        
+        if((*subwidgets_iter) == child_widget){
+            return (*subwidgets_iter)->x() - loc_x_;
+        }
+    }
+
+    return -1;
+}
+
+uint ExpendedContainerWidget::getSubPosY(const Widget* child_widget) const{
+
+    if(child_widget == &hSlider_ || child_widget == &vSlider_) return child_widget->y();
+
+    std::list<Widget*>::const_iterator subwidgets_iter;
+    for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
+        
+        if((*subwidgets_iter) == child_widget){
+            return (*subwidgets_iter)->y() - loc_y_;
+        }
+    }
+
+    return -1;
 }
