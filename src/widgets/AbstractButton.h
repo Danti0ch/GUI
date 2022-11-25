@@ -33,6 +33,7 @@ public:
         if(isPointInside(event->state()->x(), event->state()->y())){
             // TODO: make it smooth
             if(!is_hovered_){
+
                 is_hovered_ = true;
                 
                 main_texture_ = texture();

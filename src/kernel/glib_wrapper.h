@@ -106,13 +106,10 @@ public:
 
     void drawPixelBuffer(const PixelBuffer& obj, uint x_to, uint y_to, uint x_from, uint y_from, uint other_width, uint other_height){
 
-        std::cout << "1\n";
         sf::Sprite tmp_sprite(obj.buffer_.getTexture(), sf::IntRect(obj.x_coord(x_from), obj.y_coord(y_from) - other_height, other_width, other_height)); 
         tmp_sprite.setPosition(sf::Vector2f(x_coord(x_to), y_coord(y_to) - other_height));
-        std::cout << "2\n";
         
         buffer_.draw(tmp_sprite);
-        std::cout << "3\n";
 
         return;
     }
@@ -191,11 +188,20 @@ public:
         //}
 
         if(sf_event.type == sf::Event::MouseButtonPressed || sf_event.type == sf::Event::MouseMoved || sf_event.type == sf::Event::MouseButtonReleased){
+            
             mouse_data_.last_x_ = mouse_data_.x_;
             mouse_data_.last_y_ = mouse_data_.y_;
             
-            mouse_data_.x_  = x_coord(sf_event.mouseButton.x);
-            mouse_data_.y_  = y_coord(sf_event.mouseButton.y);
+            if(sf_event.type ==  sf::Event::MouseMoved){
+                mouse_data_.x_  = x_coord(sf_event.mouseMove.x);
+                mouse_data_.y_  = y_coord(sf_event.mouseMove.y);
+            }
+            else{
+                std::cout << sf_event.mouseButton.x << " " << sf_event.mouseButton.y << "\n";
+
+                mouse_data_.x_  = x_coord(sf_event.mouseButton.x);
+                mouse_data_.y_  = y_coord(sf_event.mouseButton.y);
+            }
 
             if(sf_event.type == sf::Event::MouseButtonPressed){
                 mouse_data_.isLPressed_ = true;
