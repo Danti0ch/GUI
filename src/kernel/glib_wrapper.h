@@ -16,7 +16,10 @@
 
 // TODO: написать проверки на out_of_range
 
-const int a = 15;
+// FIXME: offset
+
+class GraphicSpace;
+
 class PixelBuffer{
 public:
     PixelBuffer(uint width, uint height):
@@ -54,8 +57,9 @@ public:
     }
 
     void drawPixel(uint x_pix, uint y_pix, const Color& col){
+
         sf::Color sf_col = convertLibColor(col);
-        sf::Vertex pix_to_draw(sf::Vector2f(x_coord(x_pix), y_coord(y_pix)), sf_col);
+        sf::Vertex pix_to_draw(sf::Vector2f((x_pix), (y_pix)), sf_col);
 
         buffer_.draw(&pix_to_draw, 1, sf::Points);
         return;
@@ -102,10 +106,13 @@ public:
 
     void drawPixelBuffer(const PixelBuffer& obj, uint x_to, uint y_to, uint x_from, uint y_from, uint other_width, uint other_height){
 
-        buffer_.display();
+        std::cout << "1\n";
         sf::Sprite tmp_sprite(obj.buffer_.getTexture(), sf::IntRect(obj.x_coord(x_from), obj.y_coord(y_from) - other_height, other_width, other_height)); 
         tmp_sprite.setPosition(sf::Vector2f(x_coord(x_to), y_coord(y_to) - other_height));
+        std::cout << "2\n";
+        
         buffer_.draw(tmp_sprite);
+        std::cout << "3\n";
 
         return;
     }
@@ -145,7 +152,8 @@ class GraphicSpace{
 public:
     GraphicSpace(uint width, uint height):
         window_(sf::VideoMode(width, height), "NO SIGNAL"),
-        font_()
+        font_(),
+        mouse_data_(sf::Mouse::getPosition(window_).x, sf::Mouse::getPosition(window_).y, sf::Mouse::isButtonPressed(sf::Mouse::Left), sf::Mouse::isButtonPressed(sf::Mouse::Right))
     {
         // TODO: refactor
         font_.loadFromFile("../fonts/arial.ttf");
@@ -181,18 +189,29 @@ public:
         //if(sf_event.type == sf::Event::Closed){
         //    *p_event = new CloseButtonPressedEvent();
         //}
-        if(sf_event.type == sf::Event::MouseButtonPressed){
-            *p_event = new MouseLClickEvent(x_coord(sf_event.mouseButton.x), y_coord(sf_event.mouseButton.y));
+
+        if(sf_event.type == sf::Event::MouseButtonPressed || sf_event.type == sf::Event::MouseMoved || sf_event.type == sf::Event::MouseButtonReleased){
+            mouse_data_.last_x_ = mouse_data_.x_;
+            mouse_data_.last_y_ = mouse_data_.y_;
+            
+            mouse_data_.x_  = x_coord(sf_event.mouseButton.x);
+            mouse_data_.y_  = y_coord(sf_event.mouseButton.y);
+
+            if(sf_event.type == sf::Event::MouseButtonPressed){
+                mouse_data_.isLPressed_ = true;
+                *p_event = new MouseLClickEvent(mouse_data_);
+            } 
+            else if(sf_event.type == sf::Event::MouseMoved){
+                // "Mouse moved: " << x_coord(sf_event.mouseButton.x) << " " << y_coord(sf_event.mouseButton.y) << " " << x_coord(sf_event.mouseMove.x) << " " << y_coord(sf_event.mouseMove.y) << "\n";
+                *p_event = new MouseMovedEvent(mouse_data_);
+            }
+            else if(sf_event.type == sf::Event::MouseButtonReleased){
+                mouse_data_.isRPressed_ = false;
+                *p_event = new MouseReleasedEvent(mouse_data_);
+            }
         }
         else if(sf_event.type == sf::Event::KeyPressed){
             *p_event = new KeyPressedEvent((T_KEY)sf_event.key.code);
-        }
-        else if(sf_event.type == sf::Event::MouseMoved){
-            // "Mouse moved: " << x_coord(sf_event.mouseButton.x) << " " << y_coord(sf_event.mouseButton.y) << " " << x_coord(sf_event.mouseMove.x) << " " << y_coord(sf_event.mouseMove.y) << "\n";
-            *p_event = new MouseMovedEvent(x_coord(sf_event.mouseMove.x), y_coord(sf_event.mouseMove.y));
-        }
-        else if(sf_event.type == sf::Event::MouseButtonReleased){
-            *p_event = new MouseReleasedEvent(x_coord(sf_event.mouseButton.x), y_coord(sf_event.mouseButton.y));
         }
         else return false;
         return true;
@@ -250,9 +269,6 @@ public:
         return;
     }
 private:
-    sf::RenderWindow window_;
-    sf::Font font_;
-
     sf::Color convertLibColor(const Color& col){
         sf::Color sf_col(col.r(), col.g(), col.b(), col.a());
         return sf_col;
@@ -265,6 +281,13 @@ private:
     uint y_coord(uint val) const{
         return height() - val;
     }
+
+private:
+    sf::RenderWindow window_;
+    sf::Font font_;
+
+    //? static????
+    MouseData mouse_data_;
 };
 
 #endif // GRAPHIC_LIB_WRAPPER_H

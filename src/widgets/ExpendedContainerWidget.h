@@ -27,23 +27,23 @@ public:
 
     virtual void draw() override;
     
-    uint getSubPosX(const Widget* child_widget) const override;
-    uint getSubPosY(const Widget* child_widget) const override;
-    
+    //PixelBuffer* expBuf();
 protected:
     virtual void connect(Widget* child_widget);
     virtual void remove(Widget* child_widget);
     
+    uint getSubPosX(const Widget* child_widget) const override;
+    uint getSubPosY(const Widget* child_widget) const override;
+    
+    PixelBuffer* exp_buf_;
+    uint loc_x_, loc_y_;
 private:
 
     //? maybe implement new renderttexture buffer for drawing all subwidgets at once
     HSlider hSlider_;
     VSlider vSlider_;
 
-    uint loc_x_, loc_y_;
     uint ext_width_, ext_height_;
-
-    PixelBuffer* exp_buf_;
 };
 
 #endif // EXP_CONTAINER_WIDGET_H

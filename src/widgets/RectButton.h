@@ -3,15 +3,15 @@
 
 #include "AbstractButton.h"
 
-template<typename T_HANDLER_ARG>
-class RectButton : public AbstractButton<T_HANDLER_ARG>{
+template<class T_RECEIVER, typename T_HANDLER_ARG>
+class RectButton : public AbstractButton<T_RECEIVER, T_HANDLER_ARG>{
 public:
     RectButton(uint x, uint y, uint width, uint height):
-        AbstractButton<T_HANDLER_ARG>(x, y, width, height){}
+        AbstractButton<T_RECEIVER, T_HANDLER_ARG>(x, y, width, height){}
 
     // TODO: redone
-    RectButton(const RectButton<T_HANDLER_ARG>& other):
-        AbstractButton<T_HANDLER_ARG>(static_cast<const AbstractButton<T_HANDLER_ARG>&>(other)),
+    RectButton(const RectButton<T_RECEIVER, T_HANDLER_ARG>& other):
+        AbstractButton<T_RECEIVER, T_HANDLER_ARG>(static_cast<const AbstractButton<T_RECEIVER, T_HANDLER_ARG>&>(other)),
         text_(other.text_){}
 
     void setText(const std::string& str){

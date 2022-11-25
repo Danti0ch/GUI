@@ -20,7 +20,7 @@ namespace booba { // boot of outstanding best api
      * @brief We require you to implement this;
      * 
      */
-    void init_module();
+    extern "C" void init_module();
 
     enum class EventType
     {
@@ -88,7 +88,6 @@ namespace booba { // boot of outstanding best api
         } Oleg; //Object loading event group.
     };
 
-
     class Image
     {
     public:
@@ -96,8 +95,9 @@ namespace booba { // boot of outstanding best api
         virtual uint32_t getX()     = 0;
         virtual uint32_t getPixel(int32_t x, int32_t y) = 0;
         virtual void putPixel(uint32_t x, uint32_t y, uint32_t color) = 0;        
-        virtual uint32_t& operator()(uint32_t x, uint32_t y);
-        virtual const uint32_t& operator()(uint32_t x, uint32_t y) const;
+
+        virtual uint32_t& operator()(uint32_t x, uint32_t y) = 0;
+        virtual const uint32_t& operator()(uint32_t x, uint32_t y) const = 0;
     protected:
         virtual ~Image() = 0;
     };

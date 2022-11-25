@@ -5,19 +5,24 @@
 // TODO: rename
 #include "tools.hpp"
 #include "RectButton.h"
+#include "ToolManager.h"
 
 //? how to implement garbage collector, when we need to free generated widgets???
 
 extern "C" uint64_t booba::createButton(int32_t x, int32_t y, uint32_t w, uint32_t h, const char* name = nullptr){
     
     // TODO: make button without params
-    RectButton<int>* button = new RectButton<int>(x, y, w, h);
+    /*RectButton<int>* button = new RectButton<int>(x, y, w, h);
 
     if(name != nullptr){
         button->setText(name);
     }
 
-    return reinterpret_cast<uint64_t>(button);
+    return reinterpret_cast<uint64_t>(button);*/
+
+    exit(0);
+
+    return 0;
 }
 
 extern "C" uint64_t booba::createLabel(int32_t x, int32_t y, uint32_t w, uint32_t h, const char* name = nullptr){
@@ -56,9 +61,8 @@ extern "C" uint64_t booba::putSprite(uint64_t canvas, int32_t x, int32_t y, uint
 }
 
 extern "C" void booba::addTool(Tool* tool){
-    // TODO:
-
-    exit(0);
+    
+    ToolManager::ACTIVE_TOOL_MANAGER->addTool(tool);
     return;
 }
 

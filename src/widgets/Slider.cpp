@@ -17,7 +17,7 @@ HSlider::~HSlider(){}
 void HSlider::onMouseLClick(const MouseLClickEvent* event){
     NASSERT(event);
 
-    int new_butt_x_pos = (int)(event->x() - real_x()) - (int)(butt_.width() / 2);
+    int new_butt_x_pos = (int)(event->state()->x() - real_x()) - (int)(butt_.width() / 2);
 
     if(new_butt_x_pos < 0) new_butt_x_pos = 0;
     else if(new_butt_x_pos + butt_.width() > width()) new_butt_x_pos = width() - butt_.width();
@@ -57,7 +57,7 @@ VSlider::~VSlider(){}
 void VSlider::onMouseLClick(const MouseLClickEvent* event){
     NASSERT(event);
 
-    int new_butt_y_pos = (int)(event->y() - real_y()) - (int)(butt_.height() / 2);
+    int new_butt_y_pos = (int)(event->state()->y() - real_y()) - (int)(butt_.height() / 2);
 
     if(new_butt_y_pos < 0) new_butt_y_pos = 0;
     else if(new_butt_y_pos + butt_.height() > height()) new_butt_y_pos = height() - butt_.height();

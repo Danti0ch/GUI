@@ -13,20 +13,19 @@ void draw_distribution(const Texture& obj, PixelBuffer* space, uint x_l, uint y_
 //                          PUBLIC_FUNCTIONS_DEFINITION
 
 //========================================================================================//
+static Pixel pix = Pixel(0, 0, WHITE);
 
 #include <iostream>
-void Texture::draw(PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, TEXTURE_INSERT_MODE mode){
+void Texture::draw(PixelBuffer* buff, uint x_l, uint y_l, uint x_u, uint y_u, TEXTURE_INSERT_MODE mode){
 
-    assert(space != NULL);
-    draw_distribution(*this, space, x_l, y_l, x_u, y_u, false, pt_set(), mode);
+    draw_distribution(*this, buff, x_l, y_l, x_u, y_u, false, pt_set(), mode);
     return;
 }
 //----------------------------------------------------------------------------------------//
 
-void Texture::draw(PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, const pt_set& mask, TEXTURE_INSERT_MODE mode){
+void Texture::draw(PixelBuffer* buff, uint x_l, uint y_l, uint x_u, uint y_u, const pt_set& mask, TEXTURE_INSERT_MODE mode){
     
-    assert(space != NULL);
-    draw_distribution(*this, space, x_l, y_l, x_u, y_u, true, mask, mode);    
+    draw_distribution(*this, buff, x_l, y_l, x_u, y_u, true, mask, mode);    
     return;
 }
 
@@ -124,12 +123,12 @@ void draw_solid(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint
     uint ny_area_pxs = y_u - y_l + 1;
     uint nx_area_pxs = x_u - x_l + 1;
 
-    std::vector<Pixel> pixs_to_draw;
+    std::vector<Pixel> pixs_to_draw(nx_area_pxs * ny_area_pxs);
 
     for(uint n_row = 0; n_row < ny_area_pxs; n_row++){
         for(uint n_col = 0; n_col < nx_area_pxs; n_col++){
             if(!mask_req || mask.count({n_row, n_col})){
-                pixs_to_draw.push_back(Pixel(x_l + n_col, y_l + n_row, obj.solid_col()));
+                pixs_to_draw[n_row * nx_area_pxs + n_col] = Pixel(x_l + n_col, y_l + n_row, obj.solid_col());
             }
         }
     }

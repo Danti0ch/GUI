@@ -108,7 +108,6 @@ void Widget::y(uint val){
     return;
 }
 
-
 // TODO: make non-recursive
 uint Widget::real_x() const{
 

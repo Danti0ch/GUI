@@ -6,6 +6,9 @@
 class Pixel{
 public:
 
+    Pixel():
+        Pixel(0, 0, WHITE){}
+
     Pixel(uint x, uint y, const Color& col):
         x_(x), y_(y), col_(col) {}
 

@@ -37,7 +37,7 @@ public:
     }
 private:
     double ratio_;
-    RectButton<double> butt_;
+    RectButton<HSlider, double> butt_;
 };
 
 // TODO: inheritance from containerWidget
@@ -58,7 +58,7 @@ public:
     }
 private:
     double ratio_;
-    RectButton<double> butt_;
+    RectButton<VSlider, double> butt_;
 };
  
 #endif // SLIDER_H

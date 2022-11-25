@@ -5,24 +5,24 @@
 #include "Text.h"
 
 // TODO: add multiple handlers
-template<typename T_HANDLER_ARG>
+template<class T_RECEIVER, typename T_HANDLER_ARG>
 class AbstractButton : public Widget{
-    typedef void (*T_HANDLER)(T_HANDLER_ARG arg);
+    typedef void (T_RECEIVER::*T_HANDLER)(T_HANDLER_ARG arg);
 public:
 
     //? TODO: remove
     AbstractButton(uint x, uint y, uint width, uint height):
-        Widget(x, y, width, height), p_handler_(NULL), is_hovered_(false){}
+        Widget(x, y, width, height), p_handler_(NULL), p_receiver_(NULL), is_hovered_(false){}
 
-    AbstractButton(const AbstractButton<T_HANDLER_ARG>& other):
+    AbstractButton(const AbstractButton<T_RECEIVER, T_HANDLER_ARG>& other):
         Widget(other.x(), other.y(), other.width(), other.height()),
         p_handler_(other.p_handler_), handler_arg_(other.handler_arg_), is_hovered_(false){}
 
     void onMouseLClick(const MouseLClickEvent* event) override{
 
-        if(isPointInside(event->x(), event->y())){
+        if(isPointInside(event->state()->x(), event->state()->y())){
             if(p_handler_ == NULL) return;
-            p_handler_(handler_arg_);
+            (p_receiver_->*p_handler_)(handler_arg_);
         }
 
         return;
@@ -30,7 +30,7 @@ public:
 
     void onMouseMoved(const MouseMovedEvent* event) override{
 
-        if(isPointInside(event->x(), event->y())){
+        if(isPointInside(event->state()->x(), event->state()->y())){
             // TODO: make it smooth
             if(!is_hovered_){
                 is_hovered_ = true;
@@ -52,9 +52,11 @@ public:
 
     void setHoverTexture(const Texture& texture){ hover_texture_ = texture; RequireRender(); }
 
+    //? Move to constructor maybe?
     void data(const T_HANDLER_ARG& data){ handler_arg_ = data; }
-    void handler(const T_HANDLER handler){ p_handler_ = handler; }
+    void handler(T_RECEIVER* p_receiver, const T_HANDLER handler){ p_receiver_ = p_receiver; p_handler_ = handler; }
 private:
+    T_RECEIVER*   p_receiver_;
     T_HANDLER     p_handler_;
     T_HANDLER_ARG handler_arg_;
 

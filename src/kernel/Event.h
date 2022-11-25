@@ -14,6 +14,43 @@ enum class T_EVENT{
 };
 
 class Widget;
+class GraphicSpace;
+
+class MouseData{
+public:
+
+    MouseData(uint x_init, uint y_init, bool isLPressed, bool isRPressed)
+    {
+        last_x_ = x_init;
+        last_y_ = y_init;
+        
+        x_ = last_x_;
+        y_ = last_y_;
+
+        isLPressed_ = isLPressed;
+        isRPressed_ = isRPressed;
+    }
+
+    bool isLPressed() const { return isLPressed_; }
+    bool isRPressed() const { return isRPressed_; }
+
+    uint last_x() const { return last_x_; }
+    uint last_y() const { return last_y_; }
+
+    uint x() const { return x_; }
+    uint y() const { return y_; }
+
+    friend class GraphicSpace;
+private:
+
+    GraphicSpace* core_space_;
+    bool isLPressed_;
+    bool isRPressed_;
+
+    //?
+    uint last_x_, last_y_;
+    uint x_, y_;
+};
 
 class Event{
 public:
@@ -34,37 +71,42 @@ public:
 private:
     T_EVENT type_;
 };
+/*
+class MouseEvent : public Event{
+public:
+    MouseEvent(T_EVENT type):
+        Event(type){}
+
+    //bool check(const Widget* widget) const override;
+};
+*/
 
 class MouseEvent : public Event{
 public:
-    MouseEvent(T_EVENT type, uint x, uint y):
-        Event(type), x_(x), y_(y){}
+    MouseEvent(T_EVENT type, const MouseData& state_data):
+        Event(type), state_(&state_data){}
 
-    //bool check(const Widget* widget) const override;
-
-    uint x() const { return x_; }
-    uint y() const { return y_; }
+    const MouseData* state() const { return state_; }
 private:
-    uint x_;
-    uint y_;
+    const MouseData* state_;
 };
 
 class MouseLClickEvent : public MouseEvent{
 public:
-    MouseLClickEvent(uint x, uint y):
-        MouseEvent(T_EVENT::mouseLClick, x, y){}
+    MouseLClickEvent(const MouseData& state_data):
+        MouseEvent(T_EVENT::mouseLClick, state_data){}
 };
 
 class MouseMovedEvent : public MouseEvent{
 public:
-    MouseMovedEvent(uint x, uint y):
-        MouseEvent(T_EVENT::mouseMoved, x, y){}
+    MouseMovedEvent(const MouseData& state_data):
+        MouseEvent(T_EVENT::mouseMoved, state_data){}
 };
 
 class MouseReleasedEvent : public MouseEvent{
 public:
-    MouseReleasedEvent(uint x, uint y):
-        MouseEvent(T_EVENT::mouseReleased, x, y){}
+    MouseReleasedEvent(const MouseData& state_data):
+        MouseEvent(T_EVENT::mouseReleased, state_data){}
 };
 
 enum T_KEY {

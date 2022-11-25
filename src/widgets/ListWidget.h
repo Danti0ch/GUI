@@ -21,15 +21,18 @@ const uint SLIDER_SIZE = 20;
 // TODO:
 
 // TODO: add remove
-template<typename T_ARG>
+
+template<class T_DISTR>
 class AbstractListWidget : public ExpendedContainerWidget{
 public:
-    typedef void (*T_HANDLER)();
+    typedef void (T_DISTR::*T_HANDLER)(uint);
 
-    AbstractListWidget(uint x, uint y, uint width, uint height, uint elem_size):
+    AbstractListWidget(uint x, uint y, uint width, uint height, uint elem_size, T_DISTR* p_distr, const T_HANDLER p_handler):
         ExpendedContainerWidget(x, y, width, height, SLIDER_SIZE),
         elem_size_(elem_size),
-        elems_()
+        elems_(),
+        p_distr_(p_distr),
+        handler_(p_handler)
     {}
 
     //? ok
@@ -38,26 +41,29 @@ public:
     
     uint elem_size() const { return elem_size_; }
 protected:
-    std::vector<RectButton<T_ARG>*> elems_;
-private:
+    std::vector<RectButton<T_DISTR, uint>*> elems_;
+protected:
     uint elem_size_;
+    T_HANDLER handler_;
+    T_DISTR*  p_distr_;
 };
 
-template<typename T_ARG>
-class HListWidget : public AbstractListWidget<T_ARG>{
+template<class T_DISTR>
+class HListWidget : public AbstractListWidget<T_DISTR>{
 public:
-    typedef void (*T_HANDLER)(T_ARG arg);
+    typedef void (T_DISTR::*T_HANDLER)(uint);
 
-    HListWidget(uint x, uint y, uint width, uint height, uint elem_width):
-        AbstractListWidget<T_ARG>(x, y, width, height, elem_width){}
+    HListWidget(uint x, uint y, uint width, uint height, uint elem_width, T_DISTR* p_distr, const T_HANDLER p_handler):
+        AbstractListWidget<T_DISTR>(x, y, width, height, elem_width, p_distr, p_handler){}
 
-    void add(const std::string& label, T_HANDLER p_handler, const T_ARG& arg){
+    void add(const std::string& label){
         // TODO: remove this->??
-        // TODO:
-        this->elems_.push_back(new RectButton<T_ARG>(this->elems_.size() * this->elem_size(), 0, this->elem_size(), this->height()));
 
-        this->elems_[this->elems_.size() - 1]->data(arg);
-        this->elems_[this->elems_.size() - 1]->handler(p_handler);
+        // TODO:
+        this->elems_.push_back(new RectButton<T_DISTR, uint>(this->elems_.size() * this->elem_size(), 0, this->elem_size(), this->height()));
+
+        this->elems_[this->elems_.size() - 1]->data(this->elems_.size() - 1);    
+        this->elems_[this->elems_.size() - 1]->handler(this->p_distr_, this->handler_);
         this->elems_[this->elems_.size() - 1]->setText(label);
         this->elems_[this->elems_.size() - 1]->setTexture(Color(255, 255, 255));
         this->elems_[this->elems_.size() - 1]->setHoverTexture(Color(204, 204, 255));
@@ -68,19 +74,19 @@ public:
 };
 
 // TODO: make adding widget from top to bottom
-template<typename T_ARG>
-class VListWidget : public AbstractListWidget<T_ARG>{
+template<class T_DISTR>
+class VListWidget : public AbstractListWidget<T_DISTR>{
 public:
-    typedef void (*T_HANDLER)(T_ARG arg);
+    typedef void (T_DISTR::*T_HANDLER)(uint);
 
-    VListWidget(uint x, uint y, uint width, uint height, uint elem_height):
-        AbstractListWidget<T_ARG>(x, y, width, height, elem_height){}
+    VListWidget(uint x, uint y, uint width, uint height, uint elem_height, T_DISTR* p_distr, const T_HANDLER p_handler):
+        AbstractListWidget<T_DISTR>(x, y, width, height, elem_height, p_distr, p_handler){}
 
-    void add(const std::string& label, T_HANDLER p_handler, const T_ARG& arg){
-        this->elems_.push_back(new RectButton<T_ARG>(0, this->elems_.size() * this->elem_size(), this->width(), this->elem_size()));
+    void add(const std::string& label){
+        this->elems_.push_back(new RectButton<T_DISTR, uint>(0, this->elems_.size() * this->elem_size(), this->width(), this->elem_size()));
 
-        this->elems_[this->elems_.size() - 1]->data(arg);
-        this->elems_[this->elems_.size() - 1]->handler(p_handler);
+        this->elems_[this->elems_.size() - 1]->data(this->elems_.size() - 1);
+        this->elems_[this->elems_.size() - 1]->handler(this->p_distr_, this->handler_);
         this->elems_[this->elems_.size() - 1]->setText(label);
         this->elems_[this->elems_.size() - 1]->setTexture(Color(255, 255, 255));
         this->elems_[this->elems_.size() - 1]->setHoverTexture(Color(204, 204, 255));

@@ -117,17 +117,17 @@ public:
 
     virtual void draw() override;
 
-
-    virtual uint getSubPosX(const Widget* child_widget) const;
-    virtual uint getSubPosY(const Widget* child_widget) const;
-
     // TODO: fix    
     friend class Window;
+    friend class Widget;
 protected:
     virtual void connect( Widget* child_widget);
     virtual void connect(Widget* child_widget, uint x, uint y);
     virtual void remove( Widget* child_widget);
-    
+
+    virtual uint getSubPosX(const Widget* child_widget) const;
+    virtual uint getSubPosY(const Widget* child_widget) const;
+
     std::list<Widget*> subwidgets_;
 private:
     void connectDataUpdate_(Widget* container) override;

@@ -1,5 +1,7 @@
 #include "ExpendedContainerWidget.h"
 
+int a = 0;
+
 // TODO: remove hardcode
 ExpendedContainerWidget::ExpendedContainerWidget(uint x, uint y, uint width, uint height, uint sliderWidth):
     ContainerWidget(x, y, width, height),
@@ -44,9 +46,12 @@ void ExpendedContainerWidget::onSliderMoved(const SliderMovedEvent* event){
 // TODO: draw widgets that partially fall into the area
 void ExpendedContainerWidget::draw(){
 
-    MDLOG("drawing init on %p", this);
     // TODO: make test on this(check)
     if(!(hSlider_.isVisible()) && (!vSlider_.isVisible())){
+
+        PixelBuffer* buff = GetPointerOnPixBuff();
+        buff->drawPixelBuffer(*exp_buf_, 0, 0, loc_x_, loc_y_, width(), height());
+        
         ContainerWidget::draw();
         return;
     }
@@ -192,3 +197,8 @@ uint ExpendedContainerWidget::getSubPosY(const Widget* child_widget) const{
 
     return -1;
 }
+/*
+ExpendedContainerWidget::PixelBuffer* expBuf(){
+    return exp_buf_;
+}
+*/

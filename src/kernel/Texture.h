@@ -48,6 +48,6 @@ private:
     // TODO: unused fields
     Color solid_col_;
     Matrix<Color> col_pixels_;
-};
+    };
 
 #endif // TEXTURE_H
