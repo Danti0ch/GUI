@@ -9,15 +9,16 @@ class Label : public Widget{
 public:
     Label(uint x, uint y, uint width, uint height):
         Widget(x, y, width, height),
-        text_("tf")
+        text_()
     {
+        
         text_.color(Color(0, 0, 0));    
     }
     ~Label(){}
 
     // TODO: refactor
     void draw(){
-        text_.draw(GetPointerOnPixBuff(), 5, 5);
+        text_.draw(GetPointerOnPixBuff());
         return;
     }
     

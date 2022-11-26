@@ -24,10 +24,6 @@ int main(int argc, char *argv[]){
 
     cur_window.setTexture(Color(123, 123, 123));
     
-    Label status_bar(0, 0, cur_window.width(), 20);
-
-    status_bar.setTexture(Color(51, 153, 255));
-    status_bar.text("some data will be collected here");
     cur_window.add(&status_bar);
 
     ToolsList tools(740, 40, 150, 560);

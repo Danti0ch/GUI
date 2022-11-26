@@ -91,7 +91,6 @@ void ToolManager::setActiveTool(const booba::Tool* new_active_tool){
 
 void ToolManager::setActiveTool(uint n_tool){
 
-    std::cout << "ok!\n";
     if(n_tool > tools_.size()) return;  
     std::list<ToolWrapper>::iterator new_active_tool = tools_.begin();
 

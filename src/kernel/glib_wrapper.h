@@ -197,8 +197,6 @@ public:
                 mouse_data_.y_  = y_coord(sf_event.mouseMove.y);
             }
             else{
-                std::cout << sf_event.mouseButton.x << " " << sf_event.mouseButton.y << "\n";
-
                 mouse_data_.x_  = x_coord(sf_event.mouseButton.x);
                 mouse_data_.y_  = y_coord(sf_event.mouseButton.y);
             }

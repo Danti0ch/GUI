@@ -24,6 +24,14 @@ private:
     std::list<Widget*> widgets_;
 };
 
+enum class LINKAGE_MODE{
+
+    TOP,
+    BOTTOM,
+    LEFT,
+    RIGHT
+};
+
 /**
  * @brief an abstract class of any entity that has a representation on the application screen
  * 
@@ -32,6 +40,9 @@ class Widget{
 public:
 
     Widget(uint x, uint y, uint width, uint height);    
+
+    //! TODO:
+    Widget(uint width, uint height, const Widget* neib_widget, LINKAGE_MODE link_mode);
     ~Widget();
 
     virtual void coreDraw() final;
