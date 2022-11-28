@@ -1,8 +1,8 @@
 #include "Widget.h"
 
 // TODO: добавить возможность дефолтного конструктора где параметры расположения будут подбираться автоматически?
-Widget::Widget(uint x, uint y, uint width, uint height):
-    x_(x), y_(y), width_(width), height_(height),
+Widget::Widget(uint width, uint height):
+    x_(POS_POISON), y_(POS_POISON), width_(width), height_(height),
     is_focused_(false),
     is_visible_(true),
     is_render_required_(true),
@@ -19,6 +19,7 @@ void Widget::coreDraw(){
 
     texture_.draw(&buff_, 0, 0, width_, height_);
     draw();
+
 
     is_render_required_ = false;
     return;
@@ -123,12 +124,40 @@ uint Widget::real_y() const{
     return parent_widget_->getSubPosY(this) + parent_widget_->real_y();
 }
 
-bool Widget::isPointInside(uint x, uint y){
+bool isPointInside(const Widget* widget, uint x, uint y){
 
-    uint realX = real_x(), realY = real_y();
+    uint realX = widget->real_x(), realY = widget->real_y();
 
-    if(x >= realX && x <= realX + width() && y >= realY && y <= realY + height()){
+    if(x >= realX && x <= realX + widget->width() && y >= realY && y <= realY + widget->height()){
         return true;
     } 
     return false;
 }
+
+uint Widget::x() const { return x_; }
+uint Widget::y() const { return y_; }
+
+uint Widget::width() const { return width_; }
+uint Widget::height() const { return height_; }
+
+bool Widget::isFocused() const { return is_focused_; }
+bool Widget::isVisible() const { return is_visible_; }
+bool Widget::isRenderRequired() { return is_render_required_; }
+Texture& Widget::texture(){ return texture_; }
+
+void Widget::setTexture(const Texture& texture){ texture_ = texture; }
+
+// TODO: make it virtual for overloading in containerWidget
+void Widget::setVisible(bool val){
+    if(isVisible() != val && parent_widget_ != NULL){
+        parent_widget_->RequireRender();
+    }
+    is_visible_ = val;
+}
+
+ContainerWidget* Widget::parent() { return parent_widget_; }
+const PixelBuffer& Widget::pixBuff() const { return buff_; }
+
+//! normal?? + rename
+PixelBuffer* Widget::GetPointerOnPixBuff() { return &buff_; }
+

@@ -96,6 +96,8 @@ void ToolManager::setActiveTool(uint n_tool){
 
     std::advance(new_active_tool, n_tool);
     p_active_tool_ = new_active_tool->p;
+
+    p_status_bar_->setActivePluginName(new_active_tool->name);
     return;
 }
 
@@ -125,4 +127,9 @@ bool ToolManager::checkToolExists(const std::string& tool_name){
 
 const std::list<ToolWrapper>& ToolManager::tools() const{
     return tools_;
+}
+
+void ToolManager::linkStatusBar(StatusBar* status_bar){
+    p_status_bar_ = status_bar;
+    return;
 }

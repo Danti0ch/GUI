@@ -1,15 +1,15 @@
 #include "Slider.h"
 
-// TODO: real_x(), real_y()
-
+// TODO: remove copypast
 //? button variable pos in constructor
-HSlider::HSlider(uint x, uint y, uint width, uint height, uint butt_width):
-    Widget(x, y, width, height),
+HSlider::HSlider(uint width, uint height, uint butt_width):
+    ContainerWidget(width, height),
     ratio_(0),
-    butt_(0, 0, butt_width, height)
+    butt_(butt_width, height)
 {
     // TODO: remove
     butt_.setTexture(Color(50, 50, 50));
+    ContainerWidget::connect(&butt_, 0, 0);
 }
 
 HSlider::~HSlider(){}
@@ -35,21 +35,21 @@ void HSlider::onMouseLClick(const MouseLClickEvent* event){
     return;
 }
 
-void HSlider::draw(){
-    butt_.coreDraw();
+void HSlider::ratio(double val){
+    assert(val >= 0 && val <= 1);
 
-    PixelBuffer* p_buf = GetPointerOnPixBuff();
-    p_buf->drawPixelBuffer(butt_.x(), butt_.y(), butt_.pixBuff());
-    return;
+    ratio_ = val;
+    RequireRender();
 }
 
-VSlider::VSlider(uint x, uint y, uint width, uint height, uint butt_height):
-    Widget(x, y, width, height),
+VSlider::VSlider(uint width, uint height, uint butt_height):
+    ContainerWidget(width, height),
     ratio_(0),
-    butt_(0, 0, width, butt_height)
+    butt_(width, butt_height)
 {
     // TODO: remove
     butt_.setTexture(Color(50, 50, 50));
+    ContainerWidget::connect(&butt_, 0, 0);
 }
 
 VSlider::~VSlider(){}
@@ -73,11 +73,9 @@ void VSlider::onMouseLClick(const MouseLClickEvent* event){
     return;
 }
 
-//? ok
-void VSlider::draw(){
-    butt_.coreDraw();
+void VSlider::ratio(double val){
+    assert(val >= 0 && val <= 1);
 
-    PixelBuffer* p_buf = GetPointerOnPixBuff();
-    p_buf->drawPixelBuffer(butt_.x(), butt_.y(), butt_.pixBuff());
-    return;
+    ratio_ = val;
+    RequireRender();
 }

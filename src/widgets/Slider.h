@@ -20,42 +20,29 @@ protected:
 };
 */
 
-class HSlider : public Widget{
+class HSlider : public ContainerWidget{
 public:
-    HSlider(uint x, uint y, uint width, uint height, uint butt_width);
+    HSlider(uint width, uint height, uint butt_width);
     ~HSlider();
 
     void onMouseLClick(const MouseLClickEvent* event) override;
-    void draw() override;
 
     // TODO: refactor
-    void ratio(double val){
-        assert(val >= 0 && val <= 1);
-
-        ratio_ = val;
-        RequireRender();
-    }
+    void ratio(double val);
 private:
     double ratio_;
     RectButton<HSlider, double> butt_;
 };
 
-// TODO: inheritance from containerWidget
-class VSlider : public Widget{
+class VSlider : public ContainerWidget{
 public:
-    VSlider(uint x, uint y, uint width, uint height, uint butt_height);
+    VSlider(uint width, uint height, uint butt_height);
     ~VSlider();
 
     void onMouseLClick(const MouseLClickEvent* event) override;
-    void draw() override;
 
     // TODO: refactor
-    void ratio(double val){
-        assert(val >= 0 && val <= 1);
-
-        ratio_ = val;
-        RequireRender();
-    }
+    void ratio(double val);
 private:
     double ratio_;
     RectButton<VSlider, double> butt_;

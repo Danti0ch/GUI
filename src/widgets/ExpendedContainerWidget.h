@@ -17,7 +17,7 @@
 // TODO: make only horizontal or vertical movement widgets
 class ExpendedContainerWidget : public ContainerWidget{
 public:
-    ExpendedContainerWidget(uint x, uint y, uint width, uint height, uint sliderWidth);
+    ExpendedContainerWidget(uint width, uint height, uint sliderWidth);
     ~ExpendedContainerWidget();
 
     void onSliderMoved( const SliderMovedEvent* event) override;
@@ -29,7 +29,7 @@ public:
     
     //PixelBuffer* expBuf();
 protected:
-    virtual void connect(Widget* child_widget);
+    virtual void connect(Widget* child_widget, uint x, uint y);
     virtual void remove(Widget* child_widget);
     
     uint getSubPosX(const Widget* child_widget) const override;

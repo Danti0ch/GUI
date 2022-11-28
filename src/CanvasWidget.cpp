@@ -5,8 +5,8 @@
 booba::ApplicationContext col_context;
 booba::ApplicationContext* APPCONTEXT = &col_context;
 
-CanvasWidget::CanvasWidget(uint x, uint y, uint width, uint height, ToolManager* tool_manager):
-    ExpendedContainerWidget(x, y, width, height, 20),
+CanvasWidget::CanvasWidget(uint width, uint height, ToolManager* tool_manager):
+    ExpendedContainerWidget(width, height, 20),
     bg_color_(BLACK),
     fg_color_(RED),
     tool_manager_(tool_manager)
@@ -20,6 +20,7 @@ CanvasWidget::~CanvasWidget(){}
 
 // TODO: remove copypaste
 void CanvasWidget::onMouseLClick(const MouseLClickEvent* event){
+    if(!isVisible()) return;
 
     stImage wrapper(exp_buf_, loc_x_, loc_y_, width(), height(), real_x(), real_y());
     tool_manager_->apply(&wrapper, event);
@@ -28,6 +29,7 @@ void CanvasWidget::onMouseLClick(const MouseLClickEvent* event){
 }
 
 void CanvasWidget::onMouseReleased( const MouseReleasedEvent* event){
+    if(!isVisible()) return;
 
     stImage wrapper(exp_buf_, loc_x_, loc_y_, width(), height(), real_x(), real_y());
     tool_manager_->apply(&wrapper, event);
@@ -38,6 +40,7 @@ void CanvasWidget::onMouseReleased( const MouseReleasedEvent* event){
 
 void CanvasWidget::onMouseMoved(const MouseMovedEvent* event){
 
+    if(!isVisible()) return;
     stImage wrapper(exp_buf_, loc_x_, loc_y_, width(), height(), real_x(), real_y());
     tool_manager_->apply(&wrapper, event);
 

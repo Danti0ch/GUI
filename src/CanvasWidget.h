@@ -8,7 +8,7 @@
 
 class CanvasWidget : public ExpendedContainerWidget{
 public:
-    CanvasWidget(uint x, uint y, uint width, uint height, ToolManager* tool_manager);
+    CanvasWidget(uint width, uint height, ToolManager* tool_manager);
     ~CanvasWidget();
 
     void onMouseLClick(const MouseLClickEvent* event) override;

@@ -3,15 +3,15 @@
 int a = 0;
 
 // TODO: remove hardcode
-ExpendedContainerWidget::ExpendedContainerWidget(uint x, uint y, uint width, uint height, uint sliderWidth):
-    ContainerWidget(x, y, width, height),
-    hSlider_(0, 0, width, sliderWidth, width / 5),
-    vSlider_(width - sliderWidth, sliderWidth, sliderWidth, height - sliderWidth, height / 5),
+ExpendedContainerWidget::ExpendedContainerWidget(uint width, uint height, uint sliderWidth):
+    ContainerWidget(width, height),
+    hSlider_(width, sliderWidth, width / 5),
+    vSlider_(sliderWidth, height - sliderWidth, height / 5),
     loc_x_(0), loc_y_(0),
     ext_width_(width), ext_height_(height)
-{
-    ContainerWidget::connect(&hSlider_);
-    ContainerWidget::connect(&vSlider_);
+{       
+    ContainerWidget::connect(&hSlider_, width - sliderWidth, sliderWidth);
+    ContainerWidget::connect(&vSlider_, 0, 0);
 
     hSlider_.setVisible(false);
     vSlider_.setVisible(false);
@@ -90,10 +90,10 @@ void ExpendedContainerWidget::draw(){
     return;
 }
 
-void ExpendedContainerWidget::connect( Widget* child_widget){
+void ExpendedContainerWidget::connect( Widget* child_widget, uint x, uint y){
     NASSERT(child_widget);
 
-    ContainerWidget::connect(child_widget);
+    ContainerWidget::connect(child_widget, x, y);
 
     ext_width_  = std::max(ext_width_,  child_widget->x() + child_widget->width());
     ext_height_ = std::max(ext_height_, child_widget->y() + child_widget->height());

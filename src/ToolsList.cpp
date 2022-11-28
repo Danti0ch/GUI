@@ -2,9 +2,9 @@
 
 //? should i make version that non-depended on class type?
 
-ToolsList::ToolsList(uint x, uint y, uint width, uint height):
+ToolsList::ToolsList():
     manager_(),
-    VListWidget<ToolManager>(x, y, width, height, 30, &manager_, &ToolManager::setActiveTool)
+    VListWidget<ToolManager>(150, 560, 30, &manager_, &ToolManager::setActiveTool)
 {
     manager_.updateTools();
 

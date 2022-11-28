@@ -75,6 +75,8 @@ void debug_meta_log(log_location loc, const char* string, ...);
 #define ESDLOG(err_code)              debug_log_error({(__FILE__), (__FUNCTION__) , (__LINE__)}, (err_code));
 #define MDLOG(string, ...)            debug_meta_log({(__FILE__), (__FUNCTION__) , (__LINE__)}, (string), ##__VA_ARGS__);
 
+#define PING DLOG(INFO, "meow")
+
 #ifndef DLOG_MODE
 #define DLOG_MODE 0 /**
 					 * DLOG_MODE = CDUMP_OPTION::CONSOLE, - debug logging only to console

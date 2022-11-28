@@ -52,6 +52,22 @@ private:
     uint x_, y_;
 };
 
+class SpecialKeysData{
+public:
+
+    SpecialKeysData(){}
+    ~SpecialKeysData(){}
+    
+    bool lShift() const { return lShift_; }
+    bool rShift() const { return rShift_; }
+    bool ctrl() const { return ctrl_; }
+    bool alt() const { return alt_; }
+
+    friend class GraphicSpace;
+private:
+    bool lShift_, rShift_, alt_, ctrl_;
+};
+
 class Event{
 public:
 
@@ -83,30 +99,32 @@ public:
 
 class MouseEvent : public Event{
 public:
-    MouseEvent(T_EVENT type, const MouseData& state_data):
-        Event(type), state_(&state_data){}
+    MouseEvent(T_EVENT type, const MouseData& state_data, const SpecialKeysData& special_keys):
+        Event(type), state_(&state_data), special_keys_(&special_keys){}
 
     const MouseData* state() const { return state_; }
+    const SpecialKeysData* special_keys() const { return special_keys_; }
 private:
     const MouseData* state_;
+    const SpecialKeysData* special_keys_;
 };
 
 class MouseLClickEvent : public MouseEvent{
 public:
-    MouseLClickEvent(const MouseData& state_data):
-        MouseEvent(T_EVENT::mouseLClick, state_data){}
+    MouseLClickEvent(const MouseData& state_data, const SpecialKeysData& special_keys):
+        MouseEvent(T_EVENT::mouseLClick, state_data, special_keys){}
 };
 
 class MouseMovedEvent : public MouseEvent{
 public:
-    MouseMovedEvent(const MouseData& state_data):
-        MouseEvent(T_EVENT::mouseMoved, state_data){}
+    MouseMovedEvent(const MouseData& state_data, const SpecialKeysData& special_keys):
+        MouseEvent(T_EVENT::mouseMoved, state_data, special_keys){}
 };
 
 class MouseReleasedEvent : public MouseEvent{
 public:
-    MouseReleasedEvent(const MouseData& state_data):
-        MouseEvent(T_EVENT::mouseReleased, state_data){}
+    MouseReleasedEvent(const MouseData& state_data, const SpecialKeysData& special_keys):
+        MouseEvent(T_EVENT::mouseReleased, state_data, special_keys){}
 };
 
 enum T_KEY {

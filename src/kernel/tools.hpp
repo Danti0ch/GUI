@@ -18,7 +18,7 @@ namespace booba { // boot of outstanding best api
 
     /**
      * @brief We require you to implement this;
-     * 
+     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
      */
     extern "C" void init_module();
 
@@ -66,7 +66,6 @@ namespace booba { // boot of outstanding best api
         uint64_t id; 
         int32_t value;
     };
-
 
     struct CanvasEventData
     {

@@ -6,6 +6,8 @@
 #include <string>
 #include "Event.h"
 #include "stImage.h"
+#include "StatusBar.h"
+
 struct ToolWrapper{
     booba::Tool* p;
     std::string name;
@@ -36,9 +38,12 @@ public:
 
     const std::list<ToolWrapper>& tools() const;
 
+    void linkStatusBar(StatusBar* status_bar);
 private:
     std::list<ToolWrapper> tools_;
     booba::Tool* p_active_tool_;
+
+    StatusBar* p_status_bar_;
 };
 
 #endif // TOOL_MANAGER_H

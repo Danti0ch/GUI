@@ -150,7 +150,8 @@ public:
     GraphicSpace(uint width, uint height):
         window_(sf::VideoMode(width, height), "NO SIGNAL"),
         font_(),
-        mouse_data_(sf::Mouse::getPosition(window_).x, sf::Mouse::getPosition(window_).y, sf::Mouse::isButtonPressed(sf::Mouse::Left), sf::Mouse::isButtonPressed(sf::Mouse::Right))
+        mouse_data_(sf::Mouse::getPosition(window_).x, sf::Mouse::getPosition(window_).y, sf::Mouse::isButtonPressed(sf::Mouse::Left), sf::Mouse::isButtonPressed(sf::Mouse::Right)),
+        special_keys_()
     {
         // TODO: refactor
         font_.loadFromFile("../fonts/arial.ttf");
@@ -203,19 +204,24 @@ public:
 
             if(sf_event.type == sf::Event::MouseButtonPressed){
                 mouse_data_.isLPressed_ = true;
-                *p_event = new MouseLClickEvent(mouse_data_);
+                *p_event = new MouseLClickEvent(mouse_data_, special_keys_);
             } 
             else if(sf_event.type == sf::Event::MouseMoved){
                 // "Mouse moved: " << x_coord(sf_event.mouseButton.x) << " " << y_coord(sf_event.mouseButton.y) << " " << x_coord(sf_event.mouseMove.x) << " " << y_coord(sf_event.mouseMove.y) << "\n";
-                *p_event = new MouseMovedEvent(mouse_data_);
+                *p_event = new MouseMovedEvent(mouse_data_, special_keys_);
             }
             else if(sf_event.type == sf::Event::MouseButtonReleased){
                 mouse_data_.isRPressed_ = false;
-                *p_event = new MouseReleasedEvent(mouse_data_);
+                *p_event = new MouseReleasedEvent(mouse_data_, special_keys_);
             }
         }
         else if(sf_event.type == sf::Event::KeyPressed){
             *p_event = new KeyPressedEvent((T_KEY)sf_event.key.code);
+
+            special_keys_.lShift_ = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift);
+            special_keys_.rShift_ = sf::Keyboard::isKeyPressed(sf::Keyboard::RShift);
+            special_keys_.ctrl_   = sf::Keyboard::isKeyPressed(sf::Keyboard::LControl);
+            special_keys_.alt_    = sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt);
         }
         else return false;
         return true;
@@ -292,6 +298,7 @@ private:
 
     //? static????
     MouseData mouse_data_;
+    SpecialKeysData special_keys_;
 };
 
 #endif // GRAPHIC_LIB_WRAPPER_H

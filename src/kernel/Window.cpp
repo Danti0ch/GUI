@@ -2,7 +2,7 @@
 #include <iostream>
 
 Window::Window(uint width, uint height):
-    ContainerWidget(0, 0, width, height),
+    ContainerWidget(width, height),
     space_(width, height),
     manager_()
 {   
@@ -37,8 +37,13 @@ void Window::exec(){
     return;
 }
 
-void Window::add(Widget* widget){
-    ContainerWidget::connect(widget);
+void Window::add(Widget* widget, uint x, uint y){
+    ContainerWidget::connect(widget, x, y);
+    return;
+}
+
+void Window::add(Widget* widget, Widget* from_widget, LINKAGE_MODE mode, uint indent_val, uint offset){
+    ContainerWidget::connect(widget, from_widget, mode, indent_val, offset);
     return;
 }
 

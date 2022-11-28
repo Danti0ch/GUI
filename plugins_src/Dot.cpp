@@ -1,5 +1,7 @@
-#include "Dot.h"
+#include "StandartTools.h"
 #include <iostream>
+
+TOOL_INIT(DotTool)
 
 void DotTool::apply(booba::Image* image, const booba::Event* event) {
 
@@ -15,11 +17,4 @@ void DotTool::apply(booba::Image* image, const booba::Event* event) {
             }
         }
     }   
-}
-
-extern "C" void booba::init_module() {
-
-    DotTool* dotTool = new DotTool();
-
-    booba::addTool(dotTool);
 }

@@ -6,8 +6,8 @@
 template<class T_RECEIVER, typename T_HANDLER_ARG>
 class RectButton : public AbstractButton<T_RECEIVER, T_HANDLER_ARG>{
 public:
-    RectButton(uint x, uint y, uint width, uint height):
-        AbstractButton<T_RECEIVER, T_HANDLER_ARG>(x, y, width, height){}
+    RectButton(uint width, uint height):
+        AbstractButton<T_RECEIVER, T_HANDLER_ARG>(width, height){}
 
     // TODO: redone
     RectButton(const RectButton<T_RECEIVER, T_HANDLER_ARG>& other):

@@ -11,8 +11,8 @@ class AbstractButton : public Widget{
 public:
 
     //? TODO: remove
-    AbstractButton(uint x, uint y, uint width, uint height):
-        Widget(x, y, width, height), p_handler_(NULL), p_receiver_(NULL), is_hovered_(false){}
+    AbstractButton(uint width, uint height):
+        Widget(width, height), p_handler_(NULL), p_receiver_(NULL), is_hovered_(false){}
 
     AbstractButton(const AbstractButton<T_RECEIVER, T_HANDLER_ARG>& other):
         Widget(other.x(), other.y(), other.width(), other.height()),
@@ -20,7 +20,7 @@ public:
 
     void onMouseLClick(const MouseLClickEvent* event) override{
 
-        if(isPointInside(event->state()->x(), event->state()->y())){
+        if(isPointInside(this, event->state()->x(), event->state()->y())){
             if(p_handler_ == NULL) return;
             (p_receiver_->*p_handler_)(handler_arg_);
         }
@@ -30,7 +30,7 @@ public:
 
     void onMouseMoved(const MouseMovedEvent* event) override{
 
-        if(isPointInside(event->state()->x(), event->state()->y())){
+        if(isPointInside(this, event->state()->x(), event->state()->y())){
             // TODO: make it smooth
             if(!is_hovered_){
 

@@ -1,11 +1,13 @@
 #include "Window.h"
 #include <iostream>
 #include "RectButton.h"
-#include "CanvasWidget.h"
+#include "CanvasManager.h"
 #include "Label.h"
 #include "ExpendedContainerWidget.h"
 #include "ListWidget.h"
 #include "ToolsList.h"
+#include "StatusBar.h"
+
 void foo(uint tool_id){
 
     MDLOG("tool(%u) is pressed", tool_id);
@@ -23,16 +25,20 @@ int main(int argc, char *argv[]){
     Window cur_window(1080, 720);
 
     cur_window.setTexture(Color(123, 123, 123));
-    
-    cur_window.add(&status_bar);
 
-    ToolsList tools(740, 40, 150, 560);
-    cur_window.add(&tools);
+    StatusBar status_bar;
+    cur_window.add(&status_bar, 0, 0);
 
-    CanvasWidget canvas(15, 40, 680, 560, tools.toolManager());
-    canvas.setTexture(Color(255, 255, 255));
+    ToolsList tools;
+    cur_window.add(&tools, &status_bar, LINKAGE_MODE::TOP, 15, 25);
+    tools.toolManager()->linkStatusBar(&status_bar);
 
-    cur_window.add(&canvas);
+    status_bar.setPluginCounter(tools.toolManager()->tools().size());
+
+    CanvasManager canvases(tools.toolManager());
+    canvases.addCanvas("lol");
+    canvases.addCanvas("kek");
+    cur_window.add(&canvases, &tools, LINKAGE_MODE::RIGHT, 15);
 
     /*HListWidget canvas_list(15, 600, 680, 20, 80);
     canvas_list.setTexture(Color(255, 153, 204));
@@ -58,6 +64,7 @@ int main(int argc, char *argv[]){
     
     cur_window.add(&setting_list);
     */
+
     cur_window.exec();
 
     return 0;

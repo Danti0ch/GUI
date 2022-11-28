@@ -24,13 +24,7 @@ private:
     std::list<Widget*> widgets_;
 };
 
-enum class LINKAGE_MODE{
-
-    TOP,
-    BOTTOM,
-    LEFT,
-    RIGHT
-};
+const uint POS_POISON = -1;
 
 /**
  * @brief an abstract class of any entity that has a representation on the application screen
@@ -39,17 +33,15 @@ enum class LINKAGE_MODE{
 class Widget{
 public:
 
-    Widget(uint x, uint y, uint width, uint height);    
+    Widget(uint width, uint height);    
 
-    //! TODO:
-    Widget(uint width, uint height, const Widget* neib_widget, LINKAGE_MODE link_mode);
     ~Widget();
 
     virtual void coreDraw() final;
     virtual void draw() = 0;
 
-    uint x() const { return x_; }
-    uint y() const { return y_; }
+    uint x() const;
+    uint y() const;
 
     /// setters
     void x(uint val);
@@ -58,24 +50,22 @@ public:
     uint real_x() const;
     uint real_y() const;
 
-    uint width() const { return width_; }
-    uint height() const { return height_; }
+    uint width() const;
+    uint height() const;
 
-    bool isFocused() const { return is_focused_; }
-    bool isVisible() const { return is_visible_; }
-    bool isRenderRequired() const { return is_render_required_; }
-    Texture& texture(){ return texture_; }
+    bool isFocused() const;
+    bool isVisible() const;
+    bool isRenderRequired();
+    Texture& texture();
     
-    void setTexture(const Texture& texture){ texture_ = texture; }
+    void setTexture(const Texture& texture);
     
-    // TODO: make it virtual for overloading in containerWidget
-    void setVisible(bool val){ is_visible_ = val; }
+    void setVisible(bool val);
 
-    ContainerWidget* parent() { return parent_widget_; }
-    const PixelBuffer& pixBuff() const { return buff_; }
+    ContainerWidget* parent();
+    const PixelBuffer& pixBuff() const;
     
-    //! normal?? + rename
-    PixelBuffer* GetPointerOnPixBuff() { return &buff_; }
+    PixelBuffer* GetPointerOnPixBuff();
     //const EventManager* eventManager() const { return p_manager_; }
 
     virtual void onMouseLClick(const MouseLClickEvent* event){};
@@ -93,8 +83,6 @@ public:
     // or normal?
     void throwEvent(const Event* event);
     void triggerEvent(const Event* event);
-
-    bool isPointInside(uint x, uint y);
 
     friend class ContainerWidget;
     friend class Window;
@@ -120,11 +108,21 @@ private:
     virtual void disconnectDataUpdate_();
 };
 
+bool isPointInside(const Widget* widget, uint x, uint y);
+
 #include <list>
+
+enum class LINKAGE_MODE{
+
+    TOP,
+    BOTTOM,
+    LEFT,
+    RIGHT
+};
 
 class ContainerWidget : public Widget{
 public:
-    ContainerWidget(uint x, uint y, uint width, uint height);
+    ContainerWidget(uint width, uint height);
 
     virtual void draw() override;
 
@@ -132,8 +130,10 @@ public:
     friend class Window;
     friend class Widget;
 protected:
-    virtual void connect( Widget* child_widget);
+
     virtual void connect(Widget* child_widget, uint x, uint y);
+    virtual void connect(Widget* new_widget, Widget* from_widget, LINKAGE_MODE mode, uint indent_val = 0, uint offset = 0);
+    
     virtual void remove( Widget* child_widget);
 
     virtual uint getSubPosX(const Widget* child_widget) const;
