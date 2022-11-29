@@ -8,6 +8,8 @@
 #include "Color.h"
 #include "Event.h"
 #include "logger.h"
+#include "tools.hpp"
+
 #include <iostream>
 // TODO: make cpp
 
@@ -18,7 +20,77 @@
 
 // FIXME: offset
 
+// TODO: to namespace
 class GraphicSpace;
+class PixelBuffer;
+class stImage;
+
+class stImage : public booba::Image{
+public:
+    stImage(uint width, uint height):
+    storage_(){
+        storage_.create(width, height, convertLibColor(Color(255, 255, 255)));
+    }
+    
+    virtual uint32_t getH() override{
+        return storage_.getSize().y;
+    }
+
+    virtual uint32_t getX() override{
+        return storage_.getSize().x;
+    }
+
+    void setX(uint x){ glob_x_ = x; }
+    void setY(uint y){ glob_y_ = y; }
+
+    uint x() const { return glob_x_; }
+    uint y() const { return glob_y_; }
+    
+    virtual uint32_t getPixel(int32_t x, int32_t y) override{
+        
+        return static_cast<uint32_t>(convertFromLibColor(storage_.getPixel(x_coord(x), y_coord(y))));
+    }
+
+    virtual void putPixel(uint32_t x, uint32_t y, uint32_t color) override{
+        storage_.setPixel(x_coord(x), y_coord(y), convertLibColor(Color(color)));
+    }
+
+    virtual uint32_t& operator()(uint32_t x, uint32_t y) override{
+        return tmp;
+    }
+
+    virtual const uint32_t& operator()(uint32_t x, uint32_t y) const override{
+        return tmp;
+    }
+
+    friend class PixelBuffer;
+private:
+    // TODO: rename
+    sf::Image storage_;
+
+    // TODO: fix
+    uint tmp;
+
+    uint glob_x_, glob_y_;
+    sf::Color convertLibColor(const Color& col){
+        sf::Color sf_col(col.r(), col.g(), col.b(), col.a());
+        return sf_col;
+    }
+
+    Color convertFromLibColor(const sf::Color& sf_col){
+        Color col(sf_col.r, sf_col.g, sf_col.b, sf_col.a);
+
+        return col;
+    }
+
+    uint x_coord(uint val){
+        return val;
+    }
+
+    uint y_coord(uint val){
+        return getH() - val - 1;
+    }
+};
 
 class PixelBuffer{
 public:
@@ -51,8 +123,12 @@ public:
             sf::Vertex(sf::Vector2f(x_coord(x_pix2), y_coord(y_pix2)), sf_col)
         };
 
-        int a = 15;
-        buffer_.draw(line_to_draw, 2, sf::Lines);
+            buffer_.draw(line_to_draw, 2, sf::Lines);
+        return;
+    }
+
+    void clear(const Color& col){
+        buffer_.clear(convertLibColor(col));
         return;
     }
 
@@ -63,19 +139,6 @@ public:
 
         buffer_.draw(&pix_to_draw, 1, sf::Points);
         return;
-    }
-
-    //!!!
-    //!!! VERY SLOW
-    //!!!
-    // TODO: rework, maybe change renderttexture to image??
-    Color getPixel(uint x, uint y){
-        
-        // TODO: throw error if x, y under the limits
-        sf::Image img_tmp = buffer_.getTexture().copyToImage();
-        sf::Color color = img_tmp.getPixel(x, y);
-
-        return convertFromLibColor(color);
     }
     
     void drawPixels(const std::vector<Pixel>& pixels){
@@ -114,6 +177,15 @@ public:
         return;
     }
 
+    void draw(const stImage* img){
+
+        sf::Texture tmp_texture;
+        tmp_texture.loadFromImage(img->storage_);
+
+        sf::Sprite tmp_sprite(tmp_texture); 
+
+        buffer_.draw(tmp_sprite);
+    }
 private:
     sf::RenderTexture buffer_;
     sf::Font font_;
@@ -141,8 +213,6 @@ private:
         return height() - val;
     }
 };
-
-#include <iostream>
 
 class GraphicSpace{
 

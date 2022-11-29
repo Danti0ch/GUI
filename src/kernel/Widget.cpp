@@ -10,16 +10,17 @@ Widget::Widget(uint width, uint height):
     buff_(width, height),
     parent_widget_(NULL),
     p_manager_(NULL)
-{}
+{
+}
 
 Widget::~Widget(){}
 void Widget::coreDraw(){
 
     if(!is_render_required_) return;
 
+    buff_.clear(Color(255, 255, 255, 0));
     texture_.draw(&buff_, 0, 0, width_, height_);
     draw();
-
 
     is_render_required_ = false;
     return;
@@ -89,7 +90,7 @@ void Widget::RequireRender(){
 
     ContainerWidget* parent = (parent_widget_);
     while(parent != NULL){
-
+        
         parent->is_render_required_ = true;
         parent = parent->parent_widget_;
     }
@@ -149,8 +150,9 @@ void Widget::setTexture(const Texture& texture){ texture_ = texture; }
 
 // TODO: make it virtual for overloading in containerWidget
 void Widget::setVisible(bool val){
-    if(isVisible() != val && parent_widget_ != NULL){
-        parent_widget_->RequireRender();
+
+    if(isVisible() != val){
+        RequireRender();
     }
     is_visible_ = val;
 }
@@ -161,3 +163,8 @@ const PixelBuffer& Widget::pixBuff() const { return buff_; }
 //! normal?? + rename
 PixelBuffer* Widget::GetPointerOnPixBuff() { return &buff_; }
 
+
+void Widget::changeVisible(bool def_val){
+    is_visible_ = !is_visible_;
+    return;
+}

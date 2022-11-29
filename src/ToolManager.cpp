@@ -6,16 +6,25 @@
 #include <iostream>
 
 ToolManager* ToolManager::ACTIVE_TOOL_MANAGER = NULL;
+ExpendedContainerWidget* ToolManager::ACTIVE_SETUP_WINDOW = NULL;
+
 ToolManager::ToolManager():
     tools_(),
-    p_active_tool_(NULL)
+    p_active_tool_(NULL),
+    n_active_tool_(TOOL_INACTIVE_IND)
 {
     if(ACTIVE_TOOL_MANAGER == NULL){
         ACTIVE_TOOL_MANAGER = this;
     }
+
+    ACTIVE_SETUP_WINDOW = NULL;
 }
 
-ToolManager::~ToolManager(){}
+ToolManager::~ToolManager(){
+    for(auto widget : setupWindowWidgets_){
+        delete widget;
+    }
+}
 
 bool ToolManager::updateTools(){
     
@@ -91,11 +100,14 @@ void ToolManager::setActiveTool(const booba::Tool* new_active_tool){
 
 void ToolManager::setActiveTool(uint n_tool){
 
-    if(n_tool > tools_.size()) return;  
+    if(n_tool > tools_.size()) return;
+
     std::list<ToolWrapper>::iterator new_active_tool = tools_.begin();
 
     std::advance(new_active_tool, n_tool);
+
     p_active_tool_ = new_active_tool->p;
+    n_active_tool_ = n_tool;
 
     p_status_bar_->setActivePluginName(new_active_tool->name);
     return;
@@ -103,6 +115,10 @@ void ToolManager::setActiveTool(uint n_tool){
 
 booba::Tool* ToolManager::getActiveTool(){
     return p_active_tool_;
+}
+
+uint ToolManager::getNActiveTool(){
+    return n_active_tool_;
 }
 
 bool ToolManager::checkToolExists(const booba::Tool* tool){
@@ -131,5 +147,10 @@ const std::list<ToolWrapper>& ToolManager::tools() const{
 
 void ToolManager::linkStatusBar(StatusBar* status_bar){
     p_status_bar_ = status_bar;
+    return;
+}
+
+void ToolManager::addSetupWidget(Widget* setup_widget){
+    setupWindowWidgets_.push_back(setup_widget);
     return;
 }

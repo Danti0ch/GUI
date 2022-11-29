@@ -9,7 +9,6 @@
 //? should it support not specific type widgets
 //? T_ARG remove
 
-
 const uint SLIDER_SIZE = 6;
 
 //!!!!!!!!!!!!!! MAKE THAT IT WOULD NOT HAVE T_ARG, BUT RETURN  TO BUTTON HANDLER ID OF THE PRESSED ITEM
@@ -39,6 +38,10 @@ public:
     //void connect(Widget* child_widget) = delete;
     //void remove( Widget* child_widget) = delete;
     
+    const std::vector<RectButton<T_DISTR, uint>*>& elems(){
+        return elems_;
+    }
+
     uint elem_size() const { return elem_size_; }
 protected:
     std::vector<RectButton<T_DISTR, uint>*> elems_;

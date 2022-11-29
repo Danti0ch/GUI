@@ -38,13 +38,13 @@ public:
                 
                 main_texture_ = texture();
                 setTexture(hover_texture_);
-                RequireRender();
+                //RequireRender();
             }
         }
         else if(is_hovered_){
             is_hovered_ = false;
             setTexture(main_texture_);
-            RequireRender();
+            //RequireRender();
         }
         return;
     }

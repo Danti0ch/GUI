@@ -17,6 +17,11 @@ HSlider::~HSlider(){}
 void HSlider::onMouseLClick(const MouseLClickEvent* event){
     NASSERT(event);
 
+    if(!isPointInside(this, event->state()->x(), event->state()->y())){
+        return;
+    }
+
+    if(isVisible() == false) return;
     int new_butt_x_pos = (int)(event->state()->x() - real_x()) - (int)(butt_.width() / 2);
 
     if(new_butt_x_pos < 0) new_butt_x_pos = 0;
@@ -57,6 +62,11 @@ VSlider::~VSlider(){}
 void VSlider::onMouseLClick(const MouseLClickEvent* event){
     NASSERT(event);
 
+    if(!isPointInside(this, event->state()->x(), event->state()->y())){
+        return;
+    }
+
+    if(isVisible() == false) return;
     int new_butt_y_pos = (int)(event->state()->y() - real_y()) - (int)(butt_.height() / 2);
 
     if(new_butt_y_pos < 0) new_butt_y_pos = 0;
@@ -68,6 +78,7 @@ void VSlider::onMouseLClick(const MouseLClickEvent* event){
 
     double ratio = (double)new_butt_y_pos / (double)(height() - butt_.height());
     SliderMovedEvent slider_event(this, ratio);
+
     throwEvent(&slider_event);
 
     return;

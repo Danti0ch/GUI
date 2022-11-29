@@ -24,6 +24,8 @@ public:
     void removeCanvas(const std::string& path);
 
     void draw() override;
+
+    static CanvasWidget* ACTIVE_CANVAS_WIDGET;
 private:
     HListWidget<CanvasManager> canvas_list_;
     std::list<CanvasStorage> storage_;

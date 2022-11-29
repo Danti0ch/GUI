@@ -202,3 +202,19 @@ ExpendedContainerWidget::PixelBuffer* expBuf(){
     return exp_buf_;
 }
 */
+
+void ExpendedContainerWidget::connectDataUpdate_(Widget* container){
+    ContainerWidget::connectDataUpdate_(container);
+}
+
+void ExpendedContainerWidget::disconnectDataUpdate_(){
+    ContainerWidget::disconnectDataUpdate_();
+}
+
+const HSlider* ExpendedContainerWidget::pHSlider(){
+    return &hSlider_;
+}
+
+const VSlider* ExpendedContainerWidget::pVSlider(){
+    return &vSlider_;
+}

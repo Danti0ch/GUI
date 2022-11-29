@@ -14,7 +14,6 @@ public:
 
         for(uint y_i = 0; y_i < height; y_i++){
             for(uint x_i = 0; x_i < width; x_i++){
-                std::cout << x_i << " " << y_i << "\n";
                 storage_[y_i * width + x_i] = img->getPixel(x + x_i, y + y_i);
             }
         }
@@ -26,6 +25,7 @@ public:
     
         for(uint y_i = 0; y_i < height_; y_i++){
             for(uint x_i = 0; x_i < width_; x_i++){
+                if(x + x_i > img->getX() || y + y_i > img->getH()) continue;
                 img->putPixel(x + x_i, y + y_i, storage_[y_i * width_ + x_i]);
             }
         }    
@@ -47,8 +47,7 @@ void AreaSelectionTool::apply(booba::Image* image, const booba::Event* event) {
 
     if(event->type == booba::EventType::MousePressed){
 
-        if(event->Oleg.mbedata.ctrl && !buff_){
-            MDLOG("drawen");
+        if(event->Oleg.mbedata.ctrl && buff_){
             buff_->draw(event->Oleg.mbedata.x, event->Oleg.mbedata.y, image);
         }
 

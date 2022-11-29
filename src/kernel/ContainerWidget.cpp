@@ -10,9 +10,8 @@ void ContainerWidget::draw(){
 
     std::list<Widget*>::iterator subwidgets_iter;
     for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
-        (*subwidgets_iter)->coreDraw();
-
         if((*subwidgets_iter)->isVisible()){
+            (*subwidgets_iter)->coreDraw();
             buff_.drawPixelBuffer((*subwidgets_iter)->x(), (*subwidgets_iter)->y(), (*subwidgets_iter)->pixBuff());
         }
     }
@@ -39,15 +38,18 @@ void ContainerWidget::connect(Widget* child_widget, uint x, uint y){
 }
 
 // TODO: or make widget->connect() ??
-void ContainerWidget::connect(Widget* new_widget, Widget* from_widget, LINKAGE_MODE mode, uint indent_val, uint offset){
+void ContainerWidget::connect(Widget* new_widget, Widget* from_widget, LINKAGE_MODE mode, uint indent_val, int offset){
 
     if(from_widget->parent() == NULL) return;
-    
+
+    //?? 
+    /*
     bool from_widget_found = false;
     std::list<Widget*>::iterator subwidgets_iter;
     for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
         if(*subwidgets_iter == from_widget) from_widget_found = true;
     }
+    */
 
     uint x_coord = 0, y_coord = 0;
 

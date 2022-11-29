@@ -20,6 +20,8 @@ void goo(uint canvas_id){
     return;
 }
 
+extern booba::ApplicationContext* APPCONTEXT;
+
 int main(int argc, char *argv[]){
 
     Window cur_window(1080, 720);
@@ -39,31 +41,6 @@ int main(int argc, char *argv[]){
     canvases.addCanvas("lol");
     canvases.addCanvas("kek");
     cur_window.add(&canvases, &tools, LINKAGE_MODE::RIGHT, 15);
-
-    /*HListWidget canvas_list(15, 600, 680, 20, 80);
-    canvas_list.setTexture(Color(255, 153, 204));
-    canvas_list.add("canvas1", goo);
-    canvas_list.add("canvas2", goo);
-    canvas_list.add("canvas3", goo);
-    
-    cur_window.add(&canvas_list);
-
-    VListWidget tools_list(740, 40, 150, 560, 30);
-    tools_list.setTexture(Color(255, 153, 204));
-    for(uint i = 0; i < 40; i++){
-        tools_list.add("tool", foo);
-    }
-
-    cur_window.add(&tools_list);
-    
-    HListWidget setting_list(0, 700, 1080, 20, 80);
-    setting_list.setTexture(Color(255, 153, 204));
-
-    setting_list.add("file", foo);
-    setting_list.add("other", foo);
-    
-    cur_window.add(&setting_list);
-    */
 
     cur_window.exec();
 

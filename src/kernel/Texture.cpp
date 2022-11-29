@@ -3,11 +3,12 @@
 #include "Pixel.h"
 #include "glib_wrapper.h"
 
-void draw_solid(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask);
+void draw_solid(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask, double transparency_ratio);
 void draw_filled(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask);
 void draw_scretched(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask);
-void draw_distribution(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask, TEXTURE_INSERT_MODE mode);
+void draw_distribution(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask, TEXTURE_INSERT_MODE mode, double transparency_ratio);
 
+// TODO: filled and scretched
 //========================================================================================//
 
 //                          PUBLIC_FUNCTIONS_DEFINITION
@@ -18,14 +19,23 @@ static Pixel pix = Pixel(0, 0, WHITE);
 #include <iostream>
 void Texture::draw(PixelBuffer* buff, uint x_l, uint y_l, uint x_u, uint y_u, TEXTURE_INSERT_MODE mode){
 
-    draw_distribution(*this, buff, x_l, y_l, x_u, y_u, false, pt_set(), mode);
+    draw_distribution(*this, buff, x_l, y_l, x_u, y_u, false, pt_set(), mode, transparency_ratio_);
     return;
 }
 //----------------------------------------------------------------------------------------//
 
 void Texture::draw(PixelBuffer* buff, uint x_l, uint y_l, uint x_u, uint y_u, const pt_set& mask, TEXTURE_INSERT_MODE mode){
     
-    draw_distribution(*this, buff, x_l, y_l, x_u, y_u, true, mask, mode);    
+    draw_distribution(*this, buff, x_l, y_l, x_u, y_u, true, mask, mode, transparency_ratio_);    
+    return;
+}
+
+void Texture::setTransparency(double val){
+    assert(val >= 0);
+
+    if(val > 1) val = 1;
+
+    transparency_ratio_ = val;
     return;
 }
 
@@ -36,14 +46,14 @@ void Texture::draw(PixelBuffer* buff, uint x_l, uint y_l, uint x_u, uint y_u, co
 //========================================================================================//
 
 
-void draw_distribution(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask, TEXTURE_INSERT_MODE mode){
+void draw_distribution(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask, TEXTURE_INSERT_MODE mode, double transparency_ratio){
 
     assert(space != NULL);
 
     if(x_l == x_u || y_l == y_u) return;
 
     if(obj.is_solid()){
-        draw_solid(obj, space, x_l, y_l, x_u, y_u, mask_req, mask);
+        draw_solid(obj, space, x_l, y_l, x_u, y_u, mask_req, mask, transparency_ratio);
         return;
     }
     
@@ -115,7 +125,7 @@ void draw_scretched(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, 
 }
 //----------------------------------------------------------------------------------------//
 
-void draw_solid(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask){
+void draw_solid(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint x_u, uint y_u, bool mask_req, const pt_set& mask, double transparency_ratio){
 
     assert(space != NULL);
     assert(obj.is_solid());
@@ -123,12 +133,16 @@ void draw_solid(const Texture& obj, PixelBuffer* space, uint x_l, uint y_l, uint
     uint ny_area_pxs = y_u - y_l + 1;
     uint nx_area_pxs = x_u - x_l + 1;
 
+    Color cur_col = obj.solid_col();
+    cur_col.a(cur_col.a() * transparency_ratio);
+
     std::vector<Pixel> pixs_to_draw(nx_area_pxs * ny_area_pxs);
 
     for(uint n_row = 0; n_row < ny_area_pxs; n_row++){
         for(uint n_col = 0; n_col < nx_area_pxs; n_col++){
             if(!mask_req || mask.count({n_row, n_col})){
-                pixs_to_draw[n_row * nx_area_pxs + n_col] = Pixel(x_l + n_col, y_l + n_row, obj.solid_col());
+
+                pixs_to_draw[n_row * nx_area_pxs + n_col] = Pixel(x_l + n_col, y_l + n_row, cur_col);
             }
         }
     }

@@ -62,6 +62,9 @@ public:
     
     void setVisible(bool val);
 
+    // TODO: redone
+    void changeVisible(bool def_val);
+
     ContainerWidget* parent();
     const PixelBuffer& pixBuff() const;
     
@@ -132,7 +135,7 @@ public:
 protected:
 
     virtual void connect(Widget* child_widget, uint x, uint y);
-    virtual void connect(Widget* new_widget, Widget* from_widget, LINKAGE_MODE mode, uint indent_val = 0, uint offset = 0);
+    virtual void connect(Widget* new_widget, Widget* from_widget, LINKAGE_MODE mode, uint indent_val = 0, int offset = 0);
     
     virtual void remove( Widget* child_widget);
 
@@ -140,9 +143,9 @@ protected:
     virtual uint getSubPosY(const Widget* child_widget) const;
 
     std::list<Widget*> subwidgets_;
-private:
-    void connectDataUpdate_(Widget* container) override;
-    void disconnectDataUpdate_() override;
+
+    virtual void connectDataUpdate_(Widget* container) override;
+    virtual void disconnectDataUpdate_() override;
 };
 
 #endif // WIDGET_H

@@ -1,4 +1,5 @@
 #include "Color.h"
+#include <iostream>
 
 const uint32_t MAX_COMP_VAL = 255;
 
@@ -10,9 +11,9 @@ Color::Color(uint32_t val){
     uint32_t mask = 0xFF;
 
     a_ = val & mask;
-    b_ = val & (mask << 8);
-    g_ = val & (mask << 16);
-    r_ = val & (mask << 24);
+    b_ = (val & (mask << 8)) >> 8;
+    g_ = (val & (mask << 16)) >> 16;
+    r_ = (val & (mask << 24)) >> 24;
 }
 
 void Color::operator +=(const Color& col2){
@@ -111,10 +112,10 @@ Color::operator uint32_t() const{
 
     uint32_t mask = 0xFF;
 
-    val |= a_ & mask;
-    val |= b_ & (mask << 8);
-    val |= g_ & (mask << 16);
-    val |= r_ & (mask << 24);
+    val |= (uint32_t)a_;
+    val |= ((uint32_t)b_) << 8;
+    val |= ((uint32_t)g_) << 16;
+    val |= ((uint32_t)r_) << 24;
 
     return val;
 }

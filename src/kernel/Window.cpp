@@ -14,6 +14,7 @@ void Window::exec(){
     Event* event = NULL;
     bool was_event = false;
 
+    std::cout << this << "\n";
     coreDraw();
 
     // TODO: fix

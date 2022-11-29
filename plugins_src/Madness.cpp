@@ -4,7 +4,7 @@
 #include "logger.h"
 
 static const uint POS_POISON = -1;
-const uint SCROLL_BAR_WIDTH = 20;
+static const uint DEFAULT_PEN_SIZE = 5;
 
 TOOL_INIT(PenTool)
 /*
@@ -16,29 +16,19 @@ TOOL_INIT(PenTool)
     3. гладкое изображение линии
 */
 
-static void draw_dot(booba::Image* image, int x, int y, int size){
-    for (int32_t curX = std::max(0, x - size); curX < std::min(int32_t(image->getX()), x + size); curX++) {
-        for (int32_t curY = std::max(0, y - size); curY < std::min(int32_t(image->getH()), y + size); curY++) {
-            image->putPixel(curX, curY, 111/*booba::APPCONTEXT->fgColor*/);
-        }
-    }
-
-    return;
-}
-
-static void draw_vert_line(booba::Image* image, uint x, uint yF, uint yS, uint pen_size){
+static void draw_vert_line(booba::Image* image, uint x, uint yF, uint yS){
 
     uint y_init = std::min(yF, yS);
     uint y_end  = std::max(yF, yS);
 
     for(uint cur_y = y_init; cur_y <= y_end; cur_y++){
-        draw_dot(image, x, cur_y, pen_size);
+        image->putPixel(x, cur_y, 0);
     }
     return;
 }
 
 // TODO: optimize by making visited array
-static void draw_line(booba::Image* image, uint xF, uint xS, LagrangePolynom& polynom_, uint pen_size){
+static void draw_line(booba::Image* image, uint xF, uint xS, LagrangePolynom& polynom_){
 
     assert(xF != xS);
 
@@ -51,16 +41,17 @@ static void draw_line(booba::Image* image, uint xF, uint xS, LagrangePolynom& po
         double cur_y = polynom_.interpolate(cur_x);
 
         if((uint)cur_y >= image->getH() || (uint)cur_x >= image->getX()) continue;
-        draw_dot(image, (int)cur_x, (int)cur_y, pen_size);
+        
+        image->putPixel((uint)cur_x, (uint)cur_y, 111);
     }
+
     return;
 }
 
 PenTool::PenTool():
     AbstractTool(),
     isLButtonPressed(false),
-    polynom_(),
-    pen_size_(1)
+    polynom_()
 {}
 
 void PenTool::apply(booba::Image* image, const booba::Event* event) {
@@ -76,21 +67,16 @@ void PenTool::apply(booba::Image* image, const booba::Event* event) {
     }
     else if(event->type == booba::EventType::MouseMoved && isLButtonPressed){
         if(polynom_.is_empty()){
-            polynom_.add(event->Oleg.motion.rel_x, event->Oleg.motion.rel_y);        
+            polynom_.add(0, 0);        
         }
         polynom_.add(event->Oleg.motion.x, event->Oleg.motion.y);        
 
         if(event->Oleg.motion.rel_x == event->Oleg.motion.x){
-            draw_vert_line(image, event->Oleg.motion.x, event->Oleg.motion.rel_y, event->Oleg.motion.y, pen_size_);
+            draw_vert_line(image, event->Oleg.motion.x, 0, event->Oleg.motion.y);
         }
         else{
-            draw_line(image, event->Oleg.motion.rel_x, event->Oleg.motion.x, polynom_, pen_size_);
+            draw_line(image, 0, event->Oleg.motion.x, polynom_);
         }
-    }
-    else if(event->type == booba::EventType::ScrollbarMoved){
-
-        // TODO: fix wtf
-        pen_size_ = event->Oleg.smedata.value / 10;
     }
 
     return;
@@ -98,8 +84,8 @@ void PenTool::apply(booba::Image* image, const booba::Event* event) {
 
 void PenTool::buildSetupWidget(){
 
-    sizeControllerScrollBar_ = booba::createScrollbar(5, 5, 100, 12);
-    booba::createLabel(5, 17, 70, 20, "Pen Size");
+    sizeControllerScrollBar_ = booba::createScrollbar(5, 5, 40, 3);
+    booba::createLabel(5, 8, 20, 15, "Pen Size");
 
     return;
 }

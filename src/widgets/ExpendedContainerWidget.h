@@ -27,14 +27,22 @@ public:
 
     virtual void draw() override;
     
+    const HSlider* pHSlider();
+    const VSlider* pVSlider();
+
+    // TODO: move to protected
+    virtual void connect(Widget* child_widget, uint x, uint y);
+
     //PixelBuffer* expBuf();
 protected:
-    virtual void connect(Widget* child_widget, uint x, uint y);
     virtual void remove(Widget* child_widget);
     
     uint getSubPosX(const Widget* child_widget) const override;
     uint getSubPosY(const Widget* child_widget) const override;
     
+    virtual void connectDataUpdate_(Widget* container) override;
+    virtual void disconnectDataUpdate_() override;
+
     PixelBuffer* exp_buf_;
     uint loc_x_, loc_y_;
 private:

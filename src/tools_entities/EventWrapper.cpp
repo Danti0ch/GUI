@@ -1,21 +1,25 @@
 #include "logger.h"
 #include "EventWrapper.h"
+#include "Widget.h"
 
 // TODO: rename
 booba::Event* convertToStandartEvent(const stImage* space, const Event* event){
 
     booba::Event* stEvent = new booba::Event();
 
+    std::cout << (int)event->type() << "\n";
+
     if(event->type() == T_EVENT::unknown){
         stEvent->type = booba::EventType::NoEvent;
     }
 
-    if(event->type() == T_EVENT::mouseLClick || event->type() == T_EVENT::mouseReleased || event->type() == T_EVENT::mouseMoved){
+    if(event->type() == T_EVENT::mouseLClick || event->type() == T_EVENT::mouseReleased){
         booba::MouseButtonEventData data;
 
         MouseEvent* casted_event = (MouseEvent*)(event);
-        data.x = casted_event->state()->x() - space->globX();
-        data.y = casted_event->state()->y() - space->globY();
+
+        data.x = casted_event->state()->x() - space->x();
+        data.y = casted_event->state()->y() - space->y();
 
         data.button = booba::MouseButton::Left;
         data.shift = casted_event->special_keys()->lShift();
@@ -34,6 +38,19 @@ booba::Event* convertToStandartEvent(const stImage* space, const Event* event){
             stEvent->type = booba::EventType::MouseMoved;
         }
     }
+    else if(event->type() == T_EVENT::mouseMoved){
+        booba::MotionEventData data;
+
+        MouseEvent* casted_event = (MouseEvent*)(event);
+
+        data.rel_x = casted_event->state()->last_x() - space->x();
+        data.rel_y = casted_event->state()->last_y() - space->y();
+        data.x     = casted_event->state()->x() - space->x();
+        data.y     = casted_event->state()->y() - space->y();
+
+        stEvent->Oleg.motion = data;
+        stEvent->type = booba::EventType::MouseMoved;
+    }
     else if(event->type() == T_EVENT::keyPressed){
         stEvent->type = booba::EventType::ButtonClicked;
 
@@ -45,6 +62,18 @@ booba::Event* convertToStandartEvent(const stImage* space, const Event* event){
         data.id = casted_event->key();
 
         stEvent->Oleg.bcedata = data;
+    }
+    else if(event->type() == T_EVENT::sliderMoved){
+        stEvent->type = booba::EventType::ScrollbarMoved;
+
+        booba::ScrollMovedEventData data;
+
+        SliderMovedEvent* casted_event = (SliderMovedEvent*)(event);
+        
+        data.id = (uint64_t)casted_event->p_slider();
+        data.value = casted_event->ratio() * casted_event->p_slider()->width();
+
+        stEvent->Oleg.smedata = data;
     }
     else{
         // TODO: other events

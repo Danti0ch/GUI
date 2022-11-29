@@ -8,6 +8,8 @@ const uint LIST_HEIGHT = 20;
 const uint CANVAS_WIDTH = MANAGER_WIDTH;
 const uint CANVAS_HEIGHT = MANAGER_HEIGHT - LIST_HEIGHT;
 
+CanvasWidget* CanvasManager::ACTIVE_CANVAS_WIDGET = NULL;
+
 CanvasManager::CanvasManager(ToolManager* toolManager):
     ContainerWidget(MANAGER_WIDTH, MANAGER_HEIGHT),
     canvas_list_(MANAGER_WIDTH, LIST_HEIGHT, 40, this, &CanvasManager::setActive),
@@ -42,9 +44,12 @@ void CanvasManager::setActive(uint n_canvas){
     if(active_canvas != NULL){
         active_canvas->setVisible(false);
     }
+
     active_canvas = iter->widget;
     active_canvas->setVisible(true);
 
+    ACTIVE_CANVAS_WIDGET = active_canvas;
+    
     RequireRender();
     return;
 }
@@ -57,7 +62,7 @@ void CanvasManager::addCanvas(const std::string& path){
     new_canvas.widget->setVisible(false);
 
     storage_.push_back(new_canvas);
-    std::cout << "yo: " << new_canvas.widget << "\n";
+
     ContainerWidget::connect(new_canvas.widget, &canvas_list_, LINKAGE_MODE::BOTTOM);
 
     if(default_text_.isVisible()){

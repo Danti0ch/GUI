@@ -34,7 +34,6 @@ namespace booba { // boot of outstanding best api
         CanvasMPressed  = 6,
         CanvasMReleased = 7,
         CanvasMMoved    = 8,
-
     };
 
     enum class MouseButton
@@ -98,7 +97,8 @@ namespace booba { // boot of outstanding best api
         virtual uint32_t& operator()(uint32_t x, uint32_t y) = 0;
         virtual const uint32_t& operator()(uint32_t x, uint32_t y) const = 0;
     protected:
-        virtual ~Image() = 0;
+        // TODO:
+        //virtual ~Image() = 0;
     };
 
     struct ApplicationContext

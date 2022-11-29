@@ -4,7 +4,7 @@
 #include "logger.h"
 
 static const uint POS_POISON = -1;
-const uint SCROLL_BAR_WIDTH = 20;
+static const uint DEFAULT_PEN_SIZE = 5;
 
 TOOL_INIT(PenTool)
 /*
@@ -19,7 +19,7 @@ TOOL_INIT(PenTool)
 static void draw_dot(booba::Image* image, int x, int y, int size){
     for (int32_t curX = std::max(0, x - size); curX < std::min(int32_t(image->getX()), x + size); curX++) {
         for (int32_t curY = std::max(0, y - size); curY < std::min(int32_t(image->getH()), y + size); curY++) {
-            image->putPixel(curX, curY, 111/*booba::APPCONTEXT->fgColor*/);
+            image->putPixel(curX, curY, 0/*booba::APPCONTEXT->fgColor*/);
         }
     }
 
@@ -60,7 +60,7 @@ PenTool::PenTool():
     AbstractTool(),
     isLButtonPressed(false),
     polynom_(),
-    pen_size_(1)
+    pen_size_(4)
 {}
 
 void PenTool::apply(booba::Image* image, const booba::Event* event) {
@@ -88,18 +88,15 @@ void PenTool::apply(booba::Image* image, const booba::Event* event) {
         }
     }
     else if(event->type == booba::EventType::ScrollbarMoved){
-
-        // TODO: fix wtf
-        pen_size_ = event->Oleg.smedata.value / 10;
+        
     }
-
     return;
 }
 
 void PenTool::buildSetupWidget(){
 
-    sizeControllerScrollBar_ = booba::createScrollbar(5, 5, 100, 12);
-    booba::createLabel(5, 17, 70, 20, "Pen Size");
+    sizeControllerScrollBar_ = booba::createScrollbar(5, 5, 40, 3);
+    booba::createLabel(5, 8, 20, 15, "Pen Size");
 
     return;
 }
