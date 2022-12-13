@@ -1,76 +1,36 @@
 #include "Widget.h"
-#include <assert.h>
 
-// TODO: обернуть подобные конструкторы в один макрос
-// TODO: дефолтный параметр для текстуры
-ContainerWidget::ContainerWidget(uint width, uint height):
-    Widget(width, height), subwidgets_(){ }
+ContainerWidget::ContainerWidget(Vector size):
+    Widget(size), subwidgets_(){ }
 
 void ContainerWidget::draw(){
 
     std::list<Widget*>::iterator subwidgets_iter;
+    
     for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
         if((*subwidgets_iter)->isVisible()){
-            (*subwidgets_iter)->coreDraw();
-            buff_.drawPixelBuffer((*subwidgets_iter)->x(), (*subwidgets_iter)->y(), (*subwidgets_iter)->pixBuff());
+
+            (*subwidgets_iter)->bLayerDraw();
+            buffer_->draw((*subwidgets_iter)->relPos_, (*subwidgets_iter)->buffer_);
         }
     }
     return;
 }
 
-void ContainerWidget::connect(Widget* child_widget, uint x, uint y){
+void ContainerWidget::connect(Widget* child_widget, Vector pos){
     NASSERT(child_widget);
     
-    child_widget->x(x);
-    child_widget->y(y);
+    child_widget->pos(pos);
 
     if(child_widget->parent_widget_ != NULL){
         child_widget->parent_widget_->remove(child_widget);
     }
 
-    subwidgets_.push_back(child_widget);
-    
+    subwidgets_.push_back(child_widget);    
     child_widget->parent_widget_ = this;
 
-    child_widget->connectDataUpdate_(this);
+    child_widget->connectDataUpdate(this);
 
-    return;
-}
-
-// TODO: or make widget->connect() ??
-void ContainerWidget::connect(Widget* new_widget, Widget* from_widget, LINKAGE_MODE mode, uint indent_val, int offset){
-
-    if(from_widget->parent() == NULL) return;
-
-    //?? 
-    /*
-    bool from_widget_found = false;
-    std::list<Widget*>::iterator subwidgets_iter;
-    for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
-        if(*subwidgets_iter == from_widget) from_widget_found = true;
-    }
-    */
-
-    uint x_coord = 0, y_coord = 0;
-
-    if(mode == LINKAGE_MODE::TOP){
-        x_coord = from_widget->x() + offset;
-        y_coord = from_widget->y() + from_widget->height() + indent_val;
-    }
-    else if(mode == LINKAGE_MODE::BOTTOM){
-        x_coord = from_widget->x() + offset;
-        y_coord = from_widget->y() - new_widget->height() - indent_val;    
-    }
-    else if(mode == LINKAGE_MODE::LEFT){
-        x_coord = from_widget->x() - new_widget->width() - indent_val;
-        y_coord = from_widget->y() + offset;
-    }
-    else if(mode == LINKAGE_MODE::RIGHT){
-        x_coord = from_widget->x() + from_widget->width() + indent_val;
-        y_coord = from_widget->y() + offset;
-    }
-
-    this->connect(new_widget, x_coord, y_coord);
     return;
 }
 
@@ -79,69 +39,51 @@ void ContainerWidget::remove(Widget* child_widget){
     subwidgets_.remove( child_widget);
 
     child_widget->parent_widget_ = NULL;
-    child_widget->disconnectDataUpdate_();
+    child_widget->disconnectDataUpdate();
 
-    child_widget->x(POS_POISON);
-    child_widget->y(POS_POISON);
+    child_widget->pos(VECTOR_POISON);
     
     return;
 }
 
-void ContainerWidget::connectDataUpdate_(Widget* container){
+void ContainerWidget::connectDataUpdate(ContainerWidget* container){
 
-    if(p_manager_ != NULL){
-        disconnectDataUpdate_();
+    if(eventManager_ != NULL){
+        disconnectDataUpdate();
     }
-    if(container->p_manager_ == NULL) return;
 
-    container->p_manager_->addWidget(this);
-    p_manager_ = container->p_manager_;
+    if(container->eventManager_ == NULL) return;
+
+    container->eventManager_->addWidget(this);
+    eventManager_ = container->eventManager_;
 
     std::list<Widget*>::iterator subwidgets_iter;
     for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
-        (*subwidgets_iter)->connectDataUpdate_(this);
+        (*subwidgets_iter)->connectDataUpdate(this);
     }
 
     return;
 }
 
-void ContainerWidget::disconnectDataUpdate_(){
+void ContainerWidget::disconnectDataUpdate(){
 
-    if(p_manager_ == NULL) return;
+    if(eventManager_ == NULL) return;
 
-    p_manager_->removeWidget(this);
-    p_manager_ = NULL;
+    eventManager_->removeWidget(this);
+    eventManager_ = NULL;
 
     std::list<Widget*>::iterator subwidgets_iter;
     for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
-        (*subwidgets_iter)->disconnectDataUpdate_();
+        (*subwidgets_iter)->disconnectDataUpdate();
     }
     return;
 }
 
-// TODO: what if child_widget not in list?? redone for handling error
-uint ContainerWidget::getSubPosX(const Widget* child_widget) const{
+Vector ContainerWidget::subPos(const Widget* subwidget) const{
 
-    std::list<Widget*>::const_iterator subwidgets_iter;
-    for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
-        
-        if((*subwidgets_iter) == child_widget){
-            return (*subwidgets_iter)->x();
-        }
-    }
+    std::list<Widget*>::const_iterator iter = std::find(subwidgets_.begin(), subwidgets_.end(), subwidget);
 
-    return -1;
-}
+    if(iter == subwidgets_.end()) return VECTOR_POISON;
 
-uint ContainerWidget::getSubPosY(const Widget* child_widget) const{
-
-    std::list<Widget*>::const_iterator subwidgets_iter;
-    for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
-        
-        if((*subwidgets_iter) == child_widget){
-            return (*subwidgets_iter)->y();
-        }
-    }
-
-    return -1;
+    return subwidget->pos();
 }

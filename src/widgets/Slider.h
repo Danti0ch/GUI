@@ -2,50 +2,63 @@
 #define SLIDER_H
 
 #include "Widget.h"
-#include "RectButton.h"
+#include "Actions.h"
 
-// TODO: implement possibility to move scroll while pressing scroll main part(by holding mouse button)
+// TODO: make sliderIndicator hoverable
 
-//?
-// TODO:
-/*
-class AbstractSlider : public Widget{
+class Slider : public Widget{
 public:
-    double ratio() const { return ratio_;}
+    Slider(Vector size);
+    ~Slider();
 
-    virtual void onMouseLClick(const MouseLClickEvent* event);
+    double ratio() const;
+
+    virtual coord indicatorLen() = 0;
+
+    template<class T_RECEIVER>
+    void setHandler(T_RECEIVER* pReceiver, void (T_RECEIVER::*slot)(double));
 protected:
+    //?
     double ratio_;
-    RectButton<double> butt_;
-};
-*/
 
-class HSlider : public ContainerWidget{
+    DrawableArea* indicator_;
+    MacroAction* actions_;
+protected:
+    void indicatorMove(ORIENTATION orient);
+    void drawIndicator(ORIENTATION orient);
+};
+
+class VSlider : public Slider{
 public:
-    HSlider(uint width, uint height, uint butt_width);
-    ~HSlider();
+    VSlider(coord len);
+    VSlider(Vector size);
+    ~VSlider() = default;
 
-    void onMouseLClick(const MouseLClickEvent* event) override;
+    void draw() override;
 
-    // TODO: refactor
-    void ratio(double val);
-private:
-    double ratio_;
-    RectButton<HSlider, double> butt_;
+    coord indicatorLen() override;
+
+    void onMouseButtonPressed(const MouseButtonPressedEvent* event) override;
+    void onMouseMoved(const MouseMovedEvent* event) override;
+    
+    // TODO:
+    //void onMouseWheelScrolled(const MouseWheelScrolledEvent* event) override;
+    //?
+    //void onKeyPressed(const KeyPressedEvent* event) override;
 };
 
-class VSlider : public ContainerWidget{
+class HSlider : public Slider{
 public:
-    VSlider(uint width, uint height, uint butt_height);
-    ~VSlider();
+    HSlider(coord len);
+    HSlider(Vector size);
+    ~HSlider() = default;
 
-    void onMouseLClick(const MouseLClickEvent* event) override;
+    void draw() override;
 
-    // TODO: refactor
-    void ratio(double val);
-private:
-    double ratio_;
-    RectButton<VSlider, double> butt_;
+    coord indicatorLen() override;
+
+    void onMouseButtonPressed(const MouseButtonPressedEvent* event) override;
+    void onMouseMoved(const MouseMovedEvent* event) override;
 };
- 
+
 #endif // SLIDER_H

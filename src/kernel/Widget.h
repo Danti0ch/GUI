@@ -1,119 +1,104 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#include "stdlib.h"
-#include "Texture.h"
-#include "Event.h"
-#include "glib_wrapper.h"
-#include "logger.h"
+#include "Color.h"
+#include "graphicImp.h"
 #include <list>
+#include <string>
+#include "Event.h"
+#include "logger.h"
 
-//? x and y connect to very close functions by meaning, maybe they should be childs of class dimension_coord?
-class Window;
-class Widget;
-class ContainerWidget;
-
-class EventManager{
-public:
-    EventManager();
-    void addWidget(Widget* widget);
-    void removeWidget(Widget* widget);
-    void ProcessHandlers(const Event* event);
-
-private:
-    std::list<Widget*> widgets_;
-};
-
-const uint POS_POISON = -1;
-
+// TODO: rename to smth connected with pixels, that ctrl+h
 /**
- * @brief an abstract class of any entity that has a representation on the application screen
+ * @brief abstract class for visible entities in application, that realizes general interface methods
  * 
  */
 class Widget{
 public:
+    Widget(Vector size);  
 
-    Widget(uint width, uint height);    
+    //?  
+    virtual ~Widget() = default;
 
-    ~Widget();
-
-    virtual void coreDraw() final;
-    virtual void draw() = 0;
-
-    uint x() const;
-    uint y() const;
-
-    /// setters
-    void x(uint val);
-    void y(uint val);
+    /// @brief get coords of widget, relative to his current parent widget
+    Vector pos() const;
     
-    uint real_x() const;
-    uint real_y() const;
-
-    uint width() const;
-    uint height() const;
+    /// @brief get coords of widget in the app
+    Vector realPos() const;
+    
+    Vector size() const;
 
     bool isFocused() const;
     bool isVisible() const;
-    bool isRenderRequired();
-    Texture& texture();
     
-    void setTexture(const Texture& texture);
-    
-    void setVisible(bool val);
-
-    // TODO: redone
-    void changeVisible(bool def_val);
-
     ContainerWidget* parent();
-    const PixelBuffer& pixBuff() const;
-    
-    PixelBuffer* GetPointerOnPixBuff();
-    //const EventManager* eventManager() const { return p_manager_; }
 
-    virtual void onMouseLClick(const MouseLClickEvent* event){};
-    virtual void onKeyPressed( const KeyPressedEvent* event){};
-    virtual void onMouseReleased(const MouseReleasedEvent* event){};
-    virtual void onMouseMoved(const MouseMovedEvent* event){};
-    
-    //? should we remove slider moved
-    //! delete if it not be useful in other situations
-    virtual void onSliderMoved( const SliderMovedEvent* event){};
+    void x(coord val);
+    void y(coord val);
 
-    void RequireRender();
+    void pos(Vector val);
 
-    //! not good it is accessible for all widgets
-    // or normal?
-    void throwEvent(const Event* event);
-    void triggerEvent(const Event* event);
+    void visible(bool val);
+    void invertVisible();
 
-    friend class ContainerWidget;
-    friend class Window;
-private:
-    uint x_, y_;
-    uint width_, height_;
+    void texture(const std::string& path_to_img);
+    void texture(const Color& col);
 
-    Texture texture_;
+    void connect(Widget* slotWidget, LINKAGE_MODE mode, uint indent_val, int offset);
 
-    PixelBuffer buff_;
-
-    ContainerWidget* parent_widget_;
-    EventManager* p_manager_;
+    static Widget* FOCUSED_WIDGET;
 
 protected:
+    virtual void draw() = 0;
+
+    void requireRender();
+
+    /// @brief executes while widget connecting or disconnecting. Used to change private data.    
+    virtual void connectDataUpdate(ContainerWidget* container);
+    virtual void disconnectDataUpdate();
+
+    virtual void onMouseButtonPressed(const MouseButtonPressedEvent* event){}
+    virtual void onMouseButtonReleased(const MouseButtonReleasedEvent* event){}
+    virtual void onMouseMoved(const MouseMovedEvent* event){}
+    virtual void onMouseWheelScrolled(const MouseWheelScrolledEvent* event){}
+    virtual void onKeyPressed( const KeyPressedEvent* event){}
+    virtual void onKeyReleased( const KeyReleasedEvent* event){}
+
+private:
+    /// @brief smth changed in widget, there could be neccesity in redrawing it
+    bool isRenderRequired();
+
+    /// @brief every widget has background that should be drawed before other things of widget will be drawen
+    void bLayerDraw();
+
+    void triggerEvent(const Event* event);
+protected:
+    DrawableArea* bgLayer_;
+    RenderObject* buffer_;
+
+    /// @brief if cur widget contains subwidget, returns its pos on the buffer of current widget. Otherwise returns poison
+    virtual Vector subPos(const Widget* subwidget) const;
+
+private:
+    Vector relPos_;
+    Vector size_;
+
+    ContainerWidget* parent_widget_;
+
     bool is_focused_;
     bool is_visible_;
     bool is_render_required_;
 
-private:
-    //! TODO: arg to container widget
-    virtual void connectDataUpdate_(Widget* container);
-    virtual void disconnectDataUpdate_();
+    EventManager *eventManager_;
+friend class ContainerWidget;
+friend class EventManager;
+friend class Window;
+
+// TODO: remove
+friend class Expended;
 };
 
-bool isPointInside(const Widget* widget, uint x, uint y);
-
-#include <list>
+bool isPointInside(const Widget* widget, Vector pos);
 
 enum class LINKAGE_MODE{
 
@@ -123,29 +108,53 @@ enum class LINKAGE_MODE{
     RIGHT
 };
 
+/**
+ * @brief container for multiple widgets
+ * 
+ */
 class ContainerWidget : public Widget{
 public:
-    ContainerWidget(uint width, uint height);
+    ContainerWidget(Vector size);
+    ~ContainerWidget() = default;
+
+protected:
+    virtual void connect(Widget* child_widget, Vector pos);
+    virtual void remove( Widget* child_widget);
 
     virtual void draw() override;
 
-    // TODO: fix    
-    friend class Window;
-    friend class Widget;
+    virtual void connectDataUpdate(ContainerWidget* container) override;
+    virtual void disconnectDataUpdate() override;
+
+    virtual Vector subPos(const Widget* subwidget) const override;
+
 protected:
-
-    virtual void connect(Widget* child_widget, uint x, uint y);
-    virtual void connect(Widget* new_widget, Widget* from_widget, LINKAGE_MODE mode, uint indent_val = 0, int offset = 0);
-    
-    virtual void remove( Widget* child_widget);
-
-    virtual uint getSubPosX(const Widget* child_widget) const;
-    virtual uint getSubPosY(const Widget* child_widget) const;
-
     std::list<Widget*> subwidgets_;
+friend class Widget;
+};
 
-    virtual void connectDataUpdate_(Widget* container) override;
-    virtual void disconnectDataUpdate_() override;
+enum class LINKAGE_MODE{
+
+    TOP,
+    BOTTOM,
+    LEFT,
+    RIGHT
+};
+
+/**
+ * @brief class that distributes events on containing widgets
+*/
+class EventManager{
+public:
+    EventManager();
+    ~EventManager() = default;
+
+    void addWidget(Widget* widget);
+    void removeWidget(Widget* widget);
+    void ProcessHandlers(const Event* event);
+
+private:
+    std::list<Widget*> widgets_;
 };
 
 #endif // WIDGET_H

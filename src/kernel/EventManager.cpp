@@ -1,7 +1,8 @@
 #include "Widget.h"
 
 EventManager::EventManager():
-    widgets_(){}
+    widgets_()
+{}
 
 void EventManager::addWidget(Widget* widget){
     widgets_.push_back(widget);
@@ -17,11 +18,11 @@ void EventManager::ProcessHandlers(const Event* event){
 
     std::list<Widget*>::iterator iter = widgets_.begin();
     
-    // TODO: make queue for unhandled events
     for(; iter != widgets_.end(); iter++){
-        //if(event->check(*iter)){
+
+        //?
+        if((*iter)->isVisible())
             (*iter)->triggerEvent(event);
-        //}
     }
     return;
 }

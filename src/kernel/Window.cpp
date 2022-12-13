@@ -1,54 +1,53 @@
 #include "Window.h"
-#include <iostream>
 
-Window::Window(uint width, uint height):
-    ContainerWidget(width, height),
-    space_(width, height),
-    manager_()
+Window::Window(Vector size):
+    ContainerWidget(size),
+    window_(CREATE_REAL_WINDOW(size))
 {   
-    //! ok?
-    p_manager_ = &manager_;
-}
-
-void Window::exec(){
-    Event* event = NULL;
-    bool was_event = false;
-
-    std::cout << this << "\n";
-    coreDraw();
+    eventManager_ = new EventManager();
 
     // TODO: fix
-    space_.drawPixelBuffer(0, 0, buff_);
-    space_.show();
-
-    while(space_.isOpen()){
-        while(space_.extractEvent(&event)){
-            was_event = true;
-            manager_.ProcessHandlers(event);
-            delete event;
-        }
-        if(was_event){
-            coreDraw();
-            space_.drawPixelBuffer(0, 0, buff_);
-            space_.show();
-            was_event = false;
-        }
-    }
-
-    return;
+    delete buffer_;
+    buffer_ = window_->buffer();
 }
 
-void Window::add(Widget* widget, uint x, uint y){
-    ContainerWidget::connect(widget, x, y);
-    return;
+Window::~Window(){
+    delete window_;
+    delete eventManager_;
 }
 
-void Window::add(Widget* widget, Widget* from_widget, LINKAGE_MODE mode, uint indent_val, uint offset){
-    ContainerWidget::connect(widget, from_widget, mode, indent_val, offset);
+void Window::add(Widget* widget, Vector pos){
+    ContainerWidget::connect(widget, pos);
     return;
 }
 
 void Window::remove(Widget* widget){
     ContainerWidget::remove(widget);
+    return;
+}
+
+void Window::exec(){
+
+    bLayerDraw();
+    window_->draw();
+
+    while(window_->isOpen()){
+        window_->extractEvents();
+
+        if(!window_->extractedEvents.empty()){
+            while(!window_->extractedEvents.empty()){
+                const Event* event = window_->extractedEvents.front();
+                window_->extractedEvents.pop();
+                
+                event->updateManipulatorsData();
+
+                eventManager_->ProcessHandlers(event);
+            }
+
+            bLayerDraw();
+            window_->draw();
+        }
+    }
+
     return;
 }

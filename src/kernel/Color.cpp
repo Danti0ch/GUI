@@ -3,17 +3,23 @@
 
 const uint32_t MAX_COMP_VAL = 255;
 
+Color Color::WHITE(255, 255, 255, 255);
+Color Color::BLACK(  0,   0,   0, 255);
+Color Color::RED(  255,   0,   0, 255);
+Color Color::GREEN(  0, 255,   0, 255);
+Color Color::BLUE(   0,   0, 255, 255);
+
 Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a):
     r_(r), g_(g), b_(b), a_(a){}
 
 //? right order
-Color::Color(uint32_t val){
+Color::Color(unsigned int val, uint8_t a = 255){
     uint32_t mask = 0xFF;
 
-    a_ = val & mask;
-    b_ = (val & (mask << 8)) >> 8;
-    g_ = (val & (mask << 16)) >> 16;
-    r_ = (val & (mask << 24)) >> 24;
+    a_ = a;
+    b_ = (val & mask);
+    g_ = (val & (mask << 8)) >> 8;
+    r_ = (val & (mask << 16)) >> 16;
 }
 
 void Color::operator +=(const Color& col2){
@@ -25,7 +31,6 @@ void Color::operator +=(const Color& col2){
     
     return;
 }
-//----------------------------------------------------------------------------------------//
 
 void Color::operator *=(const Color& col2){
 
@@ -41,7 +46,6 @@ void Color::operator *=(const Color& col2){
     
     return;
 }
-//----------------------------------------------------------------------------------------//
 
 void Color::operator *=(double ratio){
 
@@ -57,7 +61,6 @@ void Color::operator *=(double ratio){
 
     return;
 }
-//----------------------------------------------------------------------------------------//
 
 void Color::operator -=(const Color& col2){
 
@@ -68,7 +71,6 @@ void Color::operator -=(const Color& col2){
     
     return;
 }
-//----------------------------------------------------------------------------------------//
 
 Color Color::operator +(const Color& col2) const{
 
@@ -77,7 +79,6 @@ Color Color::operator +(const Color& col2) const{
 
     return new_obj;
 }
-//----------------------------------------------------------------------------------------//
 
 Color Color::operator *(const Color& col2) const{
 
@@ -86,7 +87,6 @@ Color Color::operator *(const Color& col2) const{
 
     return new_obj;
 }
-//----------------------------------------------------------------------------------------//
 
 Color Color::operator *(double ratio) const{
 
@@ -95,7 +95,6 @@ Color Color::operator *(double ratio) const{
 
     return new_obj;
 }
-//----------------------------------------------------------------------------------------//
 
 Color Color::operator -(const Color& col2) const{
 
@@ -104,7 +103,6 @@ Color Color::operator -(const Color& col2) const{
 
     return new_obj;
 }
-//----------------------------------------------------------------------------------------//
 
 Color::operator uint32_t() const{
 

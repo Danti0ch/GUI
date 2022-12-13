@@ -1,92 +1,135 @@
 #include "Slider.h"
+#include "TextureManager.h"
 
-// TODO: remove copypast
-//? button variable pos in constructor
-HSlider::HSlider(uint width, uint height, uint butt_width):
-    ContainerWidget(width, height),
+static void indicatorMove(Slider* slider, ORIENTATION orient);
+
+Slider::Slider(Vector size):
+    Widget(size),
     ratio_(0),
-    butt_(butt_width, height)
-{
-    // TODO: remove
-    butt_.setTexture(Color(50, 50, 50));
-    ContainerWidget::connect(&butt_, 0, 0);
+    indicator_(NULL),
+    actions_(new MacroAction())
+{}
+
+Slider::~Slider(){
+    delete actions_;
+    delete indicator_;
 }
 
-HSlider::~HSlider(){}
+double Slider::ratio() const{ return ratio_; }
 
-void HSlider::onMouseLClick(const MouseLClickEvent* event){
-    NASSERT(event);
 
-    if(!isPointInside(this, event->state()->x(), event->state()->y())){
-        return;
-    }
+template<class T_RECEIVER>
+void Slider::setHandler(T_RECEIVER* pReceiver, void (T_RECEIVER::*slot)(double)){
 
-    if(isVisible() == false) return;
-    int new_butt_x_pos = (int)(event->state()->x() - real_x()) - (int)(butt_.width() / 2);
+    actions_->add(new ObjArgAction<T_RECEIVER, void (T_RECEIVER::*)(double), double>(pReceiver, slot, &ratio));
+    return;
+}
 
-    if(new_butt_x_pos < 0) new_butt_x_pos = 0;
-    else if(new_butt_x_pos + butt_.width() > width()) new_butt_x_pos = width() - butt_.width();
+void Slider::indicatorMove(ORIENTATION orient){
 
-    butt_.x(new_butt_x_pos);
+    int cId = 0;
+    if(orient == ORIENTATION::V) cId = 1;
 
-    // TODO: fix
-    butt_.RequireRender();
-    RequireRender();
+    int newPos = (int)(manipulatorsContext.mousePos()[cId] - realPos()[cId]) - (int)(indicator_->size()[cId] / 2);
 
-    double ratio = (double)new_butt_x_pos / (double)(width() - butt_.width());
-    SliderMovedEvent slider_event(this, ratio);
-    throwEvent(&slider_event);
+    if(newPos < 0) newPos = 0;
+    else if(newPos + indicator_->size()[cId] > size()[cId]) newPos = size()[cId] - indicator_->size()[cId];
+
+    double ratio = (double)newPos / (double)(size()[cId] - indicator_->size()[cId]);
+
+    actions_->execute();
+    requireRender();
 
     return;
 }
 
-void HSlider::ratio(double val){
-    assert(val >= 0 && val <= 1);
+void Slider::drawIndicator(ORIENTATION orient){
 
-    ratio_ = val;
-    RequireRender();
-}
+    int cId = 0;
+    if(orient == ORIENTATION::V) cId = 1;
 
-VSlider::VSlider(uint width, uint height, uint butt_height):
-    ContainerWidget(width, height),
-    ratio_(0),
-    butt_(width, butt_height)
-{
-    // TODO: remove
-    butt_.setTexture(Color(50, 50, 50));
-    ContainerWidget::connect(&butt_, 0, 0);
-}
+    coord pos = (size()[cId] - indicator_->size()[cId]) * ratio_;
 
-VSlider::~VSlider(){}
+    Vector posToDraw(0, 0);
 
-void VSlider::onMouseLClick(const MouseLClickEvent* event){
-    NASSERT(event);
-
-    if(!isPointInside(this, event->state()->x(), event->state()->y())){
-        return;
-    }
-
-    if(isVisible() == false) return;
-    int new_butt_y_pos = (int)(event->state()->y() - real_y()) - (int)(butt_.height() / 2);
-
-    if(new_butt_y_pos < 0) new_butt_y_pos = 0;
-    else if(new_butt_y_pos + butt_.height() > height()) new_butt_y_pos = height() - butt_.height();
-
-    butt_.y(new_butt_y_pos);
-    butt_.RequireRender();
-    RequireRender();
-
-    double ratio = (double)new_butt_y_pos / (double)(height() - butt_.height());
-    SliderMovedEvent slider_event(this, ratio);
-
-    throwEvent(&slider_event);
+    posToDraw[cId] = pos;
+    buffer_->draw(posToDraw, indicator_);
 
     return;
 }
 
-void VSlider::ratio(double val){
-    assert(val >= 0 && val <= 1);
+VSlider::VSlider(coord len):
+    VSlider({10, len}){}
 
-    ratio_ = val;
-    RequireRender();
+VSlider::VSlider(Vector size):
+    Slider(size)
+{
+    indicator_ = CREATE_DRAWABLE_AREA(Vector(size.x, 20));
+    bgLayer_->clear(Color(0x4a4a40, 100));
+    indicator_->clear(0xcc31b2);
+}
+
+void VSlider::onMouseButtonPressed(const MouseButtonPressedEvent* event){
+    
+    if(!isPointInside(this, manipulatorsContext.mousePos())){
+        return;
+    }
+
+    indicatorMove(ORIENTATION::V);
+    return;
+}
+
+void VSlider::onMouseMoved(const MouseMovedEvent* event){
+    
+    if(!manipulatorsContext.isMouseLPressed()) return;
+    
+    indicatorMove(ORIENTATION::V);
+    return;
+}
+
+void VSlider::draw(){
+    drawIndicator(ORIENTATION::V);
+    return;
+}
+
+coord VSlider::indicatorLen(){
+    return indicator_->size().y;
+}
+
+HSlider::HSlider(coord len):
+    HSlider({len, 10}){}
+
+HSlider::HSlider(Vector size):
+    Slider(size)
+{
+    indicator_ = CREATE_DRAWABLE_AREA(Vector(20, size.y));
+    bgLayer_->clear(Color(0x4a4a40, 100));
+    indicator_->clear(0xcc31b2);
+}
+
+void HSlider::onMouseButtonPressed(const MouseButtonPressedEvent* event){
+    
+    if(!isPointInside(this, manipulatorsContext.mousePos())){
+        return;
+    }
+
+    indicatorMove(ORIENTATION::H);
+    return;
+}
+
+void HSlider::onMouseMoved(const MouseMovedEvent* event){
+    
+    if(!manipulatorsContext.isMouseLPressed()) return;
+    
+    indicatorMove(ORIENTATION::H);
+    return;
+}
+
+void HSlider::draw(){
+    drawIndicator(ORIENTATION::H);
+    return;
+}
+
+coord HSlider::indicatorLen(){
+    return indicator_->size().x;
 }

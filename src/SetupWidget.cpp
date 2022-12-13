@@ -36,11 +36,8 @@ void SetupWidget::onMouseMoved(const MouseMovedEvent* event){
     RequireRender();
 }
 
-
 void SetupWidget::onSliderMoved( const SliderMovedEvent* event){
 
-
-    std::cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA!\n";
     if(!isVisible()) return;
 
     tool_manager_->apply(CanvasManager::ACTIVE_CANVAS_WIDGET->image(), event);

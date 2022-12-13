@@ -2,27 +2,36 @@
 #define COLOR_PICKER_H
 
 #include "RectButton.h"
+#include "TextInsertWidget.h"
+#include "Label.h"
+#include "Slider.h"
 
-class SliderPicker : ContainerWidget{
+class SliderPicker : public ContainerWidget{
 public:
     SliderPicker(const std::string& name);
 
-    PixelBuffer* buff();
+    const HSlider* slider() const;
 private:
-    PixelBuffer* buff_;
+    Label   title_;
+    HSlider slider_;    
 };
 
-class TextPicker : ContainerWidget{
+class TextPicker : public ContainerWidget{
 public:
     TextPicker(const std::string& name);
-    
+
+    const TextInsertWidget* textField() const;
 private:
-    TextInsertWidget* storage_;
+    Label             title_;
+    TextInsertWidget  storage_;
 };
 
-class ColorSetup : ContainerWidget{
+class ColorSetup : public ContainerWidget{
 public:
     ColorSetup(uint width, uint height);
+
+    void onTextInserted(const TextInsertedEvent* event) override;
+    void onSliderMoved(const SliderMovedEvent* event) override;
 
 private:
     SliderPicker huePicker;
@@ -37,7 +46,7 @@ private:
     TextPicker hexPicker;
 };
 
-class ColorPicker : ContainerWidget{
+class ColorPicker : public ContainerWidget{
 public:
     ColorPicker();
 

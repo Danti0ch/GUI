@@ -3,11 +3,10 @@
 
 #include <stdint.h>
 
-// TODO: uint8_t to double for * operator
 class Color{
 public:
-    Color(uint8_t r = 255, uint8_t g = 255, uint8_t b = 255, uint8_t a = 255);
-    Color(uint32_t val);
+    Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+    Color(unsigned int val, uint8_t a = 255);
 
     uint8_t r() const { return r_; }
     uint8_t g() const { return g_; }
@@ -19,7 +18,7 @@ public:
     void    b(uint8_t v) { b_ = v; }
     void    a(uint8_t v) { a_ = v; }
 
-    //operator double() const;
+    ///operator double() const;
 
     void  operator +=(const Color& col2);
     void  operator *=(const Color& col2);
@@ -31,22 +30,21 @@ public:
     Color operator *(double ratio) const;
     Color operator -(const Color& col2) const;
 
-    // TODO: cast to uint32_t, cast from uint32_t, cast to const uint32_t&
-
-    //? explicit
     operator uint32_t() const;
     
     //!! implement?
     //explicit operator const uint32_t&() const;
 
+    static Color WHITE;
+    static Color BLACK;
+    static Color RED;
+    static Color GREEN;
+    static Color BLUE;
+
 private:
     uint8_t r_, g_, b_, a_;
 };
 
-static Color WHITE(255, 255, 255, 255);
-static Color BLACK(  0,   0,   0, 255);
-static Color RED(  255,   0,   0, 255);
-static Color GREEN(  0, 255,   0, 255);
-static Color BLUE(   0,   0, 255, 255);
+// TODO: struct palette
 
 #endif  // COLOR_H

@@ -1,133 +1,22 @@
-#ifndef EVENT_H
-#define EVENT_H
+#ifndef SEVENT_H
+#define SEVENT_H
 
-//? maybe remove the inheritance mechanic and make general class for all event
+// TODO: rename
 
-#include "stdlib.h"
+#include "Auxil.h"
+#include <vector>
+
 enum class T_EVENT{
     unknown,
-    mouseLClick,
-    mouseMoved,
+    mouseClick,
     mouseReleased,
+    mouseMoved,
+    mouseWheelScrolled,
     keyPressed,
-    sliderMoved
+    keyReleased
 };
 
-class Widget;
-class GraphicSpace;
-
-class MouseData{
-public:
-
-    MouseData(uint x_init, uint y_init, bool isLPressed, bool isRPressed)
-    {
-        last_x_ = x_init;
-        last_y_ = y_init;
-        
-        x_ = last_x_;
-        y_ = last_y_;
-
-        isLPressed_ = isLPressed;
-        isRPressed_ = isRPressed;
-    }
-
-    bool isLPressed() const { return isLPressed_; }
-    bool isRPressed() const { return isRPressed_; }
-
-    uint last_x() const { return last_x_; }
-    uint last_y() const { return last_y_; }
-
-    uint x() const { return x_; }
-    uint y() const { return y_; }
-
-    friend class GraphicSpace;
-private:
-
-    GraphicSpace* core_space_;
-    bool isLPressed_;
-    bool isRPressed_;
-
-    //?
-    uint last_x_, last_y_;
-    uint x_, y_;
-};
-
-class SpecialKeysData{
-public:
-
-    SpecialKeysData(){}
-    ~SpecialKeysData(){}
-    
-    bool lShift() const { return lShift_; }
-    bool rShift() const { return rShift_; }
-    bool ctrl() const { return ctrl_; }
-    bool alt() const { return alt_; }
-
-    friend class GraphicSpace;
-private:
-    bool lShift_, rShift_, alt_, ctrl_;
-};
-
-class Event{
-public:
-
-    Event(T_EVENT type):
-        type_(type){}
-
-    virtual ~Event(){}
-
-    // TODO: rename to type
-    T_EVENT type() const { return type_; }
-    //int     id() const { return (int)id_; }
-
-    /**
-     * @brief проверяет действует ли событие на переданный виджет
-     */
-    //virtual bool check(const Widget* widget) const = 0;
-private:
-    T_EVENT type_;
-};
-/*
-class MouseEvent : public Event{
-public:
-    MouseEvent(T_EVENT type):
-        Event(type){}
-
-    //bool check(const Widget* widget) const override;
-};
-*/
-
-class MouseEvent : public Event{
-public:
-    MouseEvent(T_EVENT type, const MouseData& state_data, const SpecialKeysData& special_keys):
-        Event(type), state_(&state_data), special_keys_(&special_keys){}
-
-    const MouseData* state() const { return state_; }
-    const SpecialKeysData* special_keys() const { return special_keys_; }
-private:
-    const MouseData* state_;
-    const SpecialKeysData* special_keys_;
-};
-
-class MouseLClickEvent : public MouseEvent{
-public:
-    MouseLClickEvent(const MouseData& state_data, const SpecialKeysData& special_keys):
-        MouseEvent(T_EVENT::mouseLClick, state_data, special_keys){}
-};
-
-class MouseMovedEvent : public MouseEvent{
-public:
-    MouseMovedEvent(const MouseData& state_data, const SpecialKeysData& special_keys):
-        MouseEvent(T_EVENT::mouseMoved, state_data, special_keys){}
-};
-
-class MouseReleasedEvent : public MouseEvent{
-public:
-    MouseReleasedEvent(const MouseData& state_data, const SpecialKeysData& special_keys):
-        MouseEvent(T_EVENT::mouseReleased, state_data, special_keys){}
-};
-
-enum T_KEY {
+enum class T_KEY {
     Unknown = -1, A = 0, B, C,
     D, E, F, G,
     H, I, J, K,
@@ -154,35 +43,124 @@ enum T_KEY {
     F7, F8, F9, F10,
     F11, F12, F13, F14,
     F15, Pause, KeyCount, Dash = Hyphen,
-  BackSpace = Backspace, BackSlash = Backslash, SemiColon = Semicolon, Return = Enter
+  BackSpace = Backspace, BackSlash = Backslash, SemiColon = Semicolon, Return = Enter,
+
+  N_KEYS
 };
+
+const unsigned int N_KEYS = static_cast<unsigned int>(T_KEY::N_KEYS);
+
+class ManipulatorsContext{
+public:
+    ManipulatorsContext();
+    ~ManipulatorsContext();
+
+    bool isKeyPressed(T_KEY key) const; 
+
+    bool isMouseLPressed() const;
+    bool isMouseRPressed() const;
+
+    Vector mousePos() const;
+private:
+    std::vector<int> isKeyPressed_;
+
+    bool isMouseLPressed_;
+    bool isMouseRPressed_;
+
+    Vector mousePos_;
+
+friend class MouseButtonPressedEvent;
+friend class MouseButtonReleasedEvent;
+friend class MouseMovedEvent;
+friend class MouseWheelScrolledEvent;
+friend class KeyPressedEvent;
+friend class KeyReleasedEvent;
+};
+
+class Event{
+public:
+    Event(T_EVENT type);
+    ~Event();
+
+    T_EVENT type() const;
+protected:
+    virtual void updateManipulatorsData() const = 0;
+private:
+    T_EVENT type_;
+friend class Window;
+};
+
+enum class T_MOUSE_BUTTON{
+    L, R
+};
+
+class MouseButtonPressedEvent : public Event{
+public:
+    MouseButtonPressedEvent(T_MOUSE_BUTTON tButton);
+
+    T_MOUSE_BUTTON tButton() const;
+
+private:
+    void updateManipulatorsData() const override;
+private:
+    T_MOUSE_BUTTON tButton_;
+};
+
+class MouseButtonReleasedEvent : public Event{
+public:
+    MouseButtonReleasedEvent(T_MOUSE_BUTTON tButton);
+
+    T_MOUSE_BUTTON tButton() const;
+private:
+    void updateManipulatorsData() const override;
+private:
+    T_MOUSE_BUTTON tButton_;
+};
+
+class MouseMovedEvent : public Event{
+public:
+    MouseMovedEvent(Vector newPos);
+
+    Vector newPos() const;
+private:
+    void updateManipulatorsData() const override;
+private:
+    Vector newPos_;
+};
+
+class MouseWheelScrolledEvent : public Event{
+public:
+    MouseWheelScrolledEvent(int nTicks);
+
+    int nTicks() const;
+private:
+    void updateManipulatorsData() const override;
+private:
+    int nTicks_;
+};
+
 class KeyPressedEvent : public Event{
 public:
-    KeyPressedEvent(T_KEY key):
-        Event(T_EVENT::keyPressed), key_(key){}
+    KeyPressedEvent(T_KEY key);
 
-    //bool check(const Widget* widget) const override;
-
-    T_KEY key() const { return key_; }
-private: 
+    T_KEY key() const;
+private:
+    void updateManipulatorsData() const override;
+private:
     T_KEY key_;
 };
 
-//? should slider know what widgets are connected to it to distrubute event
-class SliderMovedEvent : public Event{
+class KeyReleasedEvent : public Event{
 public:
-    // TODO: fix Widget* -> AbstractSlider*
-    SliderMovedEvent(Widget* p_slider, double ratio):
-        Event(T_EVENT::sliderMoved), p_slider_(p_slider), ratio_(ratio){}
-    
-    //bool check(const Widget* widget) const override;
+    KeyReleasedEvent(T_KEY key);
 
-    const Widget* p_slider() const { return p_slider_; }
-    double ratio() const { return ratio_; }
-
+    T_KEY key() const;
 private:
-    Widget* p_slider_;
-    double ratio_;
+    void updateManipulatorsData() const override;
+private:
+    T_KEY key_;
 };
 
-#endif // EVENT_H
+ManipulatorsContext manipulatorsContext;
+
+#endif // SEVENT_H

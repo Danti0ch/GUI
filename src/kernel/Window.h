@@ -2,19 +2,24 @@
 #define WINDOW_H
 
 #include "Widget.h"
-#include <iostream>
+
+/**
+ * @brief widget representing window the window at the display
+ * 
+ */
 class Window : public ContainerWidget{
 public:
-    Window(uint width, uint height);
+    Window(Vector size);
+    ~Window();
 
-    void add(Widget* widget, uint x, uint y);
-    void add(Widget* widget, Widget* from_widget, LINKAGE_MODE mode, uint indent_val = 0, uint offset = 0);
+    void add(Widget* widget, Vector pos);
     void remove(Widget* widget);
     
     void exec();
 private:
-    GraphicSpace space_;
-    EventManager manager_;
+    void updateManipulatorsData(Event* event);
+private:
+    RealWindow* window_;
 };
 
 #endif // WINDOW_H

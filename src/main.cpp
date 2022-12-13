@@ -7,6 +7,7 @@
 #include "ListWidget.h"
 #include "ToolsList.h"
 #include "StatusBar.h"
+#include "ColorPicker.h"
 
 void foo(uint tool_id){
 
@@ -41,6 +42,9 @@ int main(int argc, char *argv[]){
     canvases.addCanvas("lol");
     canvases.addCanvas("kek");
     cur_window.add(&canvases, &tools, LINKAGE_MODE::RIGHT, 15);
+
+    ColorPicker col_picker;
+    cur_window.add(&col_picker, 800, 50);
 
     cur_window.exec();
 
