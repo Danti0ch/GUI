@@ -11,7 +11,7 @@ public:
 
     virtual void onMouseButtonPressed(const MouseButtonPressedEvent* event) override;
     virtual void onMouseMoved(const MouseMovedEvent* event) override;
-
+    virtual void onMouseButtonReleased(const MouseButtonReleasedEvent* event) override;
 protected:
     DrawableArea* hoverLayer_;
     DrawableArea* focusLayer_;

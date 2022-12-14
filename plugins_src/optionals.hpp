@@ -11,11 +11,13 @@
 #ifndef OPTIONALS_HPP
 #define OPTIONALS_HPP
 
+#include "tools.hpp"
 /**
  * @brief Here will be described standart optionals features, that will be wrapped with corresponding ifdef macroses.
  * Define it, and your plugin will REQUIRE this features by core application.
  * If your plugin can exist without this options, you can TRY to link to them with getLibSymbol, with guid = {} (Core app GUID);
  */
+#define ELPIDIFOR_HIDDEN_LAYER
 
 namespace booba {
 

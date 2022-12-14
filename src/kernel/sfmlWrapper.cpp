@@ -1,9 +1,7 @@
 #include "graphicImp.h"
+#include "logger.h"
 
 const int EXTRACTED_EVENT_QUEUE_MAX_SIZE = 16;
-
-sf::Color convertColor(const Color& col);
-Color     convertColor(const sf::Color col);
 
 SfmlRenderObject::SfmlRenderObject(Vector size):
     storage_(new sf::RenderTexture()),
@@ -23,22 +21,25 @@ void SfmlRenderObject::draw(Vector point, const Text& data){
     sf::Text text_obj(data.str, font_, data.font_size);
         
     Vector real_point = convertPos(point);
-    text_obj.setPosition(real_point.x, real_point.y - data.font_size);
-    text_obj.setFillColor(convertColor(data.col));
+
+    text_obj.setPosition(real_point.x, real_point.y - data.font_size + 2);
+    text_obj.setFillColor(converColorToLib(data.col));
 
     storage_->draw(text_obj);
+    storage_->display();
+
     return;
 }
 
 void SfmlRenderObject::draw(Vector point, const RenderObject* data){
 
     const SfmlRenderObject* casted_data = reinterpret_cast<const SfmlRenderObject*>(data);
-
     Vector real_point = convertPos(point);
 
     sf::Sprite tmp_sprite(casted_data->storage_->getTexture()); 
     tmp_sprite.setPosition(sf::Vector2f(real_point.x, real_point.y - data->size().y));
     storage_->draw(tmp_sprite);
+    storage_->display();
     
     return;
 }
@@ -52,6 +53,7 @@ void SfmlRenderObject::draw(Vector point, const RenderObject* data, const Rectan
     sf::Sprite tmp_sprite(casted_data->storage_->getTexture(), sf::IntRect(casted_data->convertPos(rect.pos).x, casted_data->convertPos(rect.pos).y - rect.size.y, rect.size.x, rect.size.y)); 
     tmp_sprite.setPosition(sf::Vector2f(real_point.x, real_point.y - rect.size.y));
     storage_->draw(tmp_sprite);
+    storage_->display();
 
     return;
 }
@@ -68,6 +70,7 @@ void SfmlRenderObject::draw(Vector point, const DrawableArea* data){
 
     tmp_sprite.setPosition(sf::Vector2f(real_point.x, real_point.y - data->size().y));
     storage_->draw(tmp_sprite);
+    storage_->display();
 
     return;
 }
@@ -83,33 +86,36 @@ void SfmlRenderObject::draw(Vector point, const DrawableArea* data, const Rectan
     sf::Sprite tmp_sprite(tmp_texture, sf::IntRect(rect.pos.x, rect.pos.y - rect.size.y, rect.size.x, rect.size.y)); 
     
     tmp_sprite.setPosition(sf::Vector2f(real_point.x, real_point.y - rect.size.y));
-    storage_->draw(tmp_sprite);
+    storage_->draw(tmp_sprite); 
+    storage_->display();
 }
 
 void SfmlRenderObject::clear(const Color& col){
-    storage_->clear(convertColor(col));
+    storage_->clear(converColorToLib(col));
     return;
 }
 
-Vector SfmlRenderObject::size()  const { return Vector(storage_->getSize().x, storage_->getSize().y); }
+Vector SfmlRenderObject::size()  const { 
+    //MDLOG("%u, %u", storage_->getSize().x, storage_->getSize().y)
+    return Vector(storage_->getSize().x, storage_->getSize().y); }
 
 const sf::RenderTexture* SfmlRenderObject::storage() const{ return storage_; }
 
-Vector SfmlRenderObject::convertPos(Vector pos) const{
-    return Vector(pos.x, size().y - pos.y);
-}
 
 SfmlDrawableArea::SfmlDrawableArea(Vector size):
     storage_(new sf::Image())
 {
-    storage_->create(size.x, size.y, convertColor(Color::WHITE));
+    storage_->create(size.x, size.y, converColorToLib(Color::WHITE));
 }
 
 SfmlDrawableArea::~SfmlDrawableArea(){}
 
-void SfmlDrawableArea::drawImage(const std::string& path){
+void SfmlDrawableArea::drawImage(Vector size, const std::string& path){
 
-    storage_->loadFromFile(path);
+    if(!storage_->loadFromFile("plugins/textures/wtf.jpg")){
+        EDLOG("dude))");
+    }
+    storage_->create(size.x, size.y);
 
     return;
 }
@@ -117,7 +123,7 @@ void SfmlDrawableArea::drawImage(const std::string& path){
 void SfmlDrawableArea::clear(const Color& col){
     for(uint y = 0; y < storage_->getSize().y; y++){
         for(uint x = 0; x < storage_->getSize().x; x++){
-            storage_->setPixel(x, y, convertColor(col));
+            storage_->setPixel(x, y, converColorToLib(col));
         }
     }
 
@@ -125,12 +131,19 @@ void SfmlDrawableArea::clear(const Color& col){
 }
 
 Color SfmlDrawableArea::getPixel(Vector point){
-    return convertColor(storage_->getPixel(point.x, point.y));
+    Vector realPoint = convertPos(point);
+    return convertColorFromLib(storage_->getPixel(realPoint.x, realPoint.y));
 }
 
 void SfmlDrawableArea::setPixel(Vector point, Color col){
-    storage_->setPixel(point.x, point.y, convertColor(col));
+
+    Vector realPoint = convertPos(point);
+    storage_->setPixel(realPoint.x, realPoint.y, converColorToLib(col));
     return;
+}
+
+Vector SfmlDrawableArea::convertPos(Vector pos) const{
+    return Vector(pos.x, size().y - pos.y);
 }
 
 Vector SfmlDrawableArea::size() const { return Vector(storage_->getSize().x, storage_->getSize().y); }
@@ -153,14 +166,17 @@ const sf::Image* SfmlDrawableArea::storage() const { return storage_; }
 
 SfmlRealWindow::SfmlRealWindow(Vector size):
     RealWindow(size, EXTRACTED_EVENT_QUEUE_MAX_SIZE),
-    storage_(NULL)
-{}
+    storage_(new sf::RenderWindow(sf::VideoMode(size.x, size.y), "404"))
+{
+    buffer_ = new SfmlRenderObject(size);
+}
 
-SfmlRealWindow::~SfmlRealWindow(){}
-
+SfmlRealWindow::~SfmlRealWindow(){
+    delete buffer_;
+}
 void SfmlRealWindow::open(){
-    if(isOpen()) return;
 
+    if(isOpen()) return;
     storage_->create(sf::VideoMode(size().x, size().y), "404");
     return;
 }
@@ -210,14 +226,15 @@ bool SfmlRealWindow::extractEvent(Event** storage) const{
         }
         else if(sf_event.type == sf::Event::MouseButtonReleased){
             if(sf_event.mouseButton.button == sf::Mouse::Right){
-                *storage = new MouseButtonReleasedEvent(T_MOUSE_BUTTON::L);
+                *storage = new MouseButtonReleasedEvent(T_MOUSE_BUTTON::R);
             }
             else{
                 *storage = new MouseButtonReleasedEvent(T_MOUSE_BUTTON::L);
             }
         }
         else if(sf_event.type == sf::Event::MouseMoved){
-            *storage = new MouseMovedEvent(convertPosFromSFML(Vector(sf_event.mouseMove.x, sf_event.mouseMove.y)));
+            //MDLOG("(%u, %u)----->(%u, %u)", sf_event.mouseMove.x, sf_event.mouseMove.y, ManipulatorsContext::activeContext.mousePos().x, ManipulatorsContext::activeContext.mousePos().y);
+            *storage = new MouseMovedEvent(convertPosFromSFML(Vector(sf_event.mouseMove.x, sf_event.mouseMove.y)), ManipulatorsContext::activeContext.mousePos());
         }
     }
     else if(sf_event.type == sf::Event::KeyPressed){
@@ -262,12 +279,19 @@ RenderObject* SfmlGraphicImpFabric::createRenderObject(Vector size) const {
     return new SfmlRenderObject(size);
 }
 
-sf::Color converColor(const Color& col){
+RealWindow* SfmlGraphicImpFabric::createRealWindow(Vector size) const{
+    return new SfmlRealWindow(size);
+}
+
+SfmlGraphicImpFabric fabric;
+GraphicImpFabric* GraphicImpFabric::active_fabric = &fabric;
+
+sf::Color converColorToLib(const Color& col){
     sf::Color sf_col(col.r(), col.g(), col.b(), col.a());
     return sf_col;
 }
 
-Color convertColor(const sf::Color sf_col){
+Color convertColorFromLib(const sf::Color& sf_col){
     Color col(sf_col.r, sf_col.g, sf_col.b, sf_col.a);
     return col;
 }

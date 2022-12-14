@@ -25,8 +25,8 @@ public:
     
         for(uint y_i = 0; y_i < height_; y_i++){
             for(uint x_i = 0; x_i < width_; x_i++){
-                if(x + x_i > img->getX() || y + y_i > img->getH()) continue;
-                img->putPixel(x + x_i, y + y_i, storage_[y_i * width_ + x_i]);
+                if(x + x_i > img->getW() || y + y_i > img->getH()) continue;
+                img->setPixel(x + x_i, y + y_i, storage_[y_i * width_ + x_i]);
             }
         }    
     }
@@ -35,6 +35,38 @@ private:
     uint32_t* storage_;
     uint width_, height_;
 };
+
+const int FrameWidth = 2;
+
+void drawFrame(booba::Image* layer, RectangleArea area){
+
+    for(uint x = area.pos.x; x < area.size.x; x++){
+        for(int depth = 0; depth < FrameWidth; depth++){
+            layer->setPixel(x, area.pos.y + depth, convertTosColor(Color::BLACK));
+        }
+    }
+
+    for(uint x = area.pos.x; x < area.size.x; x++){
+        for(int depth = 0; depth < FrameWidth; depth++){
+            layer->setPixel(x, area.size.y - depth - 1, convertTosColor(Color::BLACK));
+        }
+    }
+
+    for(uint y = area.pos.y; y < area.size.y; y++){
+        for(int depth = 0; depth < FrameWidth; depth++){
+            layer->setPixel(area.pos.x + depth, y, convertTosColor(Color::BLACK));
+        }
+    }
+
+
+    for(uint y = area.pos.y; y < area.size.y; y++){
+        for(int depth = 0; depth < FrameWidth; depth++){
+            layer->setPixel(area.size.x - depth - 1, y, convertTosColor(Color::BLACK));
+        }
+    }
+
+    return;
+}
 
 AreaSelectionTool::AreaSelectionTool():
     AbstractTool(),
@@ -47,6 +79,8 @@ void AreaSelectionTool::apply(booba::Image* image, const booba::Event* event) {
 
     if(event->type == booba::EventType::MousePressed){
 
+        isMouseClicked_ = true;
+
         if(event->Oleg.mbedata.ctrl && buff_){
             buff_->draw(event->Oleg.mbedata.x, event->Oleg.mbedata.y, image);
         }
@@ -55,6 +89,8 @@ void AreaSelectionTool::apply(booba::Image* image, const booba::Event* event) {
         y_ = event->Oleg.mbedata.y;
     }
     else if(event->type == booba::EventType::MouseReleased){
+
+        isMouseClicked_ = false;
 
         if(event->Oleg.mbedata.x == x_ || event->Oleg.mbedata.y == y_) return;
         if(event->Oleg.mbedata.x > x_){
@@ -80,6 +116,17 @@ void AreaSelectionTool::apply(booba::Image* image, const booba::Event* event) {
 
         buff_ = new PixBuff(x_, y_, area_width_, area_height_, image);
     }
+    else if(event->type == booba::EventType::MouseMoved && isMouseClicked_){
+
+        uint newX = event->Oleg.motion.x;
+        uint newY = event->Oleg.motion.y;
+
+        drawFrame(booba::getHiddenLayerID(), RectangleArea({std::min(x_, newX), std::min(y_, newY)}, {std::max(x_, newX), std::max(y_, newY)}));
+    }
 
     return;
+}
+
+const char* AreaSelectionTool::getTexture(){
+    return "plugins/textures/AreaSelect.png";
 }

@@ -1,8 +1,6 @@
 #include "Slider.h"
 #include "TextureManager.h"
 
-static void indicatorMove(Slider* slider, ORIENTATION orient);
-
 Slider::Slider(Vector size):
     Widget(size),
     ratio_(0),
@@ -17,25 +15,17 @@ Slider::~Slider(){
 
 double Slider::ratio() const{ return ratio_; }
 
-
-template<class T_RECEIVER>
-void Slider::setHandler(T_RECEIVER* pReceiver, void (T_RECEIVER::*slot)(double)){
-
-    actions_->add(new ObjArgAction<T_RECEIVER, void (T_RECEIVER::*)(double), double>(pReceiver, slot, &ratio));
-    return;
-}
-
 void Slider::indicatorMove(ORIENTATION orient){
 
     int cId = 0;
     if(orient == ORIENTATION::V) cId = 1;
 
-    int newPos = (int)(manipulatorsContext.mousePos()[cId] - realPos()[cId]) - (int)(indicator_->size()[cId] / 2);
+    int newPos = (int)(ManipulatorsContext::activeContext.mousePos()[cId] - realPos()[cId]) - (int)(indicator_->size()[cId] / 2);
 
     if(newPos < 0) newPos = 0;
     else if(newPos + indicator_->size()[cId] > size()[cId]) newPos = size()[cId] - indicator_->size()[cId];
 
-    double ratio = (double)newPos / (double)(size()[cId] - indicator_->size()[cId]);
+    ratio_ = (double)newPos / (double)(size()[cId] - indicator_->size()[cId]);
 
     actions_->execute();
     requireRender();
@@ -71,17 +61,16 @@ VSlider::VSlider(Vector size):
 
 void VSlider::onMouseButtonPressed(const MouseButtonPressedEvent* event){
     
-    if(!isPointInside(this, manipulatorsContext.mousePos())){
-        return;
-    }
-
     indicatorMove(ORIENTATION::V);
     return;
 }
 
 void VSlider::onMouseMoved(const MouseMovedEvent* event){
-    
-    if(!manipulatorsContext.isMouseLPressed()) return;
+    if(!isPointInside(this, ManipulatorsContext::activeContext.mousePos())){
+        return;
+    }
+
+    if(!ManipulatorsContext::activeContext.isMouseLPressed()) return;
     
     indicatorMove(ORIENTATION::V);
     return;
@@ -92,7 +81,7 @@ void VSlider::draw(){
     return;
 }
 
-coord VSlider::indicatorLen(){
+coord VSlider::indicatorLen() const {
     return indicator_->size().y;
 }
 
@@ -108,18 +97,17 @@ HSlider::HSlider(Vector size):
 }
 
 void HSlider::onMouseButtonPressed(const MouseButtonPressedEvent* event){
-    
-    if(!isPointInside(this, manipulatorsContext.mousePos())){
-        return;
-    }
 
     indicatorMove(ORIENTATION::H);
     return;
 }
 
 void HSlider::onMouseMoved(const MouseMovedEvent* event){
+    if(!isPointInside(this, ManipulatorsContext::activeContext.mousePos())){
+        return;
+    }
     
-    if(!manipulatorsContext.isMouseLPressed()) return;
+    if(!ManipulatorsContext::activeContext.isMouseLPressed()) return;
     
     indicatorMove(ORIENTATION::H);
     return;
@@ -130,6 +118,9 @@ void HSlider::draw(){
     return;
 }
 
-coord HSlider::indicatorLen(){
+coord HSlider::indicatorLen() const {
     return indicator_->size().x;
 }
+
+coord HSlider::len() const { return size().x; }
+coord VSlider::len() const { return size().y; }

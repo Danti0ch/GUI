@@ -12,6 +12,16 @@ public:
     virtual void draw() override;
     void setExpendedSize(Vector size);
 
+    template<class T_RECEIVER>
+    void setHMoveHandler(T_RECEIVER* pReceiver, void (T_RECEIVER::*slot)(double)){
+        vSlider_->setHandler<T_RECEIVER>(pReceiver, slot);
+    }
+
+    template<class T_RECEIVER>
+    void setVMoveHandler(T_RECEIVER* pReceiver, void (T_RECEIVER::*slot)(double)){
+        hSlider_->setHandler<T_RECEIVER>(pReceiver, slot);
+    }
+
 protected:
     void connect(Widget* child_widget, Vector pos) override;
     void remove( Widget* child_widget) override;

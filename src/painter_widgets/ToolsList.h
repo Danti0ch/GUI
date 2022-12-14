@@ -4,6 +4,7 @@
 #include "ListWidget.h"
 #include "ToolManager.h"
 #include "SetupWidget.h"
+#include "Textured.h"
 
 class ToolsList : public ContainerWidget{
 public:
@@ -12,14 +13,14 @@ public:
 
     ToolManager* toolManager();
 
-    void onSliderMoved(const SliderMovedEvent* event) override;
+    void ScrolledSlot(double ratio);
+
 private:
-    VListWidget<ToolsList> list_;
-    ToolManager manager_;
+    VListWidget* list_;
+    ToolManager* manager_;
     std::list<SetupWidget*> setupWidgets_;
 private:
     void setActiveTool(uint n_tool);
-    void draw() override;
 };
 
 #endif // TOOLS_LIST_H

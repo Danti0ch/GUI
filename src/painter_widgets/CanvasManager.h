@@ -4,6 +4,8 @@
 #include "CanvasWidget.h"
 #include "ListWidget.h"
 #include "Label.h"
+#include "optionals.hpp"
+#include "EventWrapper.h"
 
 // TODO: save implementing
 
@@ -23,16 +25,20 @@ public:
     void addCanvas(const std::string& path);
     void removeCanvas(const std::string& path);
 
+    static CanvasWidget* ACTIVE_CANVAS_WIDGET;
+    static CanvasManager* ACTIVE_CANVAS_MANAGER;
+
     void draw() override;
 
-    static CanvasWidget* ACTIVE_CANVAS_WIDGET;
+    DrawableArea* hiddenLayer();
 private:
-    HListWidget<CanvasManager> canvas_list_;
+    HListWidget*             canvas_list_;
     std::list<CanvasStorage> storage_;
-    Label default_text_;
-    ToolManager* tool_manager_;
+    Label*                   default_text_;
+    ToolManager*             tool_manager_;
     
-    CanvasWidget* active_canvas;
+    DrawableArea*            hiddenLayer_;
+    CanvasWidget*            active_canvas;
 };
 
 #endif // CANVAS_MANAGER_H

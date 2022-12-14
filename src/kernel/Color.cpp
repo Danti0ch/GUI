@@ -13,7 +13,7 @@ Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a):
     r_(r), g_(g), b_(b), a_(a){}
 
 //? right order
-Color::Color(unsigned int val, uint8_t a = 255){
+Color::Color(unsigned int val, uint8_t a){
     uint32_t mask = 0xFF;
 
     a_ = a;
@@ -104,16 +104,29 @@ Color Color::operator -(const Color& col2) const{
     return new_obj;
 }
 
-Color::operator uint32_t() const{
-
+Color::operator unsigned int() const{
     uint32_t val = 0;
 
     uint32_t mask = 0xFF;
 
-    val |= (uint32_t)a_;
-    val |= ((uint32_t)b_) << 8;
-    val |= ((uint32_t)g_) << 16;
-    val |= ((uint32_t)r_) << 24;
+    val |= ((uint32_t)b_);
+    val |= ((uint32_t)g_) << 8;
+    val |= ((uint32_t)r_) << 16;
+}
+
+uint32_t convertTosColor(const Color& col){
+    uint32_t val = 0;
+
+    uint32_t mask = 0xFF;
+
+    val |= ((uint32_t)col.a());
+    val |= ((uint32_t)col.b()) << 8;
+    val |= ((uint32_t)col.g()) << 16;
+    val |= ((uint32_t)col.r()) << 24;
 
     return val;
+}
+
+Color convertFromsColor(uint32_t val){
+    return Color(val >> 8, val & 0xFF);
 }

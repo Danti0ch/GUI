@@ -3,7 +3,8 @@
 
 RealWindow::RealWindow(Vector size, unsigned int extractedEventsQueueMaxSize):
     extractedEventsQueueMaxSize_(extractedEventsQueueMaxSize),
-    size_(size)
+    size_(size),
+    buffer_(NULL)
 {}
 
 RealWindow::~RealWindow(){

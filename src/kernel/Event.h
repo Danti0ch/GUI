@@ -61,6 +61,8 @@ public:
     bool isMouseRPressed() const;
 
     Vector mousePos() const;
+
+    static ManipulatorsContext activeContext;
 private:
     std::vector<int> isKeyPressed_;
 
@@ -119,13 +121,14 @@ private:
 
 class MouseMovedEvent : public Event{
 public:
-    MouseMovedEvent(Vector newPos);
+    MouseMovedEvent(Vector newPos, Vector oldPos);
 
     Vector newPos() const;
+    Vector oldPos() const;
 private:
     void updateManipulatorsData() const override;
 private:
-    Vector newPos_;
+    Vector newPos_, oldPos_;
 };
 
 class MouseWheelScrolledEvent : public Event{
@@ -160,7 +163,5 @@ private:
 private:
     T_KEY key_;
 };
-
-ManipulatorsContext manipulatorsContext;
 
 #endif // SEVENT_H

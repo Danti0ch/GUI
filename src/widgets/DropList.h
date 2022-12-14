@@ -1,6 +1,7 @@
 #ifndef DROP_LIST_H
 #define DROP_LIST_H
 
+/*
 #include "Widget.h"
 #include "RectButton.h"
 #include "ListWidget.h"
@@ -21,5 +22,6 @@ private:
 private:
     void changeListVisibility();
 };
+*/
 
 #endif // DROP_LIST_H

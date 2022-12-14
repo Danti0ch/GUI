@@ -1,9 +1,9 @@
 #include "Textured.h"
 
 Textured::Textured(TEXTURE_IDENT ident):
-    Widget(TexturePack.getTexture(ident)->size())
+    Widget(TexturePack::activePack.getTexture(ident)->size())
 {
-    *bgLayer_ = *TexturePack.getTexture(ident);
+    //*bgLayer_ = *TexturePack::activePack.getTexture(ident);
 }
 
 Textured::Textured(Vector size):

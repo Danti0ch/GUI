@@ -1,5 +1,6 @@
 #include "TextInsertWidget.h"
 
+/*
 TextInsertWidget::TextInsertWidget(uint width, uint height):
     Widget(width, height), text_(){
         setTexture(Color(0, 15, 15));
@@ -52,3 +53,4 @@ void TextInsertWidget::draw(){
     text_.draw(this->GetPointerOnPixBuff());
     return;
 }
+*/

@@ -49,3 +49,18 @@ void Hovered::onMouseMoved(const MouseMovedEvent* event){
     }
     return;
 }
+
+void Hovered::onMouseButtonReleased(const MouseButtonReleasedEvent* event){
+    if(!isFocuseLayer_) return;
+
+    if(isPointInside(this, ManipulatorsContext::activeContext.mousePos())){
+        bgLayer_ = hoverLayer_;
+    }
+    else{
+        bgLayer_ = defLayer_;
+    }
+    
+    isFocuseLayer_ = false;
+
+    requireRender();
+}

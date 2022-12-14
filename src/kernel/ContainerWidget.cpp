@@ -19,7 +19,7 @@ void ContainerWidget::draw(){
 
 void ContainerWidget::connect(Widget* child_widget, Vector pos){
     NASSERT(child_widget);
-    
+
     child_widget->pos(pos);
 
     if(child_widget->parent_widget_ != NULL){

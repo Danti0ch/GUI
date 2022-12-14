@@ -5,6 +5,7 @@ EventManager::EventManager():
 {}
 
 void EventManager::addWidget(Widget* widget){
+
     widgets_.push_back(widget);
     return;
 }
@@ -13,6 +14,7 @@ void EventManager::removeWidget(Widget* widget){
     widgets_.remove(widget);
     return;
 }
+#include <iostream>
 
 void EventManager::ProcessHandlers(const Event* event){
 
@@ -24,5 +26,6 @@ void EventManager::ProcessHandlers(const Event* event){
         if((*iter)->isVisible())
             (*iter)->triggerEvent(event);
     }
+
     return;
 }

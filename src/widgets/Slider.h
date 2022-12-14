@@ -13,10 +13,21 @@ public:
 
     double ratio() const;
 
-    virtual coord indicatorLen() = 0;
+    virtual coord indicatorLen() const = 0;
+    virtual coord len() const = 0;
 
     template<class T_RECEIVER>
-    void setHandler(T_RECEIVER* pReceiver, void (T_RECEIVER::*slot)(double));
+    void setHandler(T_RECEIVER* pReceiver, void (T_RECEIVER::*slot)(double)){
+        actions_->add(new ObjDynamicArgAction<T_RECEIVER, double>(pReceiver, slot, &this->ratio_));
+        return;
+    }
+
+    template<class T_RECEIVER>
+    void setHandlerIdent(T_RECEIVER* pReceiver, void (T_RECEIVER::*slot)(const Slider*)){
+        actions_->add(new ObjArgAction<T_RECEIVER, const Slider*>(pReceiver, slot, this));
+        return;
+    }
+    
 protected:
     //?
     double ratio_;
@@ -36,7 +47,8 @@ public:
 
     void draw() override;
 
-    coord indicatorLen() override;
+    coord indicatorLen() const override;
+    virtual coord len() const override;
 
     void onMouseButtonPressed(const MouseButtonPressedEvent* event) override;
     void onMouseMoved(const MouseMovedEvent* event) override;
@@ -55,7 +67,8 @@ public:
 
     void draw() override;
 
-    coord indicatorLen() override;
+    coord indicatorLen() const override;
+    virtual coord len() const override;
 
     void onMouseButtonPressed(const MouseButtonPressedEvent* event) override;
     void onMouseMoved(const MouseMovedEvent* event) override;

@@ -2,7 +2,6 @@
 #define TEXT_INSERT_WIDGET_H
 
 #include "Widget.h"
-#include "Text.h"
 
 class TextInsertWidget : public Widget{
 public:

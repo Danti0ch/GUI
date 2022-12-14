@@ -8,6 +8,17 @@
 #include "Event.h"
 #include "logger.h"
 
+class ContainerWidget;
+class EventManager;
+
+enum class LINKAGE_MODE{
+
+    TOP,
+    BOTTOM,
+    LEFT,
+    RIGHT
+};
+
 // TODO: rename to smth connected with pixels, that ctrl+h
 /**
  * @brief abstract class for visible entities in application, that realizes general interface methods
@@ -18,7 +29,7 @@ public:
     Widget(Vector size);  
 
     //?  
-    virtual ~Widget() = default;
+    virtual ~Widget();
 
     /// @brief get coords of widget, relative to his current parent widget
     Vector pos() const;
@@ -44,7 +55,7 @@ public:
     void texture(const std::string& path_to_img);
     void texture(const Color& col);
 
-    void connect(Widget* slotWidget, LINKAGE_MODE mode, uint indent_val, int offset);
+    void connectBy(Widget* slotWidget, LINKAGE_MODE mode, uint indent_val = 0, int offset = 0);
 
     static Widget* FOCUSED_WIDGET;
 
@@ -100,14 +111,6 @@ friend class Expended;
 
 bool isPointInside(const Widget* widget, Vector pos);
 
-enum class LINKAGE_MODE{
-
-    TOP,
-    BOTTOM,
-    LEFT,
-    RIGHT
-};
-
 /**
  * @brief container for multiple widgets
  * 
@@ -131,14 +134,6 @@ protected:
 protected:
     std::list<Widget*> subwidgets_;
 friend class Widget;
-};
-
-enum class LINKAGE_MODE{
-
-    TOP,
-    BOTTOM,
-    LEFT,
-    RIGHT
 };
 
 /**

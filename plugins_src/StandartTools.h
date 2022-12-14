@@ -4,11 +4,11 @@
 #include <stack>
 #include <chrono>
 #include <cstdio>
+#include "logger.h"
 
 #include "tools.hpp"
-#include "Text.h"
-
-const char DotTexture[]   = "./Icons/min/Dot.png";
+#include "optionals.hpp"
+#include "Auxil.h"
 
 // TODO: разные ашники
 #define TOOL_INIT(TOOL_TYPE)            \
@@ -22,8 +22,6 @@ struct CordsPair {
     int32_t y;
 };
 
-int64_t GetTimeMiliseconds();
-
 class AbstractTool : public booba::Tool {
 public:
     AbstractTool(){}
@@ -35,19 +33,9 @@ public:
     }
 };
 
-class DotTool : public AbstractTool {
-public:
-    DotTool() :
-    AbstractTool()
-    {}
-
-    virtual ~DotTool() {}
-
-    virtual void apply(booba::Image* image, const booba::Event* event) override;
-    virtual void buildSetupWidget() override {}
-};
-
 #include "string.h"
+
+extern booba::ApplicationContext* booba::APPCONTEXT;
 
 // https://ru.wikibooks.org/wiki/%D0%A0%D0%B5%D0%B0%D0%BB%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8_%D0%B0%D0%BB%D0%B3%D0%BE%D1%80%D0%B8%D1%82%D0%BC%D0%BE%D0%B2/%D0%98%D0%BD%D1%82%D0%B5%D1%80%D0%BF%D0%BE%D0%BB%D1%8F%D1%86%D0%B8%D1%8F/%D0%9C%D0%BD%D0%BE%D0%B3%D0%BE%D1%87%D0%BB%D0%B5%D0%BD_%D0%9B%D0%B0%D0%B3%D1%80%D0%B0%D0%BD%D0%B6%D0%B0
 class LagrangePolynom{
@@ -148,35 +136,20 @@ public:
 
     virtual void apply(booba::Image* image, const booba::Event* event) override;
     virtual void buildSetupWidget() override;
+
+    const char* getTexture() override;
 private:
-    bool isLButtonPressed;
+    bool isLButtonPressed, isRButtonPressed;
 
     LagrangePolynom polynom_;
-    uint pen_size_;
+    int pen_size_;
 
+    Vector lastPos_;
     uint64_t sizeControllerScrollBar_;
-};
-
-class TextInsertTool : public AbstractTool{
-public:
-    TextInsertTool();
-
-    virtual ~TextInsertTool() {}
-
-    virtual void apply(booba::Image* image, const booba::Event* event) override;
-    virtual void buildSetupWidget() override {}
 private:
-    Text data_;
-};
-
-class PiptTool : public AbstractTool{
-public:
-    PiptTool();
-
-    virtual ~PiptTool() {}
-
-    virtual void apply(booba::Image* image, const booba::Event* event) override;
-    virtual void buildSetupWidget() override {}
+    void draw_dot(booba::Image* image, int x, int y);
+    void draw_line(booba::Image* image, uint xF, uint xS);
+    void draw_vert_line(booba::Image* image, uint x, uint yF, uint yS);
 };
 
 class PixBuff;
@@ -189,10 +162,14 @@ public:
 
     virtual void apply(booba::Image* image, const booba::Event* event) override;
     virtual void buildSetupWidget() override {}
+
+    const char* getTexture() override;
 private:
     PixBuff* buff_;
     uint64_t canvas_id_;
 
     uint area_width_, area_height_;
     uint x_, y_;
+
+    bool isMouseClicked_;
 };

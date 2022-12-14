@@ -7,7 +7,8 @@ Widget::Widget(Vector size):
     is_focused_(false),
     is_visible_(true),
     is_render_required_(true),
-    parent_widget_(NULL)
+    parent_widget_(NULL),
+    eventManager_(NULL)
 {
     bgLayer_ = CREATE_DRAWABLE_AREA(size);
     buffer_  = CREATE_RENDER_OBJECT(size);
@@ -57,6 +58,7 @@ void Widget::pos(Vector val){
 
 void Widget::visible(bool val){
     is_visible_ = val;
+    requireRender();
 }
 
 void Widget::invertVisible(){
@@ -64,7 +66,7 @@ void Widget::invertVisible(){
 }
 
 void Widget::texture(const std::string& path_to_img){
-    bgLayer_->drawImage(path_to_img);
+    bgLayer_->drawImage(size(), path_to_img);
 }
 
 void Widget::texture(const Color& col){
@@ -87,7 +89,7 @@ void Widget::requireRender(){
 void Widget::bLayerDraw(){
     if(!is_render_required_) return;
 
-    //buffer_->clear(Color::WHITE);
+    buffer_->clear(Color(0, 0, 0, 0));
     buffer_->draw({0, 0}, bgLayer_);
     draw();
 
@@ -106,6 +108,7 @@ bool isPointInside(const Widget* widget, Vector pos){
 }
 
 void Widget::connectDataUpdate(ContainerWidget* container){
+
     if(eventManager_ != NULL){
         disconnectDataUpdate( );
     }
@@ -128,8 +131,8 @@ void Widget::disconnectDataUpdate(){
     return;
 }
 
-void Widget::connect(Widget* slotWidget, LINKAGE_MODE mode, uint indent_val, int offset){
-    if(parent_widget_ == NULL){
+void Widget::connectBy(Widget* slotWidget, LINKAGE_MODE mode, uint indent_val, int offset){
+    if(slotWidget->parent() == NULL){
         MDLOG("attempt to connect widget %p to widget %p, that isn't connected to container", this, slotWidget);
         return;
     }
@@ -142,14 +145,14 @@ void Widget::connect(Widget* slotWidget, LINKAGE_MODE mode, uint indent_val, int
     }
     else if(mode == LINKAGE_MODE::BOTTOM){
         pos.x += offset;
-        pos.y -= slotWidget->size().y + indent_val;    
+        pos.y -= size().y + indent_val;    
     }
     else if(mode == LINKAGE_MODE::LEFT){
-        pos.x -= slotWidget->size().y + indent_val;
+        pos.x -= size().y + indent_val;
         pos.y += offset;
     }
     else if(mode == LINKAGE_MODE::RIGHT){
-        pos.x += + slotWidget->size().x + indent_val;
+        pos.x += slotWidget->size().x + indent_val;
         pos.y += offset;
     }
 
@@ -158,28 +161,44 @@ void Widget::connect(Widget* slotWidget, LINKAGE_MODE mode, uint indent_val, int
     return;
 }
 
-void Widget::triggerEvent(const Event* event){
+void Widget::triggerEvent(const Event* event){\
+
+    if(!isVisible()) return;
+    
     if(event->type() == T_EVENT::mouseClick){
+
+        if(!isPointInside(this, ManipulatorsContext::activeContext.mousePos())) return;
+
         const MouseButtonPressedEvent* detected_event = static_cast<const MouseButtonPressedEvent*>(event);
         onMouseButtonPressed(detected_event);
     }
     else if(event->type() == T_EVENT::mouseReleased){
+        if(!isPointInside(this, ManipulatorsContext::activeContext.mousePos())) return;
+
         const MouseButtonReleasedEvent* detected_event = static_cast<const MouseButtonReleasedEvent*>(event);
         onMouseButtonReleased(detected_event);
     }
     else if(event->type() == T_EVENT::mouseMoved){
+
         const MouseMovedEvent* detected_event = static_cast<const MouseMovedEvent*>(event);
         onMouseMoved(detected_event);
     }
     else if(event->type() == T_EVENT::mouseWheelScrolled){
+
+        if(!isFocused()) return;
+
         const MouseWheelScrolledEvent* detected_event = static_cast<const MouseWheelScrolledEvent*>(event);
         onMouseWheelScrolled(detected_event);
     }
     else if(event->type() == T_EVENT::keyPressed){
+        if(!isFocused()) return;
+
         const KeyPressedEvent* detected_event = static_cast<const KeyPressedEvent*>(event);
         onKeyPressed(detected_event);
     }
     else if(event->type() == T_EVENT::keyReleased){
+        if(!isFocused()) return;
+
         const KeyReleasedEvent* detected_event = static_cast<const KeyReleasedEvent*>(event);
         onKeyReleased(detected_event);
     }

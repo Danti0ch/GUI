@@ -9,6 +9,7 @@
 
 #include "Color.h"
 #include <vector>
+#include <string>
 
 typedef unsigned int coord;
 const coord COORD_POISON = -1;
@@ -65,6 +66,9 @@ private:
  * 
  */
 class Text{
+public:
+    Text();
+    Text(const std::string& text);
 public:
     coord       font_size;
     std::string str;

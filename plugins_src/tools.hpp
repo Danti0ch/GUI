@@ -104,7 +104,6 @@ namespace booba { // boot of outstanding best api
         int64_t value;
     };
 
-
     struct CanvasEventData
     {
         /**
@@ -139,7 +138,6 @@ namespace booba { // boot of outstanding best api
             TimerEventData tedata;
         } Oleg; //Object loading event group.
     };
-
 
     class Image
     {
@@ -295,6 +293,15 @@ namespace booba { // boot of outstanding best api
      * @param y - y coordinate of pixel.
      * @param color - color of pixel.
      */
+    extern "C" void setPixel (uint64_t canvas, size_t x, size_t y, uint32_t color);
+    
+    /**
+     * @brief Puts pixel to canvas with given id
+     * @param canvas - id of canvas, returned by createCanvas
+     * @param x - x coordinate of pixel.
+     * @param y - y coordinate of pixel.
+     * @param color - color of pixel.
+     */
     extern "C" void putPixel (uint64_t canvas, size_t x, size_t y, uint32_t color);
     
     /**
@@ -309,7 +316,7 @@ namespace booba { // boot of outstanding best api
      */
     extern "C" void putSprite(uint64_t canvas, size_t x, size_t y, size_t w, size_t h, const char* texture);
     
-     /**
+     /**mouseLClick
      * @brief Cleans canvas with given id.
      * @param canvasId - id of canvas
      * @param color to clear.

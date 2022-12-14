@@ -30,8 +30,8 @@ public:
     Color operator *(double ratio) const;
     Color operator -(const Color& col2) const;
 
-    operator uint32_t() const;
-    
+    operator unsigned int() const;
+
     //!! implement?
     //explicit operator const uint32_t&() const;
 
@@ -44,6 +44,9 @@ public:
 private:
     uint8_t r_, g_, b_, a_;
 };
+
+uint32_t convertTosColor(const Color& col);
+Color convertFromsColor(uint32_t val);
 
 // TODO: struct palette
 

@@ -4,9 +4,9 @@
 #include <dlfcn.h>
 #include <filesystem>
 #include <iostream>
+#include "CanvasManager.h"
 
 ToolManager* ToolManager::ACTIVE_TOOL_MANAGER = NULL;
-ExpendedContainerWidget* ToolManager::ACTIVE_SETUP_WINDOW = NULL;
 
 ToolManager::ToolManager():
     tools_(),
@@ -15,14 +15,6 @@ ToolManager::ToolManager():
 {
     if(ACTIVE_TOOL_MANAGER == NULL){
         ACTIVE_TOOL_MANAGER = this;
-    }
-
-    ACTIVE_SETUP_WINDOW = NULL;
-}
-
-ToolManager::~ToolManager(){
-    for(auto widget : setupWindowWidgets_){
-        delete widget;
     }
 }
 
@@ -73,30 +65,30 @@ void ToolManager::addTool(booba::Tool* p_tool){
     return;
 }
 
-void ToolManager::apply(stImage* space, const Event* event){
+// TODO: remove space
+void ToolManager::apply(CanvasWidget* space, const Event* event){
     NASSERT(event);
 
     if(p_active_tool_ == NULL) return;
 
-    p_active_tool_->apply(space, convertToStandartEvent(space, event));
+    stImage wrapper = stImage(space);
+    p_active_tool_->apply(&wrapper, convertToStandartEvent(&wrapper, event));
     return;
 }
 
-/*
-void ToolManager::setActiveTool(const booba::Tool* new_active_tool){
+void ToolManager::setupSliderMoved(const Slider* pSlider){
+    if(p_active_tool_ == NULL) return;
 
-    std::list<ToolWrapper>::const_iterator tools_iter;
+    stImage wrapper = stImage(CanvasManager::ACTIVE_CANVAS_WIDGET);
 
-    for (tools_iter = tools_.begin(); tools_iter != tools_.end(); tools_iter++){
-        if(tools_iter->p == new_active_tool){
-            p_active_tool_ = tools_iter->p;
-            return;
-        }
-    }
+    booba::Event toolEvent;
 
+    toolEvent.type = booba::EventType::SliderMoved;
+    toolEvent.Oleg.smedata.value = pSlider->len() * pSlider->ratio();
+
+    p_active_tool_->apply(&wrapper, &toolEvent);
     return;
 }
-*/
 
 void ToolManager::setActiveTool(uint n_tool){
 
@@ -147,10 +139,5 @@ const std::list<ToolWrapper>& ToolManager::tools() const{
 
 void ToolManager::linkStatusBar(StatusBar* status_bar){
     p_status_bar_ = status_bar;
-    return;
-}
-
-void ToolManager::addSetupWidget(Widget* setup_widget){
-    setupWindowWidgets_.push_back(setup_widget);
     return;
 }

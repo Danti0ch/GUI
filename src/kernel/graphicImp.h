@@ -22,7 +22,7 @@ class DrawableArea{
 public:
     virtual ~DrawableArea() = default;
 
-    virtual void drawImage(const std::string& path) = 0;
+    virtual void drawImage(Vector size, const std::string& path) = 0;
     virtual void clear(const Color& col) = 0;
 
     virtual Color getPixel(Vector point) = 0;
@@ -81,11 +81,11 @@ public:
 protected:
     /// @brief returns 1, if event was extraced an 0 otherwise
     virtual bool extractEvent(Event**) const = 0;
+    RenderObject* buffer_;
 public:
     std::queue<Event*> extractedEvents;
 private:
     unsigned int extractedEventsQueueMaxSize_;
-    RenderObject* buffer_;
 
     Vector size_;
 };
@@ -97,6 +97,8 @@ public:
     virtual DrawableArea* createDrawableArea(Vector size) const = 0;
     virtual RenderObject* createRenderObject(Vector size) const = 0;
     virtual RealWindow*   createRealWindow(Vector size) const = 0;
+
+    static GraphicImpFabric* active_fabric;
 };
 
 #include <SFML/Graphics.hpp>
@@ -107,7 +109,7 @@ public:
     SfmlDrawableArea(Vector size);
     ~SfmlDrawableArea();
 
-    void drawImage(const std::string& path) override;
+    void drawImage(Vector size, const std::string& path) override;
     void clear(const Color& col) override;
 
     Color getPixel(Vector point) override;
@@ -119,6 +121,8 @@ public:
     void transparency(const ProportionRatio& ratio) override;
 private:
     sf::Image* storage_;
+private:
+    Vector convertPos(Vector pos) const;
 };
 
 class SfmlRenderObject : public RenderObject{
@@ -177,12 +181,11 @@ public:
     RealWindow*   createRealWindow(Vector size)   const override;
 };
 
-const GraphicImpFabric* giFabric = &SfmlGraphicImpFabric();
+sf::Color converColorToLib(const Color& col);
+Color convertColorFromLib(const sf::Color& sf_col);
 
-#define CREATE_DRAWABLE_AREA(size) (giFabric->createDrawableArea(size))
-#define CREATE_RENDER_OBJECT(size) (giFabric->createRenderObject(size))
-#define CREATE_REAL_WINDOW(size) (giFabric->createRealWindow(size))
-
-ManipulatorsContext manipulatorsContext;
+#define CREATE_DRAWABLE_AREA(size) (GraphicImpFabric::active_fabric->createDrawableArea(size))
+#define CREATE_RENDER_OBJECT(size) (GraphicImpFabric::active_fabric->createRenderObject(size))
+#define CREATE_REAL_WINDOW(size) (GraphicImpFabric::active_fabric->createRealWindow(size))
 
 #endif // GRAPHIC_IMP_H

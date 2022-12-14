@@ -13,8 +13,8 @@ Expended::Expended(Vector size):
     hSlider_->visible(false);
     vSlider_->visible(false);
 
-    hSlider_->setHandler<Expended>(this, horizontalMove);
-    vSlider_->setHandler<Expended>(this, verticalMove);
+    hSlider_->setHandler<Expended>(this, &Expended::horizontalMove);
+    vSlider_->setHandler<Expended>(this, &Expended::verticalMove);
 }
 
 Expended::~Expended(){

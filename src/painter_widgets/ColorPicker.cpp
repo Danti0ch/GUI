@@ -1,6 +1,7 @@
 #include "ColorPicker.h"
 #include "tools.hpp"
 
+/*
 extern booba::ApplicationContext* APPCONTEXT;
 
 const uint CONTROL_BUTT_WIDTH  = 50;
@@ -10,32 +11,43 @@ const uint SETUP_WIDGET_WIDTH  = 200;
 const uint SETUP_WIDGET_HEIGHT = 400;
 
 SliderPicker::SliderPicker(const std::string& name):
-    ContainerWidget(SETUP_WIDGET_WIDTH - 20, 40),
-    title_(SETUP_WIDGET_WIDTH - 20, 15),
-    slider_(SETUP_WIDGET_WIDTH - 20, 15, 10)
+    ContainerWidget({SETUP_WIDGET_WIDTH - 20, 40}),
+    title_(new Label({SETUP_WIDGET_WIDTH - 20, 15})),
+    slider_(new HSlider({SETUP_WIDGET_WIDTH - 20, 15}))
 {
-    title_.text(name);
-    connect(&slider_, 3, 3);
-    connect(&title_, &slider_, LINKAGE_MODE::TOP, 5);
+    title_->text(name);
+    connect(slider_, {3, 3});
+
+    title_->connectBy(slider_, LINKAGE_MODE::TOP, 5);
 };
 
 const HSlider* SliderPicker::slider() const{
-    return &slider_;
+    return slider_;
 }
 
 TextPicker::TextPicker(const std::string& name):
-    ContainerWidget(SETUP_WIDGET_WIDTH - 20, 40),
-    title_(SETUP_WIDGET_WIDTH - 20, 15),
-    storage_(SETUP_WIDGET_WIDTH - 20, 15)
+    ContainerWidget({SETUP_WIDGET_WIDTH - 20, 40}),
+    title_(new Label({SETUP_WIDGET_WIDTH - 20, 15})),
+    storage_(new TextInsertWidget(SETUP_WIDGET_WIDTH - 20, 15))
 {
-    title_.text(name);
+    title_->text(name);
 
-    connect(&storage_, 3, 3);
-    connect(&title_, &storage_, LINKAGE_MODE::TOP, 5);
+    connect(storage_, {3, 3});
+
+    title_->connectBy(storage_, LINKAGE_MODE::TOP, 5);
+}
+
+TextPicker::~TextPicker(){
+    delete title_;
+    delete storage_;
+}
+
+const TextInsertWidget* textField() const{
+    return storage_;
 }
 
 ColorSetup::ColorSetup(uint width, uint height):
-    ContainerWidget(width, height),
+    ContainerWidget({width, height}),
     huePicker("hue"),
     saturationPicker("saturation"),
     brightnessPicker("brightness"),
@@ -47,18 +59,20 @@ ColorSetup::ColorSetup(uint width, uint height):
     aPicker("A"),
     hexPicker("HEX")
 {
-    connect(&hexPicker, 5, 5);
-    connect(&aPicker, &hexPicker, LINKAGE_MODE::TOP);
-    connect(&bPicker, &aPicker, LINKAGE_MODE::TOP);
-    connect(&gPicker, &bPicker, LINKAGE_MODE::TOP);
-    connect(&rPicker, &gPicker, LINKAGE_MODE::TOP);
+    connect(&hexPicker, {5, 5});
 
-    connect(&opacityPicker, &rPicker, LINKAGE_MODE::TOP);
-    connect(&brightnessPicker, &opacityPicker, LINKAGE_MODE::TOP);
-    connect(&saturationPicker, &brightnessPicker, LINKAGE_MODE::TOP);
-    connect(&huePicker, &saturationPicker, LINKAGE_MODE::TOP);
+    aPicker.connectBy(&hexPicker, LINKAGE_MODE::TOP);
+    bPicker.connectBy(&aPicker, LINKAGE_MODE::TOP);
+    gPicker.connectBy(&bPicker, LINKAGE_MODE::TOP);
+    rPicker.connectBy(&gPicker, LINKAGE_MODE::TOP);
+
+    opacityPicker.connectBy(&rPicker, LINKAGE_MODE::TOP);
+    brightnessPicker.connectBy(&opacityPicker, LINKAGE_MODE::TOP);
+    saturationPicker.connectBy(&brightnessPicker, LINKAGE_MODE::TOP);
+    huePicker.connectBy(&saturationPicker, LINKAGE_MODE::TOP);
 }
 
+/*
 void ColorSetup::onTextInserted(const TextInsertedEvent* event){
 
     const Widget* p_field = event->p_field();
@@ -88,7 +102,9 @@ void ColorSetup::onTextInserted(const TextInsertedEvent* event){
     APPCONTEXT->fgColor = cur_col;
 
 }
+*/
 
+/*
 void ColorSetup::onSliderMoved(const SliderMovedEvent* event){
 
     const Widget* p_slider = event->p_slider();
@@ -99,9 +115,9 @@ void ColorSetup::onSliderMoved(const SliderMovedEvent* event){
 }
 
 ColorPicker::ColorPicker():
-    ContainerWidget(CONTROL_BUTT_WIDTH + SETUP_WIDGET_WIDTH, CONTROL_BUTT_HEIGHT + SETUP_WIDGET_HEIGHT),
-    control_button_(CONTROL_BUTT_WIDTH, CONTROL_BUTT_HEIGHT),
-    setup_widget_(SETUP_WIDGET_WIDTH, SETUP_WIDGET_HEIGHT)
+    ContainerWidget({CONTROL_BUTT_WIDTH + SETUP_WIDGET_WIDTH, CONTROL_BUTT_HEIGHT + SETUP_WIDGET_HEIGHT}),
+    control_button_(new RectButton({CONTROL_BUTT_WIDTH, CONTROL_BUTT_HEIGHT})),
+    setup_widget_(new ColorSetup({SETUP_WIDGET_WIDTH, SETUP_WIDGET_HEIGHT}))
 {
     texture().setTransparency(0);
     control_button_.setTexture(Color(40, 40, 40));
@@ -110,3 +126,4 @@ ColorPicker::ColorPicker():
 
     control_button_.handler(&setup_widget_, &ContainerWidget::changeVisible);
 }
+*/

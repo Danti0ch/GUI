@@ -3,12 +3,14 @@
 Window::Window(Vector size):
     ContainerWidget(size),
     window_(CREATE_REAL_WINDOW(size))
-{   
+{
     eventManager_ = new EventManager();
 
     // TODO: fix
     delete buffer_;
     buffer_ = window_->buffer();
+
+    bgLayer_->clear(0xbd87c4);
 }
 
 Window::~Window(){
@@ -28,6 +30,7 @@ void Window::remove(Widget* widget){
 
 void Window::exec(){
 
+    window_->open();
     bLayerDraw();
     window_->draw();
 
@@ -40,7 +43,6 @@ void Window::exec(){
                 window_->extractedEvents.pop();
                 
                 event->updateManipulatorsData();
-
                 eventManager_->ProcessHandlers(event);
             }
 

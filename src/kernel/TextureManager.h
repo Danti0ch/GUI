@@ -18,19 +18,19 @@ enum class TEXTURE_IDENT{
 
 const unsigned int N_TEXTURES = static_cast<unsigned int>(TEXTURE_IDENT::N_TEXTURES);
 
-class TexturePack_{
+class TexturePack{
 public:
-    TexturePack_();
-    TexturePack_(const std::string& path_to_textures);
-    ~TexturePack_();
+    TexturePack();
+    TexturePack(const std::string& path_to_textures);
+    ~TexturePack();
 
     /// @brief returns 1 if loading was successfull. 0 otherwise.
     bool loadPack(const std::string& path_to_textures);
     const DrawableArea* getTexture(TEXTURE_IDENT ident);
+
+    static TexturePack activePack;
 private:
     DrawableArea* textures_[N_TEXTURES];
 };
-
-TexturePack_ TexturePack;
 
 #endif // TEXTURE_MANAGER_H

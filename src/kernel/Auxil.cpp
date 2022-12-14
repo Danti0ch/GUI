@@ -67,3 +67,15 @@ coord& Vector::operator[](unsigned int id){
     if(id == 0) return x;
     else return y;
 }
+
+Text::Text():
+    font_size(14),
+    str(),
+    col(Color::BLACK)
+{}
+
+Text::Text(const std::string& text):
+    font_size(14),
+    str(text),
+    col(Color::BLACK)
+{}
