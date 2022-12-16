@@ -22,7 +22,6 @@ ToolsList::ToolsList():
 
     for (tools_iter = tools.begin(); tools_iter != tools.end(); tools_iter++){
         list_->add(tools_iter->name, new ObjArgAction<ToolsList, uint>(this, &ToolsList::setActiveTool, n_tool));
-        list_->items()[list_->items().size() - 1]->texture(tools_iter->p->getTexture());
 
         SetupWidget* setupWidget = new SetupWidget(manager_);
 

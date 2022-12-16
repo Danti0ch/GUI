@@ -17,7 +17,6 @@ int main(int argc, char *argv[]){
     booba::APPCONTEXT->bgColor = convertTosColor(Color::WHITE);
     
     Window* cur_window = new Window({1080, 720});
-    cur_window->texture("plugins/textures/wtf.jpg");
 
     StatusBar* statusBar = new StatusBar();
     cur_window->add(statusBar, {0, 0});
@@ -35,8 +34,8 @@ int main(int argc, char *argv[]){
 
     canvases->connectBy(tools, LINKAGE_MODE::RIGHT, 15);
 
-    //ColorPicker* col_picker = new ColorPicker();
-    //cur_window->add(col_picker, {800, 50});
+    ColorPicker* col_picker = new ColorPicker();
+    cur_window->add(col_picker, {800, 50});
 
     cur_window->exec();
 

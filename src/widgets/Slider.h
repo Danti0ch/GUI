@@ -16,6 +16,7 @@ public:
     virtual coord indicatorLen() const = 0;
     virtual coord len() const = 0;
 
+    // TODO: to events??
     template<class T_RECEIVER>
     void setHandler(T_RECEIVER* pReceiver, void (T_RECEIVER::*slot)(double)){
         actions_->add(new ObjDynamicArgAction<T_RECEIVER, double>(pReceiver, slot, &this->ratio_));

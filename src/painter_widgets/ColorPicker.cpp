@@ -1,8 +1,8 @@
 #include "ColorPicker.h"
 #include "tools.hpp"
+#include "Actions.h"
 
-/*
-extern booba::ApplicationContext* APPCONTEXT;
+extern booba::ApplicationContext* booba::APPCONTEXT;
 
 const uint CONTROL_BUTT_WIDTH  = 50;
 const uint CONTROL_BUTT_HEIGHT = 50;
@@ -17,24 +17,25 @@ SliderPicker::SliderPicker(const std::string& name):
 {
     title_->text(name);
     connect(slider_, {3, 3});
-
     title_->connectBy(slider_, LINKAGE_MODE::TOP, 5);
 };
 
-const HSlider* SliderPicker::slider() const{
+HSlider* SliderPicker::slider(){
     return slider_;
 }
 
-TextPicker::TextPicker(const std::string& name):
+TextPicker::TextPicker(const std::string& name, int init_val, int minVal, int MaxVal):
     ContainerWidget({SETUP_WIDGET_WIDTH - 20, 40}),
-    title_(new Label({SETUP_WIDGET_WIDTH - 20, 15})),
-    storage_(new TextInsertWidget(SETUP_WIDGET_WIDTH - 20, 15))
+    title_(new Label({40, 25})),
+    storage_(new TextNumInsertWidget({SETUP_WIDGET_WIDTH - 20 - 50, 25}, init_val))
 {
     title_->text(name);
+    connect(title_, {3, 3});
+    storage_->connectBy(title_, LINKAGE_MODE::RIGHT, 5);
 
-    connect(storage_, {3, 3});
-
-    title_->connectBy(storage_, LINKAGE_MODE::TOP, 5);
+    storage_->setDefaultText("0");
+    storage_->setMinVal(minVal);
+    storage_->setMaxVal(MaxVal);
 }
 
 TextPicker::~TextPicker(){
@@ -42,88 +43,157 @@ TextPicker::~TextPicker(){
     delete storage_;
 }
 
-const TextInsertWidget* textField() const{
+TextNumInsertWidget* TextPicker::textField(){
     return storage_;
 }
 
-ColorSetup::ColorSetup(uint width, uint height):
-    ContainerWidget({width, height}),
-    huePicker("hue"),
-    saturationPicker("saturation"),
-    brightnessPicker("brightness"),
-    opacityPicker("opacity"),
-
-    rPicker("R"),
-    gPicker("G"),
-    bPicker("B"),
-    aPicker("A"),
-    hexPicker("HEX")
+ColorSetup::ColorSetup(RectButton* controlButton):
+    ContainerWidget({SETUP_WIDGET_WIDTH, SETUP_WIDGET_HEIGHT}),
+    controlButton_(controlButton)
 {
-    connect(&hexPicker, {5, 5});
 
-    aPicker.connectBy(&hexPicker, LINKAGE_MODE::TOP);
-    bPicker.connectBy(&aPicker, LINKAGE_MODE::TOP);
-    gPicker.connectBy(&bPicker, LINKAGE_MODE::TOP);
-    rPicker.connectBy(&gPicker, LINKAGE_MODE::TOP);
+    Color curCol = convertFromsColor(booba::APPCONTEXT->fgColor);
 
-    opacityPicker.connectBy(&rPicker, LINKAGE_MODE::TOP);
-    brightnessPicker.connectBy(&opacityPicker, LINKAGE_MODE::TOP);
-    saturationPicker.connectBy(&brightnessPicker, LINKAGE_MODE::TOP);
-    huePicker.connectBy(&saturationPicker, LINKAGE_MODE::TOP);
+    huePicker        = new SliderPicker("hue");
+    saturationPicker = new SliderPicker("saturation");
+    brightnessPicker = new SliderPicker("brightness");
+    opacityPicker    = new SliderPicker("opacity");
+    
+    rPicker = new TextPicker("R", curCol.r(), 0, 255);
+    gPicker = new TextPicker("G", curCol.g(), 0, 255);
+    bPicker = new TextPicker("B", curCol.b(), 0, 255);
+    aPicker = new TextPicker("A", curCol.a(), 0, 255);
+    hexPicker = new TextPicker("HEX", static_cast<unsigned int>(curCol), 0, 0xFFFFFF);
+
+    texture(Color::WHITE);
+    connect(hexPicker, {5, 5});
+
+    aPicker->connectBy(hexPicker, LINKAGE_MODE::TOP);
+    bPicker->connectBy(aPicker, LINKAGE_MODE::TOP);
+    gPicker->connectBy(bPicker, LINKAGE_MODE::TOP);
+    rPicker->connectBy(gPicker, LINKAGE_MODE::TOP);
+
+    opacityPicker->connectBy(rPicker, LINKAGE_MODE::TOP);
+    brightnessPicker->connectBy(opacityPicker, LINKAGE_MODE::TOP);
+    saturationPicker->connectBy(brightnessPicker, LINKAGE_MODE::TOP);
+    huePicker->connectBy(saturationPicker, LINKAGE_MODE::TOP);
+
+    rPicker->textField()->setHandler<ColorSetup>(this, &ColorSetup::rPickerInserted);
+    gPicker->textField()->setHandler<ColorSetup>(this, &ColorSetup::gPickerInserted);
+    bPicker->textField()->setHandler<ColorSetup>(this, &ColorSetup::bPickerInserted);
+    aPicker->textField()->setHandler<ColorSetup>(this, &ColorSetup::aPickerInserted);
+
+    opacityPicker->slider()->setHandler<ColorSetup>(this, &ColorSetup::opacityPickerInserted);
+    brightnessPicker->slider()->setHandler<ColorSetup>(this, &ColorSetup::brightnessPickerInserted);
+    saturationPicker->slider()->setHandler<ColorSetup>(this, &ColorSetup::saturationPickerInserted);
+    huePicker->slider()->setHandler<ColorSetup>(this, &ColorSetup::huePickerInserted);
 }
 
-/*
-void ColorSetup::onTextInserted(const TextInsertedEvent* event){
-
-    const Widget* p_field = event->p_field();
-    if(p_field != &rPicker && p_field != &gPicker && p_field != &bPicker && p_field != &aPicker && p_field != &hexPicker){
-        return;
-    }
-
-    Color cur_col(APPCONTEXT->fgColor);
-    const std::string& data = event->data();
-
-    if(p_field == &hexPicker){
-        // TODO:
-    }
-    else if(p_field == &aPicker){
-        cur_col.a((uint8_t)std::stoi(data));
-    }
-    else if(p_field == &bPicker){
-        cur_col.b((uint8_t)std::stoi(data));
-    }
-    else if(p_field == &gPicker){
-        cur_col.g((uint8_t)std::stoi(data));
-    }
-    else if(p_field == &rPicker){
-        cur_col.r((uint8_t)std::stoi(data));
-    }
-
-    APPCONTEXT->fgColor = cur_col;
-
+ColorSetup::~ColorSetup(){
+    delete huePicker;
+    delete saturationPicker;
+    delete brightnessPicker;
+    delete opacityPicker;
+    delete rPicker;
+    delete gPicker;
+    delete bPicker;
+    delete aPicker;
 }
-*/
 
-/*
-void ColorSetup::onSliderMoved(const SliderMovedEvent* event){
+void ColorSetup::rPickerInserted(std::string data){
 
-    const Widget* p_slider = event->p_slider();
-    if(p_slider != &huePicker && p_slider != &saturationPicker && p_slider != &brightnessPicker && p_slider != &opacityPicker){
-        return;
-    }
+    Color cur_col = convertFromsColor(booba::APPCONTEXT->fgColor);
+    cur_col.r((uint8_t)std::stoi(data));
 
+    booba::APPCONTEXT->fgColor = convertTosColor(cur_col);
+
+    controlButton_->texture(cur_col);
+    controlButton_->requireRender();
+
+    return;
+}
+
+void ColorSetup::gPickerInserted(std::string data){
+
+    Color cur_col = convertFromsColor(booba::APPCONTEXT->fgColor);
+
+    cur_col.g((uint8_t)std::stoi(data));
+    booba::APPCONTEXT->fgColor = convertTosColor(cur_col);
+    controlButton_->texture(cur_col);
+    controlButton_->requireRender();
+
+    return;
+}
+
+void ColorSetup::bPickerInserted(std::string data){
+
+    Color cur_col = convertFromsColor(booba::APPCONTEXT->fgColor);
+    cur_col.b((uint8_t)std::stoi(data));
+    booba::APPCONTEXT->fgColor = convertTosColor(cur_col);
+    controlButton_->texture(cur_col);
+    controlButton_->requireRender();
+
+    return;
+}
+
+void ColorSetup::aPickerInserted(std::string data){
+
+    Color cur_col = convertFromsColor(booba::APPCONTEXT->fgColor);
+    cur_col.a((uint8_t)std::stoi(data));
+    booba::APPCONTEXT->fgColor = convertTosColor(cur_col);
+    controlButton_->texture(cur_col);
+    controlButton_->requireRender();
+
+    return;
+}
+
+void ColorSetup::hexPickerInserted(std::string data){
+
+    Color cur_col = convertFromsColor(booba::APPCONTEXT->fgColor);
+    cur_col = std::stoi(data, 0, 16);
+    booba::APPCONTEXT->fgColor = convertTosColor(cur_col);
+    controlButton_->texture(cur_col);
+    controlButton_->requireRender();
+
+    return;
+}
+
+void ColorSetup::opacityPickerInserted(double ratio){
+
+    ;
+}
+
+void ColorSetup::brightnessPickerInserted(double ratio){
+
+    ;
+}
+
+void ColorSetup::saturationPickerInserted(double ratio){
+
+    ;
+}
+
+void ColorSetup::huePickerInserted(double ratio){
+
+    ;
 }
 
 ColorPicker::ColorPicker():
     ContainerWidget({CONTROL_BUTT_WIDTH + SETUP_WIDGET_WIDTH, CONTROL_BUTT_HEIGHT + SETUP_WIDGET_HEIGHT}),
     control_button_(new RectButton({CONTROL_BUTT_WIDTH, CONTROL_BUTT_HEIGHT})),
-    setup_widget_(new ColorSetup({SETUP_WIDGET_WIDTH, SETUP_WIDGET_HEIGHT}))
+    setup_widget_(new ColorSetup(control_button_))
 {
-    texture().setTransparency(0);
-    control_button_.setTexture(Color(40, 40, 40));
-    connect(&control_button_, SETUP_WIDGET_WIDTH, 0);
-    connect(&setup_widget_, 0, CONTROL_BUTT_HEIGHT);
+    bgLayer_->transparency(0);
 
-    control_button_.handler(&setup_widget_, &ContainerWidget::changeVisible);
+    // TODO: fix frames
+    control_button_->texture(convertFromsColor(booba::APPCONTEXT->fgColor), false);
+    connect(control_button_, {SETUP_WIDGET_WIDTH, 0});
+    connect(setup_widget_, {0, CONTROL_BUTT_HEIGHT});
+
+    control_button_->addHandler(new ObjAction<ColorSetup>(setup_widget_, &ColorSetup::invertVisible));
 }
-*/
+
+ColorPicker::~ColorPicker(){
+    delete control_button_;
+    delete setup_widget_;
+}

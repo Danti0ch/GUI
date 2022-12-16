@@ -17,7 +17,7 @@ SfmlRenderObject::~SfmlRenderObject(){
     delete storage_;
 }
 
-void SfmlRenderObject::draw(Vector point, const Text& data){
+void SfmlRenderObject::drawText(Vector point, const Text& data){
     sf::Text text_obj(data.str, font_, data.font_size);
         
     Vector real_point = convertPos(point);
@@ -91,6 +91,7 @@ void SfmlRenderObject::draw(Vector point, const DrawableArea* data, const Rectan
 }
 
 void SfmlRenderObject::clear(const Color& col){
+
     storage_->clear(converColorToLib(col));
     return;
 }
@@ -98,6 +99,14 @@ void SfmlRenderObject::clear(const Color& col){
 Vector SfmlRenderObject::size()  const { 
     //MDLOG("%u, %u", storage_->getSize().x, storage_->getSize().y)
     return Vector(storage_->getSize().x, storage_->getSize().y); }
+
+Vector SfmlRenderObject::getTextSize(const Text& text){
+
+    sf::Text text_obj(text.str, font_, text.font_size);
+
+    sf::FloatRect bounds = text_obj.getLocalBounds();
+    return Vector(bounds.width, bounds.height);
+}
 
 const sf::RenderTexture* SfmlRenderObject::storage() const{ return storage_; }
 
@@ -112,15 +121,13 @@ SfmlDrawableArea::~SfmlDrawableArea(){}
 
 void SfmlDrawableArea::drawImage(Vector size, const std::string& path){
 
-    if(!storage_->loadFromFile("plugins/textures/wtf.jpg")){
-        EDLOG("dude))");
-    }
     storage_->create(size.x, size.y);
 
     return;
 }
 
 void SfmlDrawableArea::clear(const Color& col){
+
     for(uint y = 0; y < storage_->getSize().y; y++){
         for(uint x = 0; x < storage_->getSize().x; x++){
             storage_->setPixel(x, y, converColorToLib(col));
@@ -136,7 +143,6 @@ Color SfmlDrawableArea::getPixel(Vector point){
 }
 
 void SfmlDrawableArea::setPixel(Vector point, Color col){
-
     Vector realPoint = convertPos(point);
     storage_->setPixel(realPoint.x, realPoint.y, converColorToLib(col));
     return;

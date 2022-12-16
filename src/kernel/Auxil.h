@@ -25,6 +25,9 @@ public:
 
     void operator+=(const Vector& other);
     void operator-=(const Vector& other);
+    
+    void operator*=(unsigned int ratio);
+    void operator/=(unsigned int ratio);
 
     coord& operator[](unsigned int id);
     
@@ -33,6 +36,8 @@ public:
 
 Vector operator+(const Vector& v1, const Vector& v2);
 Vector operator-(const Vector& v1, const Vector& v2);
+Vector operator*(const Vector& v1, unsigned int ratio);
+Vector operator/(const Vector& v1, unsigned int ratio);
 
 const Vector VECTOR_POISON(COORD_POISON, COORD_POISON);
 

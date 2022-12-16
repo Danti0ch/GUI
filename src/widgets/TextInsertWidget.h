@@ -2,16 +2,51 @@
 #define TEXT_INSERT_WIDGET_H
 
 #include "Widget.h"
+#include "Actions.h"
 
+// TODO: add all keys support
+// TODO: multiple line support?
 class TextInsertWidget : public Widget{
 public:
-    TextInsertWidget(uint width, uint height);
-    
-    void onKeyPressed( const KeyPressedEvent* event) override;
+    TextInsertWidget(Vector size, std::string initText = "");
+    ~TextInsertWidget();
+
+    virtual void onKeyPressed( const KeyPressedEvent* event) override;
 
     void draw() override;
-private:
+    virtual void setDefaultText(const std::string& defaultText);
+
+    template<class T_RECEIVER>
+    void setHandler(T_RECEIVER* pReceiver, void (T_RECEIVER::*slot)(std::string)){
+        actions_->add(new ObjDynamicArgAction<T_RECEIVER, std::string>(pReceiver, slot, &this->text_.str));
+        return;
+    }
+    
+protected:
     Text text_;
+private:
+    MacroAction* actions_;
+    std::string defaultText_;
+
+    bool isDefault_;
+};
+
+class TextNumInsertWidget : public TextInsertWidget{
+public:
+    TextNumInsertWidget(Vector size, unsigned int init_val = 0);
+    ~TextNumInsertWidget() = default;
+
+    void onKeyPressed( const KeyPressedEvent* event) override;
+
+    void setDefaultText(const std::string& defaultText) override;
+
+    void setMinVal(unsigned int val);
+    void setMaxVal(unsigned int val);
+
+private:
+    int minVal_, maxVal_;
+
+    bool isMinVal_, isMaxVal_;
 };
 
 #endif // TEXT_INSERT_WIDGET_H

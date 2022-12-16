@@ -47,6 +47,20 @@ void Vector::operator-=(const Vector& other){
     return;
 }
 
+void Vector::operator*=(unsigned int ratio){
+    this->x *= ratio;
+    this->y *= ratio;
+
+    return;
+}
+
+void Vector::operator/=(unsigned int ratio){
+    this->x /= ratio;
+    this->y /= ratio;
+
+    return;
+}
+
 Vector operator+(const Vector& v1, const Vector& v2){
     Vector newObj(v1);
     newObj.operator+=(v2);
@@ -61,6 +75,20 @@ Vector operator-(const Vector& v1, const Vector& v2){
     return newObj;
 }
 
+Vector operator*(const Vector& v1, unsigned int ratio){
+    Vector newObj(v1);
+    newObj.operator*=(ratio);
+
+    return newObj;
+}
+
+Vector operator/(const Vector& v1, unsigned int ratio){
+    Vector newObj(v1);
+    newObj.operator/=(ratio);
+
+    return newObj;
+}
+
 coord& Vector::operator[](unsigned int id){
     if(id > 1) throw std::out_of_range("");
 
@@ -69,13 +97,13 @@ coord& Vector::operator[](unsigned int id){
 }
 
 Text::Text():
-    font_size(14),
+    font_size(12),
     str(),
     col(Color::BLACK)
 {}
 
 Text::Text(const std::string& text):
-    font_size(14),
+    font_size(12),
     str(text),
     col(Color::BLACK)
 {}

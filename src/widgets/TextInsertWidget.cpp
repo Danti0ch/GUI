@@ -1,56 +1,117 @@
 #include "TextInsertWidget.h"
+#include <string.h>
 
-/*
-TextInsertWidget::TextInsertWidget(uint width, uint height):
-    Widget(width, height), text_(){
-        setTexture(Color(0, 15, 15));
-    }
+// TODO: implement setLetter mb for checking rules such numeric or etc
+TextInsertWidget::TextInsertWidget(Vector size, std::string initText):
+    Widget(size), text_(initText),
+    actions_(new MacroAction()),
+    defaultText_(initText),
+    isDefault_(true)
+{
+    // TODO: fix
+    texture(0xe3e3e3, 0);
+}
 
-// TODO: we wanna know if spec number is pressed
+TextInsertWidget::~TextInsertWidget(){
+    delete actions_;
+}
+
 void TextInsertWidget::onKeyPressed(const KeyPressedEvent* event){
 
-    T_KEY key_val = event->key();
-    if(key_val == T_KEY::BackSpace){
-        text_.str().pop_back();
+    if(event->key() == T_KEY::BackSpace && !text_.str.empty()){
+        text_.str.pop_back();
+        if(text_.str.empty()){
+            text_.str = defaultText_;
+            isDefault_ = true;
+        }
     }
-    else if(key_val == T_KEY::Num1){
-        text_.str().push_back('1');
-    }
-    else if (key_val == T_KEY::Num2){
-        text_.str().push_back('2');
-    }
-    else if (key_val == T_KEY::Num3){
-        text_.str().push_back('3');
-    }
-    else if (key_val == T_KEY::Num4){
-        text_.str().push_back('4');
-    }
-    else if (key_val == T_KEY::Num5){
-        text_.str().push_back('5');
-    }
-    else if (key_val == T_KEY::Num6){
-        text_.str().push_back('6');
-    }
-    else if (key_val == T_KEY::Num7){
-        text_.str().push_back('7');
-    }
-    else if (key_val == T_KEY::Num8){
-        text_.str().push_back('8');
-    }
-    else if (key_val == T_KEY::Num9){
-        text_.str().push_back('9');
-    }
-    else if (key_val == T_KEY::Num0){
-        text_.str().push_back('0');
+    else{
+        char parsedSymb = convertKeyToChar(event->key(), ManipulatorsContext::activeContext);
+        if(parsedSymb == 0) return;
+        
+        if(isDefault_){
+            //?
+            text_.str = "";
+            isDefault_ = false;
+        }
+        text_.str.push_back(parsedSymb);
     }
 
-    RequireRender();
-
+    requireRender();
+    actions_->execute();
+    
     return;
 }
 
 void TextInsertWidget::draw(){
-    text_.draw(this->GetPointerOnPixBuff());
+
+    buffer_->drawCentralized(text_);
     return;
 }
-*/
+
+void TextInsertWidget::setDefaultText(const std::string& defaultText){
+    defaultText_ = defaultText;
+    return;
+}
+
+TextNumInsertWidget::TextNumInsertWidget(Vector size, unsigned int init_val):
+    TextInsertWidget(size, std::to_string(init_val)),
+    isMinVal_(false), isMaxVal_(false)
+{}
+
+void TextNumInsertWidget::onKeyPressed( const KeyPressedEvent* event){
+
+    char symb = convertKeyToChar(event->key(), ManipulatorsContext::activeContext);
+    if((symb != 0 && !isdigit(symb))) return;
+    else if(symb){
+        //?
+        std::string new_str = text_.str;
+        new_str.push_back(symb);
+
+        int val = std::stoi(new_str);
+
+        if(isMinVal_ && val < minVal_) return;
+        if(isMaxVal_ && val > maxVal_) return;   
+    }
+
+    TextInsertWidget::onKeyPressed(event);
+
+    return;
+}
+
+void TextNumInsertWidget::setDefaultText(const std::string& defaultText){
+    
+    bool isDigit = true;
+
+    for(auto symb : defaultText){
+        if(!isdigit(symb)){
+            isDigit = false;
+            break;
+        }
+    }
+
+    int val = std::stoi(defaultText);
+
+    if(isMinVal_ && val < minVal_) return;
+    if(isMaxVal_ && val > maxVal_) return;
+
+    if(isDigit){
+        TextInsertWidget::setDefaultText(defaultText);
+    }
+
+    return;
+}
+
+void TextNumInsertWidget::setMinVal(unsigned int val){
+    isMinVal_ = true;
+    minVal_ = val;
+
+    return;
+}
+
+void TextNumInsertWidget::setMaxVal(unsigned int val){
+    isMaxVal_ = true;
+    maxVal_ = val;
+
+    return;
+}

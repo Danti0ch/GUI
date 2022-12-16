@@ -50,6 +50,8 @@ enum class T_KEY {
 
 const unsigned int N_KEYS = static_cast<unsigned int>(T_KEY::N_KEYS);
 
+// TODO: check caps lock activated or not(and numlock mb)
+// TODO: add cursor support
 class ManipulatorsContext{
 public:
     ManipulatorsContext();
@@ -163,5 +165,7 @@ private:
 private:
     T_KEY key_;
 };
+
+char convertKeyToChar(T_KEY key, const ManipulatorsContext& context);
 
 #endif // SEVENT_H

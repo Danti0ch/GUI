@@ -1,6 +1,6 @@
 #include "Widget.h"
 
-// Widget* Widget::FOCUSED_WIDGET = NULL;
+Widget* Widget::FOCUSED_WIDGET = NULL;
 
 Widget::Widget(Vector size):
     relPos_(), size_(size),
@@ -62,15 +62,19 @@ void Widget::visible(bool val){
 }
 
 void Widget::invertVisible(){
-    is_visible_ != is_visible_;
+    visible(!is_visible_);
 }
 
-void Widget::texture(const std::string& path_to_img){
+void Widget::texture(const std::string& path_to_img, bool framed){
     bgLayer_->drawImage(size(), path_to_img);
+    if(framed)
+        drawFrame(bgLayer_);
 }
 
-void Widget::texture(const Color& col){
+void Widget::texture(const Color& col, bool framed){
     bgLayer_->clear(col);
+    if(framed)
+        drawFrame(bgLayer_);
 }
 
 void Widget::requireRender(){
@@ -168,6 +172,12 @@ void Widget::triggerEvent(const Event* event){\
     if(event->type() == T_EVENT::mouseClick){
 
         if(!isPointInside(this, ManipulatorsContext::activeContext.mousePos())) return;
+
+        if(Widget::FOCUSED_WIDGET)
+            Widget::FOCUSED_WIDGET->is_focused_ = false;
+
+        is_focused_ = true;
+        Widget::FOCUSED_WIDGET = this;
 
         const MouseButtonPressedEvent* detected_event = static_cast<const MouseButtonPressedEvent*>(event);
         onMouseButtonPressed(detected_event);

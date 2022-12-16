@@ -43,7 +43,8 @@ class RenderObject{
 public:
     virtual ~RenderObject() = default;
 
-    virtual void draw(Vector point, const Text& data) = 0;
+    void draw(Vector point, const Text& data);
+    void drawCentralized(const Text& data);
     virtual void draw(Vector point, const RenderObject* data) = 0;
 
     /// @brief draws data, that restricted by area rect
@@ -55,7 +56,10 @@ public:
 
     virtual Vector size() const = 0;
 
+    virtual Vector getTextSize(const Text& text) = 0;
     virtual void changeFont(const std::string& path) = 0;
+protected:
+    virtual void drawText(Vector point, const Text& data) = 0;
 };
 
 // TODO: rename
@@ -101,6 +105,8 @@ public:
     static GraphicImpFabric* active_fabric;
 };
 
+void drawFrame(DrawableArea* area, Color col = Color::BLACK);
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 
@@ -130,7 +136,7 @@ public:
     SfmlRenderObject(Vector size);
     ~SfmlRenderObject();
 
-    void draw(Vector point, const Text& data) override;
+    void drawText(Vector point, const Text& data) override;
     void draw(Vector point, const RenderObject* data) override;
     void draw(Vector point, const RenderObject* data, const RectangleArea& rect) override;
     void draw(Vector point, const DrawableArea* data) override;
@@ -139,6 +145,8 @@ public:
     void clear(const Color& col) override;
 
     void changeFont(const std::string& path) override;
+
+    Vector getTextSize(const Text& text) override;
 
     Vector size() const override;
     const sf::RenderTexture* storage() const;

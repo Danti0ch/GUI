@@ -52,17 +52,17 @@ public:
     void visible(bool val);
     void invertVisible();
 
-    void texture(const std::string& path_to_img);
-    void texture(const Color& col);
+    void texture(const std::string& path_to_img, bool framed = 0);
+    void texture(const Color& col, bool framed = 0);
 
     void connectBy(Widget* slotWidget, LINKAGE_MODE mode, uint indent_val = 0, int offset = 0);
 
     static Widget* FOCUSED_WIDGET;
 
+    //?? is it really needed ? test
+    void requireRender();
 protected:
     virtual void draw() = 0;
-
-    void requireRender();
 
     /// @brief executes while widget connecting or disconnecting. Used to change private data.    
     virtual void connectDataUpdate(ContainerWidget* container);
