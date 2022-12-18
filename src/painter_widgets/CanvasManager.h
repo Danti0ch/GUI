@@ -7,6 +7,7 @@
 #include "optionals.hpp"
 #include "EventWrapper.h"
 
+// TODO: rewrite on barwidget
 // TODO: save implementing
 
 // TODO: maybe path ptr or widget without ptr, figure out
@@ -22,7 +23,7 @@ public:
     ~CanvasManager();
 
     void setActive(uint n_canvas);
-    void addCanvas(const std::string& path);
+    void addCanvas(std::string path);
     void removeCanvas(const std::string& path);
 
     static CanvasWidget* ACTIVE_CANVAS_WIDGET;

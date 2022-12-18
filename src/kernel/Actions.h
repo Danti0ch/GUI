@@ -74,6 +74,7 @@ private:
     tMethod pFunc_;
 };
 
+// TODO: fix const type& case
 template<class T_RECEIVER, typename T_ARG>
 class ObjArgAction : public Action{
     typedef void (T_RECEIVER::* tMethod)(T_ARG);

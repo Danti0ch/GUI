@@ -1,26 +1,20 @@
 #ifndef DROP_LIST_H
 #define DROP_LIST_H
 
+//??????
+//????
 /*
 #include "Widget.h"
-#include "RectButton.h"
+#include "Buttons.h"
 #include "ListWidget.h"
+#include "Actions.h"
 
-template<class T_RECEIVER>
-class DropList : public ContainerWidget{
+class DropList : public VListWidget{
 public:
-    DropList(T_RECEIVER* p_receiver, uint controlButtWidth, uint controlButtHeight, uint listWidth, uint listHeight, uint listButHeight):
-        ContainerWidget(std::max(controlButtWidth, listButWidth), std::max(controlButtHeight, listButHeight)),
-        control_button_(controlButtWidth, controlButtHeight),
-        list_(listWidth, listHeight, listButHeight, p_receiver, )
-    ~DropList();
-
-    void add(const std::string& name, )
+    DropList(Vector size, RectButton* pControlButton);
+    ~DropList() = default;
 private:
-    RectButton<DropList, bool> control_button_;
-    HListWidget<T_RECEIVER> list_;
-private:
-    void changeListVisibility();
+    RectButton* pControlButton_;
 };
 */
 

@@ -9,7 +9,7 @@
 #include "logger.h"
 
 class ContainerWidget;
-class EventManager;
+class Window;
 
 enum class LINKAGE_MODE{
 
@@ -24,9 +24,11 @@ enum class LINKAGE_MODE{
  * @brief abstract class for visible entities in application, that realizes general interface methods
  * 
  */
-class Widget{
+
+template<class T_WIDGET, class... PROPERTIES>
+class ExtWidget : virtual public T_WIDGET, virtual public PROPERTIES...{
 public:
-    Widget(Vector size);  
+    Widget(Vector size);
 
     //?  
     virtual ~Widget();
@@ -72,8 +74,8 @@ protected:
     virtual void onMouseButtonReleased(const MouseButtonReleasedEvent* event){}
     virtual void onMouseMoved(const MouseMovedEvent* event){}
     virtual void onMouseWheelScrolled(const MouseWheelScrolledEvent* event){}
-    virtual void onKeyPressed( const KeyPressedEvent* event){}
-    virtual void onKeyReleased( const KeyReleasedEvent* event){}
+    virtual void onKeyPressed(const KeyPressedEvent* event){}
+    virtual void onKeyReleased(const KeyReleasedEvent* event){}
 
 private:
     /// @brief smth changed in widget, there could be neccesity in redrawing it
@@ -87,6 +89,8 @@ protected:
     DrawableArea* bgLayer_;
     RenderObject* buffer_;
 
+    bool focusable_;
+
     /// @brief if cur widget contains subwidget, returns its pos on the buffer of current widget. Otherwise returns poison
     virtual Vector subPos(const Widget* subwidget) const;
 
@@ -99,17 +103,19 @@ private:
     bool is_focused_;
     bool is_visible_;
     bool is_render_required_;
-
-    EventManager *eventManager_;
+    
+    Window* window_;
 friend class ContainerWidget;
 friend class EventManager;
 friend class Window;
 
 // TODO: remove
 friend class Expended;
+friend class Contexted;
 };
 
 bool isPointInside(const Widget* widget, Vector pos);
+bool isPointInside(const RectangleArea& rect, Vector pos);
 
 /**
  * @brief container for multiple widgets

@@ -1,11 +1,12 @@
 #include "Slider.h"
 #include "TextureManager.h"
 
-Slider::Slider(Vector size):
+Slider::Slider(Vector size, ORIENTATION orient, ProportionRatio initRatio):
     Widget(size),
-    ratio_(0),
+    ratio_(initRatio),
     indicator_(NULL),
-    actions_(new MacroAction())
+    actions_(new MacroAction()),
+    orient_(orient)
 {}
 
 Slider::~Slider(){
@@ -15,10 +16,10 @@ Slider::~Slider(){
 
 double Slider::ratio() const{ return ratio_; }
 
-void Slider::indicatorMove(ORIENTATION orient){
+void Slider::indicatorMove(){
 
     int cId = 0;
-    if(orient == ORIENTATION::V) cId = 1;
+    if(orient_ == ORIENTATION::V) cId = 1;
 
     int newPos = (int)(ManipulatorsContext::activeContext.mousePos()[cId] - realPos()[cId]) - (int)(indicator_->size()[cId] / 2);
 
@@ -33,10 +34,10 @@ void Slider::indicatorMove(ORIENTATION orient){
     return;
 }
 
-void Slider::drawIndicator(ORIENTATION orient){
+void Slider::drawIndicator(){
 
     int cId = 0;
-    if(orient == ORIENTATION::V) cId = 1;
+    if(orient_ == ORIENTATION::V) cId = 1;
 
     coord pos = (size()[cId] - indicator_->size()[cId]) * ratio_;
 
@@ -48,36 +49,49 @@ void Slider::drawIndicator(ORIENTATION orient){
     return;
 }
 
-VSlider::VSlider(coord len):
-    VSlider({10, len}){}
+void Slider::replaceIndicator(ProportionRatio ratio){
+    ratio_ = ratio;
+    drawIndicator();
+    requireRender();
+}
 
-VSlider::VSlider(Vector size):
-    Slider(size)
+VSlider::VSlider(coord len, ProportionRatio initRatio):
+    VSlider({10, len}, initRatio){}
+
+VSlider::VSlider(Vector size, ProportionRatio initRatio):
+    Slider(size, ORIENTATION::V, initRatio)
 {
     indicator_ = CREATE_DRAWABLE_AREA(Vector(size.x, 20));
-    bgLayer_->clear(Color(0x4a4a40, 100));
+
+    texture(Color(0x4a4a40, 100));
     indicator_->clear(0xcc31b2);
+
+    if(ratio_ > 0)
+        drawIndicator();
 }
 
 void VSlider::onMouseButtonPressed(const MouseButtonPressedEvent* event){
     
-    indicatorMove(ORIENTATION::V);
+    indicatorMove();
+    ACTIVE_SLIDER = this;
     return;
 }
 
+void VSlider::onMouseButtonReleased(const MouseButtonReleasedEvent* event){
+    ACTIVE_SLIDER = NULL;
+}
+
 void VSlider::onMouseMoved(const MouseMovedEvent* event){
-    if(!isPointInside(this, ManipulatorsContext::activeContext.mousePos())){
-        return;
-    }
+    if(this != Slider::ACTIVE_SLIDER) return;
 
     if(!ManipulatorsContext::activeContext.isMouseLPressed()) return;
     
-    indicatorMove(ORIENTATION::V);
+    indicatorMove();
     return;
 }
 
 void VSlider::draw(){
-    drawIndicator(ORIENTATION::V);
+    drawIndicator();
     return;
 }
 
@@ -85,36 +99,42 @@ coord VSlider::indicatorLen() const {
     return indicator_->size().y;
 }
 
-HSlider::HSlider(coord len):
-    HSlider({len, 10}){}
+HSlider::HSlider(coord len, ProportionRatio initRatio):
+    HSlider({len, 10}, initRatio){}
 
-HSlider::HSlider(Vector size):
-    Slider(size)
+HSlider::HSlider(Vector size, ProportionRatio initRatio):
+    Slider(size, ORIENTATION::H, initRatio)
 {
     indicator_ = CREATE_DRAWABLE_AREA(Vector(20, size.y));
-    bgLayer_->clear(Color(0x4a4a40, 100));
+    texture(Color(0x4a4a40, 100));
     indicator_->clear(0xcc31b2);
+
+    if(ratio_ > 0)
+        drawIndicator();
 }
 
 void HSlider::onMouseButtonPressed(const MouseButtonPressedEvent* event){
 
-    indicatorMove(ORIENTATION::H);
+    indicatorMove();
+    ACTIVE_SLIDER = this;
     return;
 }
 
+void HSlider::onMouseButtonReleased(const MouseButtonReleasedEvent* event){
+    ACTIVE_SLIDER = NULL;
+}
+
 void HSlider::onMouseMoved(const MouseMovedEvent* event){
-    if(!isPointInside(this, ManipulatorsContext::activeContext.mousePos())){
-        return;
-    }
-    
+ 
     if(!ManipulatorsContext::activeContext.isMouseLPressed()) return;
-    
-    indicatorMove(ORIENTATION::H);
+    if(this != Slider::ACTIVE_SLIDER) return;
+
+    indicatorMove();
     return;
 }
 
 void HSlider::draw(){
-    drawIndicator(ORIENTATION::H);
+    drawIndicator();
     return;
 }
 
@@ -124,3 +144,5 @@ coord HSlider::indicatorLen() const {
 
 coord HSlider::len() const { return size().x; }
 coord VSlider::len() const { return size().y; }
+
+Slider* Slider::ACTIVE_SLIDER = NULL;

@@ -1,7 +1,7 @@
 #include "graphicImp.h"
 #include "logger.h"
 
-const coord FRAME_DEPTH = 2;
+const coord FRAME_DEPTH = 1;
 
 RealWindow::RealWindow(Vector size, unsigned int extractedEventsQueueMaxSize):
     extractedEventsQueueMaxSize_(extractedEventsQueueMaxSize),

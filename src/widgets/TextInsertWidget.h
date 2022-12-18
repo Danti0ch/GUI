@@ -4,6 +4,7 @@
 #include "Widget.h"
 #include "Actions.h"
 
+// TODO: refactor
 // TODO: add all keys support
 // TODO: multiple line support?
 class TextInsertWidget : public Widget{
@@ -21,11 +22,11 @@ public:
         actions_->add(new ObjDynamicArgAction<T_RECEIVER, std::string>(pReceiver, slot, &this->text_.str));
         return;
     }
-    
+
 protected:
     Text text_;
-private:
     MacroAction* actions_;
+private:
     std::string defaultText_;
 
     bool isDefault_;
@@ -43,6 +44,7 @@ public:
     void setMinVal(unsigned int val);
     void setMaxVal(unsigned int val);
 
+    void set(unsigned int val);
 private:
     int minVal_, maxVal_;
 

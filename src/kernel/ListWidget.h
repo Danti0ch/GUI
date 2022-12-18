@@ -35,6 +35,8 @@ public:
 
     void add(const std::string& name);
     void add(const std::string& name, Action* action);
+
+    static coord DEFAULT_ITEM_SIZE;
 };
 
 class VListWidget : public AbstractListWidget{
@@ -46,7 +48,8 @@ public:
 
     void add(const std::string& name);
     void add(const std::string& name, Action* action);
-};
 
+    static coord DEFAULT_ITEM_SIZE;
+};
 
 #endif // LIST_WIDGET_H

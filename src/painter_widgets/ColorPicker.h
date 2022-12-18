@@ -6,9 +6,11 @@
 #include "Label.h"
 #include "Slider.h"
 
+// TODO: hue picker fix
+
 class SliderPicker : public ContainerWidget{
 public:
-    SliderPicker(const std::string& name);
+    SliderPicker(const std::string& name, ProportionRatio initRatio);
 
     HSlider* slider();
 private:
@@ -35,26 +37,31 @@ public:
     void rPickerInserted(std::string data);
     void gPickerInserted(std::string data);
     void bPickerInserted(std::string data);
-    void aPickerInserted(std::string data);
     void hexPickerInserted(std::string data);
 
-    void opacityPickerInserted(double ratio);
     void brightnessPickerInserted(double ratio);
     void saturationPickerInserted(double ratio);
     void huePickerInserted(double ratio);
+
+    void updatePickers();
+
+    void draw() override;
+
+    void onMouseButtonPressed(const MouseButtonPressedEvent* event) override;
+private:
+    void colorAreaUpdate();
 
 private:
     SliderPicker* huePicker;
     SliderPicker* saturationPicker;
     SliderPicker* brightnessPicker;
-    SliderPicker* opacityPicker;
 
     TextPicker* rPicker;
     TextPicker* gPicker;
     TextPicker* bPicker;
-    TextPicker* aPicker;
     TextPicker* hexPicker;
 
+    DrawableArea* colorArea_;
     RectButton* controlButton_;
 };
 

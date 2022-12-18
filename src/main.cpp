@@ -7,16 +7,27 @@
 #include "ToolsList.h"
 #include "StatusBar.h"
 #include "ColorPicker.h"
+#include "TopBar.h"
 
 booba::ApplicationContext* booba::APPCONTEXT = NULL;
 
+template<typename... T>
+class A{
+public:
+    A(){
+        std::cout << "safsdf\n";
+    }
+};
+
+
+// TODO: global get Color
 int main(int argc, char *argv[]){
 
     booba::APPCONTEXT = new booba::ApplicationContext();
     booba::APPCONTEXT->fgColor = convertTosColor(Color::BLUE);
     booba::APPCONTEXT->bgColor = convertTosColor(Color::WHITE);
     
-    Window* cur_window = new Window({1080, 720});
+    Window* cur_window = new Window({WINDOW_WIDTH, WINDOW_HEIGHT});
 
     StatusBar* statusBar = new StatusBar();
     cur_window->add(statusBar, {0, 0});
@@ -36,6 +47,10 @@ int main(int argc, char *argv[]){
 
     ColorPicker* col_picker = new ColorPicker();
     cur_window->add(col_picker, {800, 50});
+
+    TopBar* topBar = new TopBar();
+    
+    cur_window->add(topBar, {0, 0});
 
     cur_window->exec();
 

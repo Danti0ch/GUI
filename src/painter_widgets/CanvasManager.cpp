@@ -64,7 +64,9 @@ void CanvasManager::setActive(uint n_canvas){
     return;
 }
 
-void CanvasManager::addCanvas(const std::string& path){
+// TODO: to const &
+void CanvasManager::addCanvas(std::string path){
+
     CanvasStorage new_canvas;
 
     new_canvas.path = path;

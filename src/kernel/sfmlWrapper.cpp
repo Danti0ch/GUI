@@ -119,6 +119,7 @@ SfmlDrawableArea::SfmlDrawableArea(Vector size):
 
 SfmlDrawableArea::~SfmlDrawableArea(){}
 
+// TODO:
 void SfmlDrawableArea::drawImage(Vector size, const std::string& path){
 
     storage_->create(size.x, size.y);
@@ -143,13 +144,16 @@ Color SfmlDrawableArea::getPixel(Vector point){
 }
 
 void SfmlDrawableArea::setPixel(Vector point, Color col){
+
     Vector realPoint = convertPos(point);
+
     storage_->setPixel(realPoint.x, realPoint.y, converColorToLib(col));
+
     return;
 }
 
 Vector SfmlDrawableArea::convertPos(Vector pos) const{
-    return Vector(pos.x, size().y - pos.y);
+    return Vector(pos.x, size().y - pos.y - 1);
 }
 
 Vector SfmlDrawableArea::size() const { return Vector(storage_->getSize().x, storage_->getSize().y); }
@@ -257,11 +261,11 @@ bool SfmlRealWindow::extractEvent(Event** storage) const{
 }
 
 Vector SfmlRealWindow::convertPosToSFML(Vector pos) const{
-    return Vector(pos.x, size().y - pos.y);
+    return Vector(pos.x, size().y - pos.y - 1);
 }
 
 Vector SfmlRealWindow::convertPosFromSFML(Vector pos) const{
-    return Vector(pos.x, size().y - pos.y);
+    return Vector(pos.x, size().y - pos.y - 1);
 }
 
 void SfmlRenderObject::changeFont(const std::string& path){
@@ -271,6 +275,9 @@ void SfmlRenderObject::changeFont(const std::string& path){
 }
 
 Vector SfmlRenderObject::convertPos(Vector pos) const{
+
+    //!
+    // TODO: could be errors( -1 )
     return Vector(pos.x, size().y - pos.y);
 }
 

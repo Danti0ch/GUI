@@ -1,7 +1,7 @@
 #include "ListWidget.h"
 
-const int HLIST_ITEM_LEN = 50;
-const int VLIST_ITEM_LEN = 30;
+coord HListWidget::DEFAULT_ITEM_SIZE = 50;
+coord VListWidget::DEFAULT_ITEM_SIZE = 30;
 
 AbstractListWidget::AbstractListWidget(Vector size, coord itemLen):
     Expended(size),
@@ -22,12 +22,12 @@ void AbstractListWidget::add(ORIENTATION orient, const std::string& name){
     RectButton* butt = NULL;
 
     if(orient == ORIENTATION::H){
-        butt = new RectButton({HLIST_ITEM_LEN, size().y}, name);
-        Expended::connect(butt, {items_.size() * HLIST_ITEM_LEN, 0});
+        butt = new RectButton({HListWidget::DEFAULT_ITEM_SIZE, size().y}, name);
+        Expended::connect(butt, {items_.size() * HListWidget::DEFAULT_ITEM_SIZE, 0});
     }
     else{
-        butt = new RectButton({size().x, VLIST_ITEM_LEN}, name);
-        Expended::connect(butt, {0, items_.size() * VLIST_ITEM_LEN});
+        butt = new RectButton({size().x, VListWidget::DEFAULT_ITEM_SIZE}, name);
+        Expended::connect(butt, {0, items_.size() * VListWidget::DEFAULT_ITEM_SIZE});
     }
 
     items_.push_back(butt);
@@ -62,7 +62,7 @@ std::vector<RectButton*>& AbstractListWidget::items(){
 }
 
 HListWidget::HListWidget(Vector size):
-    AbstractListWidget(size, HLIST_ITEM_LEN)
+    AbstractListWidget(size, HListWidget::DEFAULT_ITEM_SIZE)
 {}
 HListWidget::HListWidget(Vector size, coord itemLen):
     AbstractListWidget(size, itemLen)
@@ -77,7 +77,7 @@ void HListWidget::add(const std::string& name, Action* action){
 }
 
 VListWidget::VListWidget(Vector size):
-    AbstractListWidget(size, VLIST_ITEM_LEN)
+    AbstractListWidget(size, VListWidget::DEFAULT_ITEM_SIZE)
 {}
 VListWidget::VListWidget(Vector size, coord itemLen):
     AbstractListWidget(size, itemLen)

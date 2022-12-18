@@ -1,5 +1,7 @@
 #include "Color.h"
+#include "logger.h"
 #include <iostream>
+#include <math.h>
 
 const uint32_t MAX_COMP_VAL = 255;
 
@@ -130,3 +132,139 @@ uint32_t convertTosColor(const Color& col){
 Color convertFromsColor(uint32_t val){
     return Color(val >> 8, val & 0xFF);
 }
+
+// https://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
+unsigned int Color::h() const{ 
+    double rd = ((double)r_) / 255.0;
+    double gd = ((double)g_) / 255.0;
+    double bd = ((double)b_) / 255.0;
+
+    double cMax = std::max(rd, std::max(gd, bd));
+    double cMin = std::min(rd, std::min(gd, bd));
+
+    double delta = cMax - cMin;
+
+    if(delta < 0.000001){
+        return 0;
+    }
+    if(cMax < 0.0) assert(0);
+
+    double hVal = 0;
+
+    if(rd >= cMax) hVal = ((gd - bd) / delta) * 60.0;
+    else if(gd >= cMax){
+        hVal = (((bd - rd )/ delta) + 2.0) * 60.0;
+    }
+    else{
+        hVal = (((rd - gd) / delta) + 4.0) * 60.0;
+    }
+    
+    if(hVal < 0.0){
+        hVal += 360.0;
+    }
+
+    return (unsigned int)(hVal);
+}
+
+double Color::s() const{
+
+    double rd = (double)r_ / (double)MAX_COMP_VAL;
+    double gd = (double)g_ / (double)MAX_COMP_VAL;
+    double bd = (double)b_ / (double)MAX_COMP_VAL;
+
+    double cMax = std::max(rd, std::max(gd, bd));
+    double cMin = std::min(rd, std::min(gd, bd));
+
+    double delta = cMax - cMin;
+    if(delta < 0.000001){
+        return 0;
+    }
+
+    if(cMax < 0.00001) return 0;
+    return delta / cMax;
+}
+
+double Color::v() const{
+    double rd = (double)r_ / (double)MAX_COMP_VAL;
+    double gd = (double)g_ / (double)MAX_COMP_VAL;
+    double bd = (double)b_ / (double)MAX_COMP_VAL;
+
+    double cMax = std::max(rd, std::max(gd, bd));
+
+    return cMax;
+}
+
+// TODO: check inputs to porportion ratio
+// https://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
+void Color::hsv(unsigned int h, double s, double v){
+
+    double hd = h;
+    if(hd >= 360.0) hd = 0;
+
+    hd /= 60.0;
+
+    h = (uint)(hd);
+
+    double ff = hd - (double)h;
+
+    double p = v * (1.0 - s);
+    double q = v * (1.0 - (s * ff));
+    double t = v * (1.0 - (s * (1.0 - ff)));
+
+    switch(h){
+        case 0:{
+            r_ = (uint8_t) round(v * 255.0);
+            g_ = (uint8_t) round(t * 255.0);
+            b_ = (uint8_t) round(p * 255.0);
+            break;
+        }
+        case 1:{
+            r_ = (uint8_t) round(q * 255.0);
+            g_ = (uint8_t) round(v * 255.0);
+            b_ = (uint8_t) round(p * 255.0);
+            break;
+        }
+        case 2:{
+            r_ = (uint8_t) round(p * 255.0);
+            g_ = (uint8_t) round(v * 255.0);
+            b_ = (uint8_t) round(t * 255.0);
+            break;
+        }
+        case 3:{
+            r_ = (uint8_t) round(p * 255.0);
+            g_ = (uint8_t) round(q * 255.0);
+            b_ = (uint8_t) round(v * 255.0);
+            break;
+        }
+        case 4:{
+            r_ = (uint8_t) round(t * 255.0);
+            g_ = (uint8_t) round(p * 255.0);
+            b_ = (uint8_t) round(v * 255.0);
+            break;
+        }
+        case 5:default:{
+            r_ = (uint8_t) round(v * 255.0);
+            g_ = (uint8_t) round(p * 255.0);
+            b_ = (uint8_t) round(q * 255.0);
+            break;
+        }
+    }
+
+    return;
+}
+
+void Color::h(unsigned int val){
+    hsv(val, s(), v());
+    return;
+}
+
+void Color::s(double val){
+    hsv(h(), val, v());
+    return;
+}
+
+void Color::v(double val){
+    hsv(h(), s(), val);
+    return;
+}
+    

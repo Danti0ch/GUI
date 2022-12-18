@@ -1,7 +1,11 @@
 #include "Widget.h"
+#include "Window.h"
 
 ContainerWidget::ContainerWidget(Vector size):
-    Widget(size), subwidgets_(){ }
+    Widget(size), subwidgets_()
+{
+    focusable_ = false;
+}
 
 void ContainerWidget::draw(){
 
@@ -48,14 +52,14 @@ void ContainerWidget::remove(Widget* child_widget){
 
 void ContainerWidget::connectDataUpdate(ContainerWidget* container){
 
-    if(eventManager_ != NULL){
+    if(window_ != NULL){
         disconnectDataUpdate();
     }
 
-    if(container->eventManager_ == NULL) return;
+    if(container->window_ == NULL) return;
 
-    container->eventManager_->addWidget(this);
-    eventManager_ = container->eventManager_;
+    container->window_->eventManager_->addWidget(this);
+    window_ = container->window_;
 
     std::list<Widget*>::iterator subwidgets_iter;
     for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){
@@ -67,10 +71,10 @@ void ContainerWidget::connectDataUpdate(ContainerWidget* container){
 
 void ContainerWidget::disconnectDataUpdate(){
 
-    if(eventManager_ == NULL) return;
+    if(window_ == NULL) return;
 
-    eventManager_->removeWidget(this);
-    eventManager_ = NULL;
+    window_->eventManager_->removeWidget(this);
+    window_ = NULL;
 
     std::list<Widget*>::iterator subwidgets_iter;
     for (subwidgets_iter = subwidgets_.begin(); subwidgets_iter != subwidgets_.end(); subwidgets_iter++){

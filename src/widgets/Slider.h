@@ -8,7 +8,7 @@
 
 class Slider : public Widget{
 public:
-    Slider(Vector size);
+    Slider(Vector size, ORIENTATION orient, ProportionRatio initRatio = 0);
     ~Slider();
 
     double ratio() const;
@@ -29,21 +29,26 @@ public:
         return;
     }
     
+    void replaceIndicator(ProportionRatio ratio);
+
+    static Slider* ACTIVE_SLIDER;
 protected:
     //?
     double ratio_;
 
     DrawableArea* indicator_;
     MacroAction* actions_;
+
+    ORIENTATION orient_;
 protected:
-    void indicatorMove(ORIENTATION orient);
-    void drawIndicator(ORIENTATION orient);
+    void indicatorMove();
+    void drawIndicator();
 };
 
 class VSlider : public Slider{
 public:
-    VSlider(coord len);
-    VSlider(Vector size);
+    VSlider(coord len, ProportionRatio initRatio = 0);
+    VSlider(Vector size, ProportionRatio initRatio = 0);
     ~VSlider() = default;
 
     void draw() override;
@@ -53,7 +58,8 @@ public:
 
     void onMouseButtonPressed(const MouseButtonPressedEvent* event) override;
     void onMouseMoved(const MouseMovedEvent* event) override;
-    
+    void onMouseButtonReleased(const MouseButtonReleasedEvent* event) override;
+
     // TODO:
     //void onMouseWheelScrolled(const MouseWheelScrolledEvent* event) override;
     //?
@@ -62,8 +68,8 @@ public:
 
 class HSlider : public Slider{
 public:
-    HSlider(coord len);
-    HSlider(Vector size);
+    HSlider(coord len, ProportionRatio initRatio = 0);
+    HSlider(Vector size, ProportionRatio initRatio = 0);
     ~HSlider() = default;
 
     void draw() override;
@@ -73,6 +79,7 @@ public:
 
     void onMouseButtonPressed(const MouseButtonPressedEvent* event) override;
     void onMouseMoved(const MouseMovedEvent* event) override;
+    void onMouseButtonReleased(const MouseButtonReleasedEvent* event) override;
 };
 
 #endif // SLIDER_H

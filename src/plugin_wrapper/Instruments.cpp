@@ -47,7 +47,7 @@ extern "C" uint64_t booba::createLabel(size_t x, size_t y, size_t w, size_t h, c
 extern "C" uint64_t booba::createSlider(size_t x, size_t y, size_t w, size_t h, int64_t minValue, int64_t maxValue, int64_t startValue){
 
     // TODO:
-    HSlider* slider = new HSlider({w, h});
+    HSlider* slider = new HSlider(Vector(w, h));
 
     SetupWidget::ACTIVE_SETUP_WINDOW->addSetupWidget(slider, {x, y});
 

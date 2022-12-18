@@ -1,4 +1,5 @@
 #include "Widget.h"
+#include "Window.h"
 
 Widget* Widget::FOCUSED_WIDGET = NULL;
 
@@ -8,7 +9,8 @@ Widget::Widget(Vector size):
     is_visible_(true),
     is_render_required_(true),
     parent_widget_(NULL),
-    eventManager_(NULL)
+    window_(NULL),
+    focusable_(true)
 {
     bgLayer_ = CREATE_DRAWABLE_AREA(size);
     buffer_  = CREATE_RENDER_OBJECT(size);
@@ -111,26 +113,34 @@ bool isPointInside(const Widget* widget, Vector pos){
     return false;
 }
 
+bool isPointInside(const RectangleArea& rect, Vector pos){
+
+    if(pos.x >= rect.pos.x && pos.x <= rect.pos.x + rect.size.x && pos.y >= rect.pos.y && pos.y <= rect.pos.y + rect.size.y){
+        return true;
+    } 
+    return false;
+}
+
 void Widget::connectDataUpdate(ContainerWidget* container){
 
-    if(eventManager_ != NULL){
+    if(window_ != NULL){
         disconnectDataUpdate( );
     }
 
-    if(container->eventManager_ == NULL){
-        eventManager_ = NULL;
+    if(container->window_ == NULL){
+        window_ = NULL;
         return;
     }
 
-    container->eventManager_->addWidget(this);
-    eventManager_ = container->eventManager_;
+    container->window_->eventManager_->addWidget(this);
+    window_ = container->window_;
 
     return;
 }
 
 void Widget::disconnectDataUpdate(){
-    eventManager_->removeWidget(this);
-    eventManager_ = NULL;
+    window_->eventManager_->removeWidget(this);
+    window_ = NULL;
 
     return;
 }
@@ -165,7 +175,7 @@ void Widget::connectBy(Widget* slotWidget, LINKAGE_MODE mode, uint indent_val, i
     return;
 }
 
-void Widget::triggerEvent(const Event* event){\
+void Widget::triggerEvent(const Event* event){
 
     if(!isVisible()) return;
     
@@ -173,17 +183,20 @@ void Widget::triggerEvent(const Event* event){\
 
         if(!isPointInside(this, ManipulatorsContext::activeContext.mousePos())) return;
 
-        if(Widget::FOCUSED_WIDGET)
-            Widget::FOCUSED_WIDGET->is_focused_ = false;
+        if(focusable_){
+            if(Widget::FOCUSED_WIDGET)
+                Widget::FOCUSED_WIDGET->is_focused_ = false;
 
-        is_focused_ = true;
-        Widget::FOCUSED_WIDGET = this;
+            is_focused_ = true;
+            Widget::FOCUSED_WIDGET = this;
+        }
 
         const MouseButtonPressedEvent* detected_event = static_cast<const MouseButtonPressedEvent*>(event);
         onMouseButtonPressed(detected_event);
     }
     else if(event->type() == T_EVENT::mouseReleased){
-        if(!isPointInside(this, ManipulatorsContext::activeContext.mousePos())) return;
+        //??/????
+        //if(!isPointInside(this, ManipulatorsContext::activeContext.mousePos())) return;
 
         const MouseButtonReleasedEvent* detected_event = static_cast<const MouseButtonReleasedEvent*>(event);
         onMouseButtonReleased(detected_event);

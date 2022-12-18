@@ -8,8 +8,7 @@ TextInsertWidget::TextInsertWidget(Vector size, std::string initText):
     defaultText_(initText),
     isDefault_(true)
 {
-    // TODO: fix
-    texture(0xe3e3e3, 0);
+    texture(0xe3e3e3, true);
 }
 
 TextInsertWidget::~TextInsertWidget(){
@@ -38,6 +37,7 @@ void TextInsertWidget::onKeyPressed(const KeyPressedEvent* event){
     }
 
     requireRender();
+
     actions_->execute();
     
     return;
@@ -57,7 +57,7 @@ void TextInsertWidget::setDefaultText(const std::string& defaultText){
 TextNumInsertWidget::TextNumInsertWidget(Vector size, unsigned int init_val):
     TextInsertWidget(size, std::to_string(init_val)),
     isMinVal_(false), isMaxVal_(false)
-{}
+{} 
 
 void TextNumInsertWidget::onKeyPressed( const KeyPressedEvent* event){
 
@@ -70,8 +70,16 @@ void TextNumInsertWidget::onKeyPressed( const KeyPressedEvent* event){
 
         int val = std::stoi(new_str);
 
-        if(isMinVal_ && val < minVal_) return;
-        if(isMaxVal_ && val > maxVal_) return;   
+        if(isMinVal_ && val < minVal_){
+            set(minVal_);
+            actions_->execute();
+            return;
+        }
+        if(isMaxVal_ && val > maxVal_){
+            set(maxVal_);
+            actions_->execute();
+            return;
+        }
     }
 
     TextInsertWidget::onKeyPressed(event);
@@ -92,8 +100,14 @@ void TextNumInsertWidget::setDefaultText(const std::string& defaultText){
 
     int val = std::stoi(defaultText);
 
-    if(isMinVal_ && val < minVal_) return;
-    if(isMaxVal_ && val > maxVal_) return;
+    if(isMinVal_ && val < minVal_){
+        set(minVal_);
+        return;
+    }
+    if(isMaxVal_ && val > maxVal_){
+        set(maxVal_);
+        return;
+    }
 
     if(isDigit){
         TextInsertWidget::setDefaultText(defaultText);
@@ -112,6 +126,20 @@ void TextNumInsertWidget::setMinVal(unsigned int val){
 void TextNumInsertWidget::setMaxVal(unsigned int val){
     isMaxVal_ = true;
     maxVal_ = val;
+
+    return;
+}
+
+void TextNumInsertWidget::set(unsigned int val){
+    if(isMinVal_ && val < minVal_){
+        val = minVal_;
+    }
+    if(isMaxVal_ && val > maxVal_){
+        val = maxVal_;
+    }
+
+    text_.str = std::to_string(val);
+    requireRender();
 
     return;
 }

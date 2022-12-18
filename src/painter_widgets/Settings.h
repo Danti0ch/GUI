@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-const uint WINDOW_WIDTH  = 1080;
-const uint WINDOW_HEIGHT = 720;
+const uint WINDOW_WIDTH  = 1440;
+const uint WINDOW_HEIGHT = 900;
 
 #endif // SETTINGS_H

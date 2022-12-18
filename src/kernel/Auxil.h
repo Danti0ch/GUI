@@ -11,7 +11,7 @@
 #include <vector>
 #include <string>
 
-typedef unsigned int coord;
+typedef size_t coord;
 const coord COORD_POISON = -1;
 
 enum class ORIENTATION{

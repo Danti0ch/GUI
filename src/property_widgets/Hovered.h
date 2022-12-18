@@ -3,7 +3,7 @@
 
 #include "Widget.h"
 
-class Hovered : virtual public Widget{
+class Hovered : public Widget{
 public:
     Hovered(Vector size, const Color& hoverCol, const Color& focusCol);
     Hovered(Vector size);

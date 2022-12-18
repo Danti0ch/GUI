@@ -18,8 +18,16 @@ public:
     void    b(uint8_t v) { b_ = v; }
     void    a(uint8_t v) { a_ = v; }
 
-    ///operator double() const;
+    unsigned int h() const;
+    double       s() const;
+    double       v() const;
 
+    void h(unsigned int val);
+    void s(double val);
+    void v(double val);
+
+    void hsv(unsigned int h, double s, double v);
+    
     void  operator +=(const Color& col2);
     void  operator *=(const Color& col2);
     void  operator *=(double ratio);
